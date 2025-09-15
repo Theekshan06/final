@@ -272,441 +272,157 @@ def create_filters_controls():
         st.error(f"Error retrieving trajectory data: {str(e)}")
         return None
 
+def create_base_map():
+    """Create the base map with proper layers"""
+    m = folium.Map(
+        location=[0, 0],
+        zoom_start=2,
+        tiles=None  # We'll add custom tiles
+    )
+    
+    # Add base layers with proper attributions
+    folium.TileLayer(
+        tiles='OpenStreetMap',
+        name='OpenStreetMap',
+        attr='© OpenStreetMap contributors'
+    ).add_to(m)
+    
+    folium.TileLayer(
+        tiles='https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png',
+        attr='Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.',
+        name='Terrain'
+    ).add_to(m)
+    
+    folium.TileLayer(
+        tiles='https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg',
+        attr='Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.',
+        name='Watercolor'
+    ).add_to(m)
+    
+    return m
+
 def create_enhanced_float_map():
     """Create enhanced interactive map with filtering controls and trajectory support"""
     if not st.session_state.get('initialized', False) or not st.session_state.rag_system:
         st.error("RAG system not initialized")
         return
 
-    # Initialize filter and trajectory states
-    if 'map_start_date' not in st.session_state:
-        st.session_state.map_start_date = None
-    if 'map_end_date' not in st.session_state:
-        st.session_state.map_end_date = None
-    if 'map_selected_region' not in st.session_state:
-        st.session_state.map_selected_region = 'All Oceans'
-    if 'show_trajectory' not in st.session_state:
-        st.session_state.show_trajectory = False
-    if 'trajectory_float_id' not in st.session_state:
-        st.session_state.trajectory_float_id = None
+    # Initialize states
+    initialize_map_states()
 
-    # Create two-column layout: controls (25%) + map (75%)
-    col1, col2 = st.columns([1, 3])
+    try:
+        # Get latest float locations from database
+        sql_query = """
+        WITH latest_profiles AS (
+            SELECT p.float_id,
+                   p.profile_id,
+                   p.latitude,
+                   p.longitude,
+                   p.profile_date,
+                   ROW_NUMBER() OVER (PARTITION BY p.float_id ORDER BY p.profile_date DESC) as rn
+            FROM profiles p
+            WHERE p.latitude IS NOT NULL
+            AND p.longitude IS NOT NULL
+            AND p.latitude BETWEEN -90 AND 90
+            AND p.longitude BETWEEN -180 AND 180
+        ),
+        float_measurements AS (
+            SELECT lp.float_id,
+                   lp.latitude,
+                   lp.longitude,
+                   lp.profile_date,
+                   COUNT(m.measurement_id) as measurement_count
+            FROM latest_profiles lp
+            LEFT JOIN measurements m ON lp.profile_id = m.profile_id
+            WHERE lp.rn = 1
+            GROUP BY lp.float_id, lp.latitude, lp.longitude, lp.profile_date
+        )
+        SELECT * FROM float_measurements
+        ORDER BY float_id
+        """
+        
+        latest_locations = st.session_state.rag_system.db_connection.execute(sql_query).fetchdf()
+        
+        # Display float count
+        st.success(f"Found {len(latest_locations)} ARGO floats")
 
-    with col1:
-        # Create collapsible filters panel
-        with st.container():
-            # Minimize/Maximize button for filters
-            if 'filters_minimized' not in st.session_state:
-                st.session_state.filters_minimized = False
+        # Map Layout
+        map_col, filters_col = st.columns([3, 1])
 
-            col_btn, col_title = st.columns([1, 4])
-            with col_btn:
-                if st.button("📖" if st.session_state.filters_minimized else "📕",
-                           help="Minimize/Maximize Filters",
-                           key="toggle_filters"):
-                    st.session_state.filters_minimized = not st.session_state.filters_minimized
-                    st.rerun()
+        with map_col:
+            # Square Map Container
+            st.markdown("""
+            <style>
+            .map-container {
+                width: 100%;
+                aspect-ratio: 1;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+            
+            with st.container():
+                folium_map = create_base_map()
+                st_folium(folium_map, width=800, height=800)  # Square dimensions
 
-            with col_title:
-                st.markdown("### Filters & Controls")
-
-            if not st.session_state.filters_minimized:
-                st.markdown("""
-                <div style="background-color: #f8f9fa; padding: 1rem; border-radius: 8px; border: 1px solid #e9ecef;">
-                """, unsafe_allow_html=True)
-
-                # Date Range Filter with Calendar
-                st.markdown("**Time Range**")
-
-                import datetime
-                today = datetime.date.today()
-                # Default to a wider range - ARGO data goes back to early 2000s
-                start_default = datetime.date(2000, 1, 1)  # Start from year 2000
-
-                col_start, col_end = st.columns(2)
-                with col_start:
-                    start_date = st.date_input(
-                        "Start Date:",
-                        value=st.session_state.map_start_date or start_default,
-                        min_value=datetime.date(1990, 1, 1),  # Allow even earlier dates
-                        max_value=today,
-                        key="start_date_filter"
-                    )
-                    st.session_state.map_start_date = start_date
-
-                with col_end:
-                    end_date = st.date_input(
-                        "End Date:",
-                        value=st.session_state.map_end_date or today,
-                        min_value=start_date,  # End date must be after start date
-                        max_value=today,
-                        key="end_date_filter"
-                    )
-                    st.session_state.map_end_date = end_date
-
-                # Ocean Regions Filter
-                st.markdown("**🌊 Ocean Regions**")
-
-                # Define ocean regions
-                ocean_regions = {
-                    "All Oceans": None,
-                    "Red Sea": {"lat_min": 12.0, "lat_max": 30.0, "lon_min": 32.0, "lon_max": 43.0},
-                    "Persian Gulf": {"lat_min": 24.0, "lat_max": 31.0, "lon_min": 48.0, "lon_max": 57.0},
-                    "Andaman Sea": {"lat_min": 5.0, "lat_max": 20.0, "lon_min": 92.0, "lon_max": 100.0},
-                    "Western Australian Basin": {"lat_min": -40.0, "lat_max": -10.0, "lon_min": 90.0, "lon_max": 120.0},
-                    "Mozambique Channel": {"lat_min": -27.0, "lat_max": -10.0, "lon_min": 40.0, "lon_max": 50.0},
-                    "Northern Indian Ocean": {"lat_min": 0.0, "lat_max": 30.0, "lon_min": 40.0, "lon_max": 100.0},
-                    "Southern Indian Ocean": {"lat_min": -50.0, "lat_max": 0.0, "lon_min": 40.0, "lon_max": 120.0},
-                    "Bay Of Bengal": {"lat_min": 5.0, "lat_max": 25.0, "lon_min": 80.0, "lon_max": 100.0},
-                    "Arabian Sea": {"lat_min": 8.0, "lat_max": 27.0, "lon_min": 50.0, "lon_max": 75.0},
-                    "Atlantic Ocean": {"lat_min": -60.0, "lat_max": 70.0, "lon_min": -80.0, "lon_max": 20.0},
-                    "Pacific Ocean": {"lat_min": -60.0, "lat_max": 70.0, "lon_min": 120.0, "lon_max": -70.0},
-                    "Mediterranean Sea": {"lat_min": 30.0, "lat_max": 46.0, "lon_min": -6.0, "lon_max": 37.0}
-                }
-
-                selected_region = st.selectbox(
-                    "Select ocean region:",
-                    options=list(ocean_regions.keys()),
-                    index=list(ocean_regions.keys()).index(st.session_state.map_selected_region),
-                    key="region_filter_map"
-                )
-                st.session_state.map_selected_region = selected_region
-
-                # Apply and Reset Buttons
-                st.markdown("**Actions**")
-                col_apply, col_reset = st.columns(2)
-
-                with col_apply:
-                    if st.button("🔍 Apply Filters", use_container_width=True, type="primary"):
-                        st.session_state.map_filters_applied = True
-                        st.rerun()
-
-                with col_reset:
-                    if st.button("🔄 Reset Filters", use_container_width=True):
-                        st.session_state.map_start_date = None
-                        st.session_state.map_end_date = None
-                        st.session_state.map_selected_region = 'All Oceans'
-                        st.session_state.map_filters_applied = True
-                        st.rerun()
-
-                # Float Trajectory Feature
+        with filters_col:
+            # Filters and Trajectory Section
+            with st.expander("Filters & Controls", expanded=True):
+                create_filters_section()
                 st.markdown("---")
-                st.subheader("Float Trajectory")
+                create_trajectory_section()
 
-                # Float ID input
-                float_id_input = st.text_input(
-                    "Enter Float ID for trajectory:",
-                    placeholder="e.g., 2902755",
-                    help="Enter the ARGO float ID to visualize its trajectory path"
-                )
+        # Export Options Section (below map)
+        st.markdown("### Export Options")
+        export_col1, export_col2, export_col3 = st.columns(3)
+        with export_col1:
+            export_format = st.selectbox("Format", ["CSV", "NetCDF", "JSON"])
+        with export_col2:
+            st.selectbox("Resolution", ["High", "Medium", "Low"])
+        with export_col3:
+            st.button("Export Data", use_container_width=True)
 
-                col1, col2 = st.columns(2)
-                with col1:
-                    if st.button("Show Trajectory", use_container_width=True, type="secondary"):
-                        if float_id_input.strip():
-                            st.session_state.show_trajectory = True
-                            st.session_state.trajectory_float_id = float_id_input.strip()
-                            st.rerun()
-                        else:
-                            st.warning("Please enter a valid Float ID")
+    except Exception as e:
+        st.error(f"Error creating map: {str(e)}")
 
-                with col2:
-                    if st.button("Clear Trajectory", use_container_width=True):
-                        st.session_state.show_trajectory = False
-                        st.session_state.trajectory_float_id = None
-                        st.rerun()
+def create_filters_section():
+    """Create filters section without emoji and expanded by default"""
+    st.markdown("**Time Range**")
+    col_start, col_end = st.columns(2)
+    with col_start:
+        start_date = st.date_input(
+            "Start Date:",
+            value=st.session_state.map_start_date or datetime.date(2000, 1, 1)
+        )
+    with col_end:
+        end_date = st.date_input(
+            "End Date:",
+            value=st.session_state.map_end_date or datetime.date.today()
+        )
 
-                # Show current trajectory status
-                if st.session_state.get('show_trajectory', False) and st.session_state.get('trajectory_float_id'):
-                    st.info(f"🛤️ Currently showing trajectory for Float: {st.session_state.trajectory_float_id}")
+    st.markdown("**Ocean Regions**")
+    selected_region = st.selectbox(
+        "Select region:",
+        options=list(ocean_regions.keys()),
+        index=list(ocean_regions.keys()).index(st.session_state.map_selected_region)
+    )
 
-                st.markdown("</div>", unsafe_allow_html=True)
-            else:
-                st.info("🔍 Filters minimized - Click 📖 to expand")
-
+    col1, col2 = st.columns(2)
+    with col1:
+        st.button("Apply", use_container_width=True, type="primary")
     with col2:
-        try:
-            # Build dynamic SQL query based on new filters
-            time_condition = ""
-            if st.session_state.map_start_date and st.session_state.map_end_date:
-                time_condition = f"AND p.profile_date BETWEEN '{st.session_state.map_start_date}' AND '{st.session_state.map_end_date}'"
+        st.button("Reset", use_container_width=True)
 
-            # Ocean region filtering
-            location_condition = ""
-            if st.session_state.map_selected_region != 'All Oceans':
-                ocean_regions = {
-                    "Red Sea": {"lat_min": 12.0, "lat_max": 30.0, "lon_min": 32.0, "lon_max": 43.0},
-                    "Persian Gulf": {"lat_min": 24.0, "lat_max": 31.0, "lon_min": 48.0, "lon_max": 57.0},
-                    "Andaman Sea": {"lat_min": 5.0, "lat_max": 20.0, "lon_min": 92.0, "lon_max": 100.0},
-                    "Western Australian Basin": {"lat_min": -40.0, "lat_max": -10.0, "lon_min": 90.0, "lon_max": 120.0},
-                    "Mozambique Channel": {"lat_min": -27.0, "lat_max": -10.0, "lon_min": 40.0, "lon_max": 50.0},
-                    "Northern Indian Ocean": {"lat_min": 0.0, "lat_max": 30.0, "lon_min": 40.0, "lon_max": 100.0},
-                    "Southern Indian Ocean": {"lat_min": -50.0, "lat_max": 0.0, "lon_min": 40.0, "lon_max": 120.0},
-                    "Bay Of Bengal": {"lat_min": 5.0, "lat_max": 25.0, "lon_min": 80.0, "lon_max": 100.0},
-                    "Arabian Sea": {"lat_min": 8.0, "lat_max": 27.0, "lon_min": 50.0, "lon_max": 75.0},
-                    "Atlantic Ocean": {"lat_min": -60.0, "lat_max": 70.0, "lon_min": -80.0, "lon_max": 20.0},
-                    "Pacific Ocean": {"lat_min": -60.0, "lat_max": 70.0, "lon_min": 120.0, "lon_max": -70.0},
-                    "Mediterranean Sea": {"lat_min": 30.0, "lat_max": 46.0, "lon_min": -6.0, "lon_max": 37.0}
-                }
-
-                if st.session_state.map_selected_region in ocean_regions:
-                    region = ocean_regions[st.session_state.map_selected_region]
-                    # Handle Pacific Ocean longitude wrapping
-                    if st.session_state.map_selected_region == "Pacific Ocean":
-                        location_condition = f"""AND (
-                            (p.longitude BETWEEN {region['lon_min']} AND 180) OR
-                            (p.longitude BETWEEN -180 AND {region['lon_max']})
-                        ) AND p.latitude BETWEEN {region['lat_min']} AND {region['lat_max']}"""
-                    else:
-                        location_condition = f"""AND p.latitude BETWEEN {region['lat_min']} AND {region['lat_max']}
-                                                AND p.longitude BETWEEN {region['lon_min']} AND {region['lon_max']}"""
-
-            sql_query = f"""
-            WITH latest_profiles AS (
-                SELECT p.float_id,
-                       p.profile_id,
-                       p.latitude,
-                       p.longitude,
-                       p.profile_date,
-                       ROW_NUMBER() OVER (PARTITION BY p.float_id ORDER BY p.profile_date DESC) as rn
-                FROM profiles p
-                WHERE p.latitude IS NOT NULL
-                AND p.longitude IS NOT NULL
-                AND p.latitude BETWEEN -90 AND 90
-                AND p.longitude BETWEEN -180 AND 180
-                {time_condition}
-                {location_condition}
-            ),
-            float_measurements AS (
-                SELECT lp.float_id,
-                       lp.latitude,
-                       lp.longitude,
-                       lp.profile_date,
-                       COUNT(m.measurement_id) as measurement_count
-                FROM latest_profiles lp
-                LEFT JOIN measurements m ON lp.profile_id = m.profile_id
-                WHERE lp.rn = 1
-                GROUP BY lp.float_id, lp.latitude, lp.longitude, lp.profile_date
-            )
-            SELECT * FROM float_measurements
-            ORDER BY float_id
-            """
-
-            # Execute query
-            with st.spinner("Loading ARGO float locations..."):
-                rag_system = st.session_state.rag_system
-                if rag_system.db_connection:
-                    df = rag_system.db_connection.execute(sql_query).fetchdf()
-
-                    if not df.empty:
-                        # Get only the last location for each float
-                        latest_locations = df.groupby('float_id').first().reset_index()
-
-                        st.success(f"Found {len(latest_locations)} ARGO floats")
-
-                        # Display map info horizontally just below the map title
-                        colm1, colm2, colm3, colm4 = st.columns(4)
-                        with colm1:
-                            st.metric("Total Floats", len(latest_locations))
-                        with colm2:
-                            total_measurements = latest_locations['measurement_count'].sum()
-                            st.metric("Total Measurements", f"{total_measurements:,}")
-                        with colm3:
-                            avg_measurements = latest_locations['measurement_count'].mean()
-                            st.metric("Avg Measurements", f"{avg_measurements:.0f}")
-                        with colm4:
-                            st.metric("Ocean Region", st.session_state.map_selected_region)
-
-                        # Enhanced Interactive Map
-                        st.markdown("### Enhanced Interactive Map")
-
-                        # Calculate map center
-                        center_lat = latest_locations['latitude'].mean()
-                        center_lon = latest_locations['longitude'].mean()
-
-                        # Create folium map with satellite view as default
-                        m = folium.Map(
-                            location=[center_lat, center_lon],
-                            zoom_start=3,
-                            width='100%',
-                            height=700,
-                            tiles=None  # Start with no default tiles
-                        )
-
-                        # Add satellite as the first (default) tile layer
-                        satellite_layer = folium.TileLayer(
-                            tiles='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                            attr='Esri',
-                            name='Satellite',
-                            overlay=False,
-                            control=True
-                        )
-                        satellite_layer.add_to(m)
-
-                        folium.TileLayer(
-                            tiles='OpenStreetMap',
-                            name='OpenStreetMap',
-                            overlay=False,
-                            control=True
-                        ).add_to(m)
-
-                        # Create color mapping for measurement count
-                        max_measurements = latest_locations['measurement_count'].max()
-                        min_measurements = latest_locations['measurement_count'].min()
-
-                        # Add markers for each float
-                        for idx, row in latest_locations.iterrows():
-                            # Color based on measurement count
-                            measurement_ratio = (row['measurement_count'] - min_measurements) / max(1, (max_measurements - min_measurements))
-
-                            if measurement_ratio > 0.7:
-                                color = '#ffd700'  # Gold
-                            elif measurement_ratio > 0.4:
-                                color = '#ffa500'  # Orange
-                            else:
-                                color = '#87ceeb'  # Sky blue
-
-                            # Create popup text
-                            popup_text = f"""
-                            <div style="font-family: Arial, sans-serif; width: 250px;">
-                                <h4 style="color: #2E8B57; margin: 0;">🌊 ARGO Float</h4>
-                                <hr style="margin: 5px 0;">
-                                <b>Float ID:</b> {row['float_id']}<br>
-                                <b>Last Position:</b><br>
-                                &nbsp;&nbsp;📍 {row['latitude']:.3f}°N, {row['longitude']:.3f}°E<br>
-                                <b>Last Profile:</b> {row['profile_date']}<br>
-                                <b>Measurements:</b> {row['measurement_count']:,} records<br>
-                                <br>
-                                <small style="color: gray;">Region: {st.session_state.map_selected_region}</small>
-                            </div>
-                            """
-
-                            # Enhanced circular markers with borders and zoom-responsive sizing
-                            folium.CircleMarker(
-                                location=[row['latitude'], row['longitude']],
-                                radius=8,  # Slightly larger base size
-                                popup=folium.Popup(popup_text, max_width=300),
-                                tooltip=f"Float {row['float_id']} | {row['measurement_count']} measurements",
-                                color='#ff8c00',  # Dark orange border for better visibility
-                                weight=3,  # Thicker border
-                                fillColor='#ffd700',  # Yellow fill
-                                fillOpacity=0.85,
-                                opacity=1.0  # Full opacity for border
-                            ).add_to(m)
-
-                        # Add trajectory if requested
-                        if st.session_state.get('show_trajectory', False) and st.session_state.get('trajectory_float_id'):
-                            trajectory_data = get_float_trajectory(st.session_state.trajectory_float_id)
-
-                            if trajectory_data is not None and len(trajectory_data) > 1:
-                                st.success(f"🛤️ Showing trajectory for Float {st.session_state.trajectory_float_id} with {len(trajectory_data)} profile locations")
-
-                                # Create trajectory path coordinates
-                                trajectory_coords = []
-                                for idx, row in trajectory_data.iterrows():
-                                    trajectory_coords.append([row['latitude'], row['longitude']])
-
-                                # Add red trajectory line connecting all profile locations
-                                folium.PolyLine(
-                                    locations=trajectory_coords,
-                                    color='red',
-                                    weight=3,
-                                    opacity=0.8,
-                                    popup=f"Float {st.session_state.trajectory_float_id} Trajectory",
-                                    tooltip=f"Trajectory path for Float {st.session_state.trajectory_float_id}"
-                                ).add_to(m)
-
-                                # Add numbered markers for trajectory points
-                                for idx, row in trajectory_data.iterrows():
-                                    # Create popup with profile information
-                                    profile_popup = f"""
-                                    <div style="font-family: Arial, sans-serif; width: 250px;">
-                                        <h4 style="color: #d32f2f; margin: 0;">Profile #{row['sequence_number']}</h4>
-                                        <hr style="margin: 5px 0;">
-                                        <b>Float ID:</b> {row['float_id']}<br>
-                                        <b>Profile ID:</b> {row['profile_id']}<br>
-                                        <b>Date:</b> {row['profile_date']}<br>
-                                        <b>Position:</b> {row['latitude']:.3f}°N, {row['longitude']:.3f}°E<br>
-                                        <br>
-                                        <small style="color: gray;">Trajectory sequence: {row['sequence_number']} of {len(trajectory_data)}</small>
-                                    </div>
-                                    """
-
-                                    # Add trajectory markers (red circles with numbers)
-                                    folium.CircleMarker(
-                                        location=[row['latitude'], row['longitude']],
-                                        radius=8,
-                                        popup=folium.Popup(profile_popup, max_width=300),
-                                        tooltip=f"Profile #{row['sequence_number']} - {row['profile_date']}",
-                                        color='red',
-                                        weight=2,
-                                        fillColor='red',
-                                        fillOpacity=0.7
-                                    ).add_to(m)
-
-                                    # Add sequence number as text marker for first and last points
-                                    if idx == 0:  # First point
-                                        folium.Marker(
-                                            location=[row['latitude'], row['longitude']],
-                                            icon=folium.DivIcon(
-                                                html=f'<div style="color: red; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 1px white;">START</div>',
-                                                icon_size=(30, 10),
-                                                icon_anchor=(15, 5)
-                                            )
-                                        ).add_to(m)
-                                    elif idx == len(trajectory_data) - 1:  # Last point
-                                        folium.Marker(
-                                            location=[row['latitude'], row['longitude']],
-                                            icon=folium.DivIcon(
-                                                html=f'<div style="color: red; font-weight: bold; font-size: 12px; text-shadow: 1px 1px 1px white;">END</div>',
-                                                icon_size=(30, 10),
-                                                icon_anchor=(15, 5)
-                                            )
-                                        ).add_to(m)
-
-                                # Zoom to fit trajectory
-                                if len(trajectory_coords) > 0:
-                                    m.fit_bounds(trajectory_coords)
-
-                            elif trajectory_data is not None and len(trajectory_data) == 1:
-                                st.warning(f"Float {st.session_state.trajectory_float_id} has only one profile location. Trajectory requires multiple profiles.")
-                            else:
-                                st.error(f"No trajectory data found for Float {st.session_state.trajectory_float_id}. Please check the Float ID.")
-
-                        # Add layer control
-                        folium.LayerControl().add_to(m)
-
-                        # Display the map full width
-                        map_data = st_folium(m, width=None, height=700, returned_objects=["last_clicked"])
-
-                        # Handle map clicks
-                        if map_data['last_clicked']:
-                            clicked_lat = map_data['last_clicked']['lat']
-                            clicked_lng = map_data['last_clicked']['lng']
-                            st.info(f"Clicked location: {clicked_lat:.4f}°N, {clicked_lng:.4f}°E")
-
-                        # Show data table
-                        with st.expander("Float Location Data"):
-                            # Add download button
-                            csv_data = latest_locations.to_csv(index=False)
-                            st.download_button(
-                                "Download Float Locations (CSV)",
-                                csv_data,
-                                f"argo_floats_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                                "text/csv"
-                            )
-
-                            st.dataframe(latest_locations, use_container_width=True)
-
-                    else:
-                        st.warning("No ARGO floats found in the selected region/time period.")
-                else:
-                    st.error("Database connection not available")
-
-        except Exception as e:
-            st.error(f"Error creating enhanced map: {str(e)}")
-            st.error(f"Traceback: {traceback.format_exc()}")
+def create_trajectory_section():
+    """Create trajectory section"""
+    st.markdown("**Float Trajectory**")
+    float_id = st.text_input("Float ID:", placeholder="e.g., 2902755")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.button("Show Path", use_container_width=True)
+    with col2:
+        st.button("Clear Path", use_container_width=True)
 
 def create_float_location_map():
     """Create a 2D map showing last location of each ARGO float"""
@@ -1535,267 +1251,283 @@ def main():
     st.markdown("---")
     st.markdown("### Scientific Query Interface")
 
-        # Check for preset query
-        preset_query = st.session_state.get('preset_query', '')
-        if preset_query:
-            st.session_state.preset_query = ''  # Clear after using
+    # Corrected indentation for the preset_query line
+    # Check for preset query
+    preset_query = st.session_state.get('preset_query', '')
+    if preset_query:
+        st.session_state.preset_query = ''  # Clear after using
 
-        col1, col2, col3 = st.columns([4, 1, 1])
-        with col1:
-            query = st.text_area(
-                "Scientific Query",
-                value=preset_query,
-                height=100,
-                placeholder="""Examples:
+    col1, col2, col3 = st.columns([4, 1, 1])
+    with col1:
+        query = st.text_area(
+            "Scientific Query",
+            value=preset_query,
+            height=100,
+            placeholder="""Examples:
 • Analyze temperature gradients in the North Atlantic
 • Show salinity profiles below 2000m depth
 • Create time series of temperature anomalies
 • Compare ocean warming trends by basin""",
-                help="Enter natural language queries about oceanographic data analysis"
-            )
-        with col2:
-            submit_btn = st.button("Analyze", type="primary", use_container_width=True)
-            if st.button("Examples", use_container_width=True):
-                st.session_state.show_examples = not st.session_state.get('show_examples', False)
-        with col3:
-            if st.button("Clear Results", use_container_width=True, disabled=st.session_state.query_results is None):
-                st.session_state.query_results = None
-                st.session_state.data_page = 0
-                st.rerun()
+            help="Enter natural language queries about oceanographic data analysis"
+        )
+    with col2:
+        submit_btn = st.button("Analyze", type="primary", use_container_width=True)
+        if st.button("Examples", use_container_width=True):
+            st.session_state.show_examples = not st.session_state.get('show_examples', False)
+    with col3:
+        if st.button("Clear Results", use_container_width=True, disabled=st.session_state.query_results is None):
+            st.session_state.query_results = None
+            st.session_state.data_page = 0
+            st.rerun()
 
-        # Show examples if requested
-        if st.session_state.get('show_examples', False):
-            with st.expander("Example Scientific Queries", expanded=True):
-                example_categories = {
-                    "Temperature Analysis": [
-                        "Show temperature vs depth profiles for the last 6 months",
-                        "Analyze temperature anomalies in the tropical Pacific",
-                        "Create a heatmap of sea surface temperature"
-                    ],
-                    "Salinity Studies": [
-                        "Plot salinity distribution in the Mediterranean",
-                        "Compare deep water salinity trends",
-                        "Analyze halocline structure"
-                    ],
-                    "Geographic Analysis": [
-                        "Map ARGO float trajectories in the Southern Ocean",
-                        "Regional temperature comparison between Atlantic basins",
-                        "Analyze upwelling zones temperature profiles"
-                    ]
-                }
+    # Show examples if requested
+    if st.session_state.get('show_examples', False):
+        with st.expander("Example Scientific Queries", expanded=True):
+            example_categories = {
+                "Temperature Analysis": [
+                    "Show temperature vs depth profiles for the last 6 months",
+                    "Analyze temperature anomalies in the tropical Pacific",
+                    "Create a heatmap of sea surface temperature"
+                ],
+                "Salinity Studies": [
+                    "Plot salinity distribution in the Mediterranean",
+                    "Compare deep water salinity trends",
+                    "Analyze halocline structure"
+                ],
+                "Geographic Analysis": [
+                    "Map ARGO float trajectories in the Southern Ocean",
+                    "Regional temperature comparison between Atlantic basins",
+                    "Analyze upwelling zones temperature profiles"
+                ]
+            }
 
-                for category, examples in example_categories.items():
-                    st.write(f"**{category}**")
-                    for example in examples:
-                        if st.button(example, key=example):
-                            st.session_state.preset_query = example
-                            st.rerun()
+            for category, examples in example_categories.items():
+                st.write(f"**{category}**")
+                for example in examples:
+                    if st.button(example, key=example):
+                        st.session_state.preset_query = example
+                        st.rerun()
 
-        # Process query when submitted
-        if submit_btn and query:
-            with st.spinner("Processing your query with semantic search and LLM..."):
-                result = process_query(query)
-                st.session_state.query_results = result
-                st.session_state.data_page = 0  # Reset to first page
-                st.rerun()
+    # Process query when submitted
+    if submit_btn and query:
+        with st.spinner("Processing your query with semantic search and LLM..."):
+            result = process_query(query)
+            st.session_state.query_results = result
+            st.session_state.data_page = 0  # Reset to first page
+            st.rerun()
     
-        # Advanced Scientific Results Display
-        if st.session_state.query_results:
-            result = st.session_state.query_results
+    # Advanced Scientific Results Display
+    if st.session_state.query_results:
+        result = st.session_state.query_results
 
-            st.markdown("---")
-            st.markdown("## Scientific Analysis Results")
+        st.markdown("---")
+        st.markdown("## Scientific Analysis Results")
 
-            # Advanced metrics display
-            create_analysis_metrics(result)
+        # Advanced metrics display
+        create_analysis_metrics(result)
 
-            # Professional results tabs
-            tab1, tab2, tab3, tab4, tab5 = st.tabs([
-                "AI Scientific Analysis",
-                "Advanced Visualization",
-                "Data Analysis",
-                "Statistical Summary",
-                "Technical Details"
-            ])
+        # Professional results tabs
+        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+            "AI Scientific Analysis",
+            "Advanced Visualization",
+            "Data Analysis",
+            "Statistical Summary",
+            "Technical Details"
+        ])
 
-            with tab1:
-                st.markdown("### AI-Powered Scientific Interpretation")
-                if result.get('llm_response'):
-                    # Enhanced AI response display
-                    st.markdown(f"""
-                    <div style="background-color: rgba(30,30,45,0.9); padding: 1.5rem; border-radius: 10px;
-                               border-left: 4px solid #4FC3F7; color: #E8E8E8;">
-                        <h4 style="color: #4FC3F7; margin-top: 0;">Scientific Analysis</h4>
-                        <p style="margin-bottom: 0; line-height: 1.6; color: #E8E8E8;">{result['llm_response']}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                else:
-                    st.info("No AI analysis available for this query")
+        with tab1:
+            st.markdown("### AI-Powered Scientific Interpretation")
+            if result.get('llm_response'):
+                # Enhanced AI response display
+                st.markdown(f"""
+                <div style="background-color: rgba(30,30,45,0.9); padding: 1.5rem; border-radius: 10px;
+                           border-left: 4px solid #4FC3F7; color: #E8E8E8;">
+                    <h4 style="color: #4FC3F7; margin-top: 0;">Scientific Analysis</h4>
+                    <p style="margin-bottom: 0; line-height: 1.6; color: #E8E8E8;">{result['llm_response']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.info("No AI analysis available for this query")
 
-            with tab2:
-                st.markdown("### Advanced Scientific Visualization")
-                if result.get('sql_data') and len(result['sql_data']) > 0:
-                    df = pd.DataFrame(result['sql_data'])
-                    create_advanced_visualization(df, result)
-                else:
-                    st.info("No data available for visualization")
+        with tab2:
+            st.markdown("### Advanced Scientific Visualization")
+            if result.get('sql_data') and len(result['sql_data']) > 0:
+                df = pd.DataFrame(result['sql_data'])
+                create_advanced_visualization(df, result)
+            else:
+                st.info("No data available for visualization")
 
-            with tab3:
-                st.markdown("### Oceanographic Data Analysis")
-                if result.get('sql_data'):
-                    df = pd.DataFrame(result['sql_data'])
+        with tab3:
+            st.markdown("### Oceanographic Data Analysis")
+            if result.get('sql_data'):
+                df = pd.DataFrame(result['sql_data'])
 
-                    # Data overview
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        st.metric("Total Records", len(df))
-                    with col2:
-                        st.metric("Parameters", len(df.columns))
-                    with col3:
-                        numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns
-                        st.metric("Numeric Variables", len(numeric_cols))
+                # Data overview
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Total Records", len(df))
+                with col2:
+                    st.metric("Parameters", len(df.columns))
+                with col3:
+                    numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns
+                    st.metric("Numeric Variables", len(numeric_cols))
 
-                    # Interactive data table with filters
-                    st.markdown("#### Data Explorer")
+                # Interactive data table with filters
+                st.markdown("#### Data Explorer")
 
-                    # Column selector
-                    if len(df.columns) > 5:
-                        selected_cols = st.multiselect(
-                            "Select columns to display:",
-                            df.columns.tolist(),
-                            default=df.columns.tolist()[:5]
-                        )
-                        if selected_cols:
-                            df_display = df[selected_cols]
-                        else:
-                            df_display = df
+                # Column selector
+                if len(df.columns) > 5:
+                    selected_cols = st.multiselect(
+                        "Select columns to display:",
+                        df.columns.tolist(),
+                        default=df.columns.tolist()[:5]
+                    )
+                    if selected_cols:
+                        df_display = df[selected_cols]
                     else:
                         df_display = df
-
-                    # Data filters
-                    if len(df) > 100:
-                        sample_size = st.slider("Sample size", 10, min(1000, len(df)), 100)
-                        df_display = df_display.head(sample_size)
-
-                    st.dataframe(df_display, use_container_width=True, height=400)
-
-                    # Enhanced download options
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        csv = df.to_csv(index=False)
-                        st.download_button(
-                            "Download CSV",
-                            csv,
-                            f"argo_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                            "text/csv",
-                            use_container_width=True
-                        )
-                    with col2:
-                        json_data = df.to_json(orient='records', indent=2)
-                        st.download_button(
-                            "Download JSON",
-                            json_data,
-                            f"argo_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.json",
-                            "application/json",
-                            use_container_width=True
-                        )
-                    with col3:
-                        # Data summary
-                        if st.button("Generate Report", use_container_width=True):
-                            st.info("Comprehensive data report functionality ready")
                 else:
-                    st.info("No data retrieved for analysis")
+                    df_display = df
 
-            with tab4:
-                st.markdown("### Statistical Analysis")
-                if result.get('sql_data'):
-                    df = pd.DataFrame(result['sql_data'])
-                    numeric_df = df.select_dtypes(include=['float64', 'int64'])
+                # Data filters
+                if len(df) > 1000:
+                    sample_size = st.slider("Sample size", 10, min(5000, len(df)), 1000)
+                    df_display = df_display.head(sample_size)
 
-                    if not numeric_df.empty:
+                st.dataframe(df_display, use_container_width=True, height=400)
+
+                # Enhanced download options
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    csv = df.to_csv(index=False)
+                    st.download_button(
+                        "Download CSV",
+                        csv,
+                        f"argo_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                        "text/csv",
+                        use_container_width=True
+                    )
+                with col2:
+                    json_data = df.to_json(orient='records', indent=2)
+                    st.download_button(
+                        "Download JSON",
+                        json_data,
+                        f"argo_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.json",
+                        "application/json",
+                        use_container_width=True
+                    )
+                with col3:
+                    # Data summary
+                    if st.button("Generate Report", use_container_width=True):
+                        st.info("Comprehensive data report functionality ready")
+            else:
+                st.info("No data retrieved for analysis")
+
+        with tab4:
+            st.markdown("### Statistical Analysis")
+            if result.get('sql_data'):
+                df = pd.DataFrame(result['sql_data'])
+                numeric_df = df.select_dtypes(include=['float64', 'int64'])
+
+                if not numeric_df.empty:
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+                        st.markdown("#### Descriptive Statistics")
+                        st.dataframe(numeric_df.describe(), use_container_width=True)
+
+                    with col2:
+                        st.markdown("#### Correlation Matrix")
+                        if len(numeric_df.columns) > 1:
+                            corr_matrix = numeric_df.corr()
+                            fig = px.imshow(corr_matrix,
+                                          text_auto=True,
+                                          title="Parameter Correlations",
+                                          color_continuous_scale='RdBu_r')
+                            fig.update_layout(height=400)
+                            st.plotly_chart(fig, use_container_width=True)
+                        else:
+                            st.info("Need multiple numeric columns for correlation analysis")
+
+                    # Distribution analysis
+                    st.markdown("#### Distribution Analysis")
+                    if len(numeric_df.columns) > 0:
+                        selected_param = st.selectbox("Select parameter for distribution:", numeric_df.columns)
+
                         col1, col2 = st.columns(2)
-
                         with col1:
-                            st.markdown("#### Descriptive Statistics")
-                            st.dataframe(numeric_df.describe(), use_container_width=True)
+                            fig_hist = px.histogram(numeric_df, x=selected_param,
+                                                  title=f"Distribution of {selected_param}")
+                            st.plotly_chart(fig_hist, use_container_width=True)
 
                         with col2:
-                            st.markdown("#### Correlation Matrix")
-                            if len(numeric_df.columns) > 1:
-                                corr_matrix = numeric_df.corr()
-                                fig = px.imshow(corr_matrix,
-                                              text_auto=True,
-                                              title="Parameter Correlations",
-                                              color_continuous_scale='RdBu_r')
-                                fig.update_layout(height=400)
-                                st.plotly_chart(fig, use_container_width=True)
-                            else:
-                                st.info("Need multiple numeric columns for correlation analysis")
-
-                        # Distribution analysis
-                        st.markdown("#### Distribution Analysis")
-                        if len(numeric_df.columns) > 0:
-                            selected_param = st.selectbox("Select parameter for distribution:", numeric_df.columns)
-
-                            col1, col2 = st.columns(2)
-                            with col1:
-                                fig_hist = px.histogram(numeric_df, x=selected_param,
-                                                      title=f"Distribution of {selected_param}")
-                                st.plotly_chart(fig_hist, use_container_width=True)
-
-                            with col2:
-                                fig_box = px.box(numeric_df, y=selected_param,
-                                               title=f"Box Plot of {selected_param}")
-                                st.plotly_chart(fig_box, use_container_width=True)
-                    else:
-                        st.info("No numeric data available for statistical analysis")
+                            fig_box = px.box(numeric_df, y=selected_param,
+                                           title=f"Box Plot of {selected_param}")
+                            st.plotly_chart(fig_box, use_container_width=True)
                 else:
-                    st.info("No data available for statistical analysis")
+                    st.info("No numeric data available for statistical analysis")
+            else:
+                st.info("No data available for statistical analysis")
 
-            with tab5:
-                st.markdown("### Technical Analysis Details")
+        with tab5:
+            st.markdown("### Technical Analysis Details")
 
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.markdown("#### Query Matching")
-                    st.write("**Best Match ID:**", result.get('best_match_id', 'N/A'))
-                    st.write("**Similarity Score:**", f"{result.get('similarity', 0):.4f}")
-                    st.write("**Processing Time:**", f"{result.get('processing_time', 0):.3f} seconds")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("#### Query Matching")
+                st.write("**Best Match ID:**", result.get('best_match_id', 'N/A'))
+                st.write("**Similarity Score:**", f"{result.get('similarity', 0):.4f}")
+                st.write("**Processing Time:**", f"{result.get('processing_time', 0):.3f} seconds")
 
-                    # Performance indicators
-                    if result.get('processing_time', 0) < 2:
-                        st.success("Excellent performance")
-                    elif result.get('processing_time', 0) < 5:
-                        st.info("Good performance")
-                    else:
-                        st.warning("Consider query optimization")
+                # Performance indicators
+                if result.get('processing_time', 0) < 2:
+                    st.success("Excellent performance")
+                elif result.get('processing_time', 0) < 5:
+                    st.info("Good performance")
+                else:
+                    st.warning("Consider query optimization")
 
-                with col2:
-                    st.markdown("#### System Operations")
-                    st.write("**SQL Generation:**", "Success" if result.get('sql_executed') else "Failed")
-                    st.write("**Visualization:**", "Created" if result.get('visualization_created') else "None")
-                    st.write("**Data Retrieval:**", f"{len(result.get('sql_data', []))} records")
+            with col2:
+                st.markdown("#### System Operations")
+                st.write("**SQL Generation:**", "Success" if result.get('sql_executed') else "Failed")
+                st.write("**Visualization:**", "Created" if result.get('visualization_created') else "None")
+                st.write("**Data Retrieval:**", f"{len(result.get('sql_data', []))} records")
 
-                # SQL Query Analysis
-                if result.get('sql_executed') and result.get('sql'):
-                    st.markdown("#### Generated SQL Query")
-                    st.code(result['sql'], language='sql')
+            # SQL Query Analysis
+            if result.get('sql_executed') and result.get('sql'):
+                st.markdown("#### Generated SQL Query")
+                st.code(result['sql'], language='sql')
 
-                    # SQL complexity analysis
-                    sql_lines = result['sql'].count('\n') + 1
-                    if sql_lines < 5:
-                        st.success("Simple query - Fast execution")
-                    elif sql_lines < 15:
-                        st.info("Moderate query complexity")
-                    else:
-                        st.warning("Complex query - May take time")
+                # SQL complexity analysis
+                sql_lines = result['sql'].count('\n') + 1
+                if sql_lines < 5:
+                    st.success("Simple query - Fast execution")
+                elif sql_lines < 15:
+                    st.info("Moderate query complexity")
+                else:
+                    st.warning("Complex query - May take time")
 
-                # Semantic matching details
-                if result.get('matched_sample'):
-                    with st.expander("Semantic Matching Details", expanded=False):
-                        st.json(result['matched_sample'])
+            # Semantic matching details
+            if result.get('matched_sample'):
+                with st.expander("Semantic Matching Details", expanded=False):
+                    st.json(result['matched_sample'])
 
     # Map is now always visible in main layout above
+
+def initialize_map_states():
+    """Initialize the map states in session state"""
+    if 'map_start_date' not in st.session_state:
+        st.session_state.map_start_date = None
+    if 'map_end_date' not in st.session_state:
+        st.session_state.map_end_date = None
+    if 'map_selected_region' not in st.session_state:
+        st.session_state.map_selected_region = 'All Oceans'
+    if 'show_trajectory' not in st.session_state:
+        st.session_state.show_trajectory = False
+    if 'trajectory_float_id' not in st.session_state:
+        st.session_state.trajectory_float_id = None
+    if 'map_filters_applied' not in st.session_state:
+        st.session_state.map_filters_applied = False
 
 if __name__ == "__main__":
     main()
