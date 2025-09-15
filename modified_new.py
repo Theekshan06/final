@@ -19,7 +19,6 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import folium
 from streamlit_folium import st_folium
-import datetime
 
 # Import the new comprehensive RAG system
 try:
@@ -164,22 +163,18 @@ def get_float_trajectory(float_id):
         return None
 
 def create_enhanced_float_map():
-    """Create enhanced interactive map with filtering controls and trajectory support"""
+    """Create enhanced interactive map with filtering controls"""
     if not st.session_state.get('initialized', False) or not st.session_state.rag_system:
         st.error("RAG system not initialized")
         return
 
-    # Initialize filter and trajectory states
+    # Initialize filter states
     if 'map_start_date' not in st.session_state:
         st.session_state.map_start_date = None
     if 'map_end_date' not in st.session_state:
         st.session_state.map_end_date = None
     if 'map_selected_region' not in st.session_state:
         st.session_state.map_selected_region = 'All Oceans'
-    if 'show_trajectory' not in st.session_state:
-        st.session_state.show_trajectory = False
-    if 'trajectory_float_id' not in st.session_state:
-        st.session_state.trajectory_float_id = None
 
     # Create two-column layout: controls (25%) + map (75%)
     col1, col2 = st.columns([1, 3])
@@ -265,7 +260,7 @@ def create_enhanced_float_map():
                 st.session_state.map_selected_region = selected_region
 
                 # Apply and Reset Buttons
-                st.markdown("**Actions**")
+                st.markdown("**⚙️ Actions**")
                 col_apply, col_reset = st.columns(2)
 
                 with col_apply:
@@ -280,37 +275,6 @@ def create_enhanced_float_map():
                         st.session_state.map_selected_region = 'All Oceans'
                         st.session_state.map_filters_applied = True
                         st.rerun()
-
-                # Float Trajectory Feature
-                st.markdown("---")
-                st.subheader("Float Trajectory")
-
-                # Float ID input
-                float_id_input = st.text_input(
-                    "Enter Float ID for trajectory:",
-                    placeholder="e.g., 2902755",
-                    help="Enter the ARGO float ID to visualize its trajectory path"
-                )
-
-                col1, col2 = st.columns(2)
-                with col1:
-                    if st.button("Show Trajectory", use_container_width=True, type="secondary"):
-                        if float_id_input.strip():
-                            st.session_state.show_trajectory = True
-                            st.session_state.trajectory_float_id = float_id_input.strip()
-                            st.rerun()
-                        else:
-                            st.warning("Please enter a valid Float ID")
-
-                with col2:
-                    if st.button("Clear Trajectory", use_container_width=True):
-                        st.session_state.show_trajectory = False
-                        st.session_state.trajectory_float_id = None
-                        st.rerun()
-
-                # Show current trajectory status
-                if st.session_state.get('show_trajectory', False) and st.session_state.get('trajectory_float_id'):
-                    st.info(f"🛤️ Currently showing trajectory for Float: {st.session_state.trajectory_float_id}")
 
                 st.markdown("</div>", unsafe_allow_html=True)
             else:
@@ -351,7 +315,7 @@ def create_enhanced_float_map():
                         ) AND p.latitude BETWEEN {region['lat_min']} AND {region['lat_max']}"""
                     else:
                         location_condition = f"""AND p.latitude BETWEEN {region['lat_min']} AND {region['lat_max']}
-                                                AND p.longitude BETWEEN {region['lon_min']} AND {region['lon_max']}"""
+                                              AND p.longitude BETWEEN {region['lon_min']} AND {region['lon_max']}"""
 
             sql_query = f"""
             WITH latest_profiles AS (
@@ -374,7 +338,8 @@ def create_enhanced_float_map():
                        lp.latitude,
                        lp.longitude,
                        lp.profile_date,
-                       COUNT(m.measurement_id) as measurement_count
+                       COUNT(m.measurement_id) as measurement_count,
+                       AVG(m.pressure) as avg_pressure
                 FROM latest_profiles lp
                 LEFT JOIN measurements m ON lp.profile_id = m.profile_id
                 WHERE lp.rn = 1
@@ -385,7 +350,7 @@ def create_enhanced_float_map():
             """
 
             # Execute query
-            with st.spinner("Loading ARGO float locations..."):
+            with st.spinner("Loading filtered ARGO float locations..."):
                 rag_system = st.session_state.rag_system
                 if rag_system.db_connection:
                     df = rag_system.db_connection.execute(sql_query).fetchdf()
@@ -394,20 +359,23 @@ def create_enhanced_float_map():
                         # Get only the last location for each float
                         latest_locations = df.groupby('float_id').first().reset_index()
 
-                        st.success(f"Found {len(latest_locations)} ARGO floats")
+                        st.success(f"Found {len(latest_locations)} ARGO floats (filtered)")
 
-                        # Display map info
+                        # Display map metrics
                         col1, col2, col3, col4 = st.columns(4)
                         with col1:
                             st.metric("Total Floats", len(latest_locations))
                         with col2:
-                            total_measurements = latest_locations['measurement_count'].sum()
-                            st.metric("Total Measurements", f"{total_measurements:,}")
-                        with col3:
                             avg_measurements = latest_locations['measurement_count'].mean()
                             st.metric("Avg Measurements", f"{avg_measurements:.0f}")
-                        with col4:
+                        with col3:
                             st.metric("Ocean Region", st.session_state.map_selected_region)
+                        with col4:
+                            if st.session_state.map_start_date and st.session_state.map_end_date:
+                                date_range = f"{st.session_state.map_start_date} to {st.session_state.map_end_date}"
+                                st.metric("Date Range", "Custom")
+                            else:
+                                st.metric("Date Range", "All Time")
 
                         # Enhanced Interactive Map
                         st.markdown("### Enhanced Interactive Map")
@@ -437,37 +405,30 @@ def create_enhanced_float_map():
 
                         folium.TileLayer(
                             tiles='OpenStreetMap',
-                            name='OpenStreetMap',
+                            name='Street Map',
                             overlay=False,
                             control=True
                         ).add_to(m)
 
-                        # Create color mapping for measurement count
-                        max_measurements = latest_locations['measurement_count'].max()
-                        min_measurements = latest_locations['measurement_count'].min()
+                        folium.TileLayer(
+                            tiles='https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png',
+                            attr='Stamen',
+                            name='Terrain',
+                            overlay=False,
+                            control=True
+                        ).add_to(m)
 
-                        # Add markers for each float
+                        # Add yellow circular markers for each float (as specified)
                         for idx, row in latest_locations.iterrows():
-                            # Color based on measurement count
-                            measurement_ratio = (row['measurement_count'] - min_measurements) / max(1, (max_measurements - min_measurements))
-
-                            if measurement_ratio > 0.7:
-                                color = '#ffd700'  # Gold
-                            elif measurement_ratio > 0.4:
-                                color = '#ffa500'  # Orange
-                            else:
-                                color = '#87ceeb'  # Sky blue
-
-                            # Create popup text
+                            # Create enhanced popup
                             popup_text = f"""
-                            <div style="font-family: Arial, sans-serif; width: 250px;">
-                                <h4 style="color: #2E8B57; margin: 0;">🌊 ARGO Float</h4>
+                            <div style="font-family: Arial, sans-serif; width: 280px;">
+                                <h4 style="color: #1976d2; margin: 0;">ARGO Float {row['float_id']}</h4>
                                 <hr style="margin: 5px 0;">
-                                <b>Float ID:</b> {row['float_id']}<br>
-                                <b>Last Position:</b><br>
-                                &nbsp;&nbsp;📍 {row['latitude']:.3f}°N, {row['longitude']:.3f}°E<br>
+                                <b>Position:</b> {row['latitude']:.3f}°N, {row['longitude']:.3f}°E<br>
                                 <b>Last Profile:</b> {row['profile_date']}<br>
                                 <b>Measurements:</b> {row['measurement_count']:,} records<br>
+                                <b>Avg Pressure:</b> {row.get('avg_pressure', 0):.0f} dbar<br>
                                 <br>
                                 <small style="color: gray;">Region: {st.session_state.map_selected_region}</small>
                             </div>
@@ -568,250 +529,77 @@ def create_enhanced_float_map():
                         # Add layer control
                         folium.LayerControl().add_to(m)
 
-                        # Display the map
-                        map_data = st_folium(m, width=900, height=600, returned_objects=["last_clicked"])
+                        # Add overview minimap (bottom-right as specified)
+                        minimap = folium.plugins.MiniMap(
+                            tile_layer='OpenStreetMap',
+                            position='bottomright',
+                            width=150,
+                            height=100,
+                            collapsed=False
+                        )
+                        m.add_child(minimap)
 
-                        # Handle map clicks
-                        if map_data['last_clicked']:
-                            clicked_lat = map_data['last_clicked']['lat']
-                            clicked_lng = map_data['last_clicked']['lng']
-                            st.info(f"Clicked location: {clicked_lat:.4f}°N, {clicked_lng:.4f}°E")
+                        # Add scale bar (bottom-left as specified)
+                        folium.plugins.MeasureControl(position='bottomleft').add_to(m)
 
-                        # Show data table
-                        with st.expander("Float Location Data"):
-                            # Add download button
-                            csv_data = latest_locations.to_csv(index=False)
-                            st.download_button(
-                                "Download Float Locations (CSV)",
-                                csv_data,
-                                f"argo_floats_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                                "text/csv"
-                            )
+                        # Display the enhanced map
+                        map_data = st_folium(m, width='100%', height=600, returned_objects=["last_object_clicked"])
 
-                            st.dataframe(latest_locations, use_container_width=True)
+                        # Handle map interactions
+                        if map_data['last_object_clicked']:
+                            clicked_data = map_data['last_object_clicked']
+                            st.info(f"Selected float at: {clicked_data.get('lat', 0):.4f}°N, {clicked_data.get('lng', 0):.4f}°E")
+
+                        # Data export and analysis section
+                        with st.expander("Data Export & Analysis", expanded=False):
+                            col1, col2 = st.columns([2, 1])
+
+                            with col1:
+                                # Export options
+                                st.markdown("**Export Options**")
+                                export_format = st.selectbox("Format:", ["CSV", "JSON", "Excel"])
+
+                                if export_format == "CSV":
+                                    csv_data = latest_locations.to_csv(index=False)
+                                    st.download_button(
+                                        "Download Filtered Data",
+                                        csv_data,
+                                        f"filtered_argo_floats_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                                        "text/csv",
+                                        use_container_width=True
+                                    )
+                                elif export_format == "JSON":
+                                    json_data = latest_locations.to_json(orient='records', indent=2)
+                                    st.download_button(
+                                        "Download Filtered Data",
+                                        json_data,
+                                        f"filtered_argo_floats_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.json",
+                                        "application/json",
+                                        use_container_width=True
+                                    )
+
+                            with col2:
+                                # Filter summary
+                                st.markdown("**Applied Filters**")
+                                if st.session_state.map_start_date and st.session_state.map_end_date:
+                                    st.write(f"• Time: {st.session_state.map_start_date} to {st.session_state.map_end_date}")
+                                else:
+                                    st.write("• Time: All available data")
+                                st.write(f"• Region: {st.session_state.map_selected_region}")
+
+                            # Data table
+                            st.markdown("**Filtered Float Data**")
+                            st.dataframe(latest_locations, use_container_width=True, height=300)
 
                     else:
-                        st.warning("No ARGO floats found in the selected region/time period.")
+                        st.warning("No floats found matching the current filters")
+                        st.info("Try adjusting the time range, pressure range, or location filters")
                 else:
                     st.error("Database connection not available")
 
         except Exception as e:
-            st.error(f"Error creating enhanced map: {str(e)}")
-            st.error(f"Traceback: {traceback.format_exc()}")
-
-def create_float_location_map():
-    """Create a 2D map showing last location of each ARGO float"""
-    if not st.session_state.get('initialized', False) or not st.session_state.rag_system:
-        st.error("RAG system not initialized")
-        return
-
-    try:
-        # Query to get last location of each float with measurement counts
-        sql_query = """
-        WITH latest_profiles AS (
-            SELECT p.float_id,
-                   p.profile_id,
-                   p.latitude,
-                   p.longitude,
-                   p.profile_date,
-                   ROW_NUMBER() OVER (PARTITION BY p.float_id ORDER BY p.profile_date DESC) as rn
-            FROM profiles p
-            WHERE p.latitude IS NOT NULL
-            AND p.longitude IS NOT NULL
-            AND p.latitude BETWEEN -90 AND 90
-            AND p.longitude BETWEEN -180 AND 180
-        ),
-        float_measurements AS (
-            SELECT lp.float_id,
-                   lp.latitude,
-                   lp.longitude,
-                   lp.profile_date,
-                   COUNT(m.measurement_id) as measurement_count
-            FROM latest_profiles lp
-            LEFT JOIN measurements m ON lp.profile_id = m.profile_id
-            WHERE lp.rn = 1
-            GROUP BY lp.float_id, lp.latitude, lp.longitude, lp.profile_date
-        )
-        SELECT * FROM float_measurements
-        ORDER BY float_id
-        """
-
-        # Execute query
-        with st.spinner("Loading ARGO float locations..."):
-            rag_system = st.session_state.rag_system
-            if rag_system.db_connection:
-                df = rag_system.db_connection.execute(sql_query).fetchdf()
-
-                if not df.empty:
-                    # Get only the last location for each float
-                    latest_locations = df.groupby('float_id').first().reset_index()
-
-                    st.success(f"Found {len(latest_locations)} ARGO floats")
-
-                    # Display map info
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        st.metric("Total Floats", len(latest_locations))
-                    with col2:
-                        lat_range = f"{latest_locations['latitude'].min():.1f}° to {latest_locations['latitude'].max():.1f}°"
-                        st.metric("Latitude Range", lat_range)
-                    with col3:
-                        lon_range = f"{latest_locations['longitude'].min():.1f}° to {latest_locations['longitude'].max():.1f}°"
-                        st.metric("Longitude Range", lon_range)
-
-                    # Create Leaflet map
-                    st.markdown("### Interactive Leaflet Map")
-
-                    # Calculate map center
-                    center_lat = latest_locations['latitude'].mean()
-                    center_lon = latest_locations['longitude'].mean()
-
-                    # Create folium map
-                    m = folium.Map(
-                        location=[center_lat, center_lon],
-                        zoom_start=3,
-                        tiles='OpenStreetMap',
-                        width='100%',
-                        height=600
-                    )
-
-                    # Add different tile layers with proper attributions
-                    folium.TileLayer(
-                        tiles='https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png',
-                        attr='Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.',
-                        name='Terrain'
-                    ).add_to(m)
-
-                    folium.TileLayer(
-                        tiles='https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg',
-                        attr='Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.',
-                        name='Watercolor'
-                    ).add_to(m)
-
-                    # Create color mapping for measurement count
-                    max_measurements = latest_locations['measurement_count'].max()
-                    min_measurements = latest_locations['measurement_count'].min()
-
-                    # Add markers for each float
-                    for idx, row in latest_locations.iterrows():
-                        # Color based on measurement count
-                        measurement_ratio = (row['measurement_count'] - min_measurements) / (max_measurements - min_measurements)
-
-                        if measurement_ratio > 0.7:
-                            color = 'red'  # High data
-                            icon_color = 'darkred'
-                        elif measurement_ratio > 0.4:
-                            color = 'orange'  # Medium data
-                            icon_color = 'orange'
-                        else:
-                            color = 'blue'  # Low data
-                            icon_color = 'blue'
-
-                        # Create popup text
-                        popup_text = f"""
-                        <div style="font-family: Arial, sans-serif; width: 250px;">
-                            <h4 style="color: {icon_color}; margin: 0;">🌊 ARGO Float</h4>
-                            <hr style="margin: 5px 0;">
-                            <b>Float ID:</b> {row['float_id']}<br>
-                            <b>Last Position:</b><br>
-                            &nbsp;&nbsp;📍 {row['latitude']:.3f}°N, {row['longitude']:.3f}°E<br>
-                            <b>Last Profile:</b> {row['profile_date']}<br>
-                            <b>Measurements:</b> {row['measurement_count']:,} records<br>
-                            <br>
-                            <small style="color: gray;">Click to view details</small>
-                        </div>
-                        """
-
-                        folium.CircleMarker(
-                            location=[row['latitude'], row['longitude']],
-                            radius=8,
-                            popup=folium.Popup(popup_text, max_width=300),
-                            tooltip=f"Float {row['float_id']}: {row['measurement_count']} measurements",
-                            color='white',
-                            weight=2,
-                            fillColor=color,
-                            fillOpacity=0.8
-                        ).add_to(m)
-
-                    # Add layer control
-                    folium.LayerControl().add_to(m)
-
-                    # Add legend
-                    legend_html = f'''
-                    <div style="position: fixed;
-                                bottom: 50px; left: 50px; width: 200px; height: 120px;
-                                background-color: white; border:2px solid grey; z-index:9999;
-                                font-size:14px; font-family: Arial;
-                                padding: 10px;
-                                border-radius: 10px;
-                                box-shadow: 0 0 15px rgba(0,0,0,0.3);">
-                    <h4 style="margin: 0 0 10px 0; color: #2E8B57;">🌊 ARGO Floats</h4>
-                    <p style="margin: 5px 0;"><span style="display: inline-block; width: 12px; height: 12px; background-color: red; border-radius: 50%; border: 2px solid white; margin-right: 8px;"></span>High Data (>{int(max_measurements*0.7):,})</p>
-                    <p style="margin: 5px 0;"><span style="display: inline-block; width: 12px; height: 12px; background-color: orange; border-radius: 50%; border: 2px solid white; margin-right: 8px;"></span>Medium Data</p>
-                    <p style="margin: 5px 0;"><span style="display: inline-block; width: 12px; height: 12px; background-color: blue; border-radius: 50%; border: 2px solid white; margin-right: 8px;"></span>Low Data (<{int(max_measurements*0.4):,})</p>
-                    </div>
-                    '''
-                    m.get_root().html.add_child(folium.Element(legend_html))
-
-                    # Display the map
-                    map_data = st_folium(m, width=900, height=600, returned_objects=["last_clicked"])
-
-                    # Handle map clicks
-                    if map_data['last_clicked']:
-                        clicked_lat = map_data['last_clicked']['lat']
-                        clicked_lng = map_data['last_clicked']['lng']
-                        st.info(f"Clicked location: {clicked_lat:.4f}°N, {clicked_lng:.4f}°E")
-
-                    # Show data table
-                    with st.expander("Float Location Data"):
-                        # Add download button
-                        csv_data = latest_locations.to_csv(index=False)
-                        st.download_button(
-                            "Download Float Locations (CSV)",
-                            csv_data,
-                            f"argo_float_locations_{pd.Timestamp.now().strftime('%Y%m%d')}.csv",
-                            "text/csv"
-                        )
-
-                        # Display data table
-                        st.dataframe(latest_locations, use_container_width=True)
-
-                    # Geographic analysis
-                    st.markdown("### Geographic Distribution Analysis")
-                    col1, col2 = st.columns(2)
-
-                    with col1:
-                        # Latitude histogram
-                        fig_lat = px.histogram(
-                            latest_locations,
-                            x='latitude',
-                            nbins=20,
-                            title="Float Distribution by Latitude",
-                            labels={'latitude': 'Latitude (°N)', 'count': 'Number of Floats'}
-                        )
-                        fig_lat.update_layout(height=400, template="plotly_white")
-                        st.plotly_chart(fig_lat, use_container_width=True)
-
-                    with col2:
-                        # Longitude histogram
-                        fig_lon = px.histogram(
-                            latest_locations,
-                            x='longitude',
-                            nbins=20,
-                            title="Float Distribution by Longitude",
-                            labels={'longitude': 'Longitude (°E)', 'count': 'Number of Floats'}
-                        )
-                        fig_lon.update_layout(height=400, template="plotly_white")
-                        st.plotly_chart(fig_lon, use_container_width=True)
-
-                else:
-                    st.warning("No float location data found")
-            else:
-                st.error("Database connection not available")
-
-    except Exception as e:
-        st.error(f"Error creating float map: {str(e)}")
-        st.exception(e)
+            st.error(f"Error creating enhanced float map: {str(e)}")
+            st.exception(e)
 
 def create_scientific_sidebar():
     """Create advanced scientific sidebar with oceanographic controls"""
@@ -897,8 +685,42 @@ def create_scientific_sidebar():
 
         st.markdown("---")
 
-        # Note: Float map is now always visible in main area
-        st.info("Interactive map is always visible in the main area")
+        # Float Map Visualization
+        st.subheader("ARGO Float Map")
+        if st.button("Show Enhanced Float Map", use_container_width=True, type="primary"):
+            st.session_state.show_enhanced_float_map = True
+            st.rerun()
+
+        # Float Trajectory Feature
+        st.markdown("---")
+        st.subheader("Float Trajectory")
+
+        # Float ID input
+        float_id_input = st.text_input(
+            "Enter Float ID for trajectory:",
+            placeholder="e.g., 2902755",
+            help="Enter the ARGO float ID to visualize its trajectory path"
+        )
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Show Trajectory", use_container_width=True, type="secondary"):
+                if float_id_input.strip():
+                    st.session_state.show_trajectory = True
+                    st.session_state.trajectory_float_id = float_id_input.strip()
+                    st.rerun()
+                else:
+                    st.warning("Please enter a valid Float ID")
+
+        with col2:
+            if st.button("Clear Trajectory", use_container_width=True):
+                st.session_state.show_trajectory = False
+                st.session_state.trajectory_float_id = None
+                st.rerun()
+
+        # Show current trajectory status
+        if st.session_state.get('show_trajectory', False) and st.session_state.get('trajectory_float_id'):
+            st.info(f"🛤️ Currently showing trajectory for Float: {st.session_state.trajectory_float_id}")
 
 def create_analysis_metrics(result):
     """Create scientific metrics display"""
@@ -1103,7 +925,7 @@ def create_advanced_visualization(df, result):
         st.plotly_chart(fig, use_container_width=True)
 
         # Statistical summary
-        with st.expander("Statistical Summary"):
+        with st.expander("📊 Statistical Summary"):
             col1, col2 = st.columns(2)
             with col1:
                 st.write("**Descriptive Statistics**")
@@ -1125,27 +947,28 @@ def main():
         initial_sidebar_state="expanded"
     )
 
-    # Enhanced Dark Ocean Theme with Floating Boat Buttons
+    # Add watercolor ocean background CSS
     st.markdown("""
     <style>
-        /* Main App Background - Vibrant Black Ocean */
         .stApp {
             background:
-                radial-gradient(circle at 20% 30%, rgba(0, 50, 100, 0.4) 0%, transparent 40%),
-                radial-gradient(circle at 80% 20%, rgba(0, 30, 80, 0.3) 0%, transparent 30%),
-                radial-gradient(circle at 60% 70%, rgba(0, 40, 90, 0.35) 0%, transparent 45%),
-                radial-gradient(circle at 30% 80%, rgba(0, 60, 120, 0.25) 0%, transparent 35%),
+                radial-gradient(circle at 15% 20%, rgba(135, 206, 235, 0.3) 0%, transparent 30%),
+                radial-gradient(circle at 85% 10%, rgba(72, 209, 204, 0.2) 0%, transparent 25%),
+                radial-gradient(circle at 45% 60%, rgba(95, 158, 160, 0.25) 0%, transparent 35%),
+                radial-gradient(circle at 75% 85%, rgba(176, 224, 230, 0.3) 0%, transparent 40%),
+                radial-gradient(circle at 25% 80%, rgba(102, 205, 170, 0.2) 0%, transparent 30%),
                 linear-gradient(135deg,
-                    #000814 0%,     /* Deep black */
-                    #001219 25%,    /* Midnight black */
-                    #003366 50%,    /* Deep navy */
-                    #001219 75%,    /* Midnight black */
-                    #000814 100%);  /* Deep black */
+                    #e0f6ff 0%,     /* Very light watercolor blue */
+                    #b8e6ff 15%,    /* Light watercolor cyan */
+                    #87ceeb 35%,    /* Sky blue watercolor */
+                    #4682b4 60%,    /* Steel blue watercolor */
+                    #5f9ea0 85%,    /* Cadet blue watercolor */
+                    #2e8b57 100%);  /* Sea green watercolor */
             background-attachment: fixed;
-            min-height: 100vh;
+            background-size: 300px 300px, 400px 400px, 500px 500px, 350px 350px, 450px 450px, cover;
         }
 
-        /* Ocean Wave Animation Overlay */
+        /* Watercolor texture overlay */
         .stApp::before {
             content: '';
             position: fixed;
@@ -1154,237 +977,255 @@ def main():
             width: 100%;
             height: 100%;
             background-image:
-                radial-gradient(ellipse at 20% 20%, rgba(0, 100, 200, 0.1) 0%, transparent 25%),
-                radial-gradient(ellipse at 80% 40%, rgba(0, 80, 160, 0.08) 0%, transparent 20%),
-                radial-gradient(ellipse at 40% 80%, rgba(0, 120, 240, 0.12) 0%, transparent 30%);
-            background-size: 400px 200px, 600px 300px, 500px 250px;
-            animation: oceanWaves 20s ease-in-out infinite;
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 1px, transparent 2px),
+                radial-gradient(circle at 70% 60%, rgba(255,255,255,0.12) 1px, transparent 2px),
+                radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 1px, transparent 2px),
+                radial-gradient(circle at 90% 20%, rgba(135,206,235,0.1) 2px, transparent 3px),
+                radial-gradient(circle at 30% 70%, rgba(72,209,204,0.08) 1px, transparent 2px);
+            background-size: 80px 80px, 120px 120px, 100px 100px, 150px 150px, 90px 90px;
+            animation: watercolorFlow 25s ease-in-out infinite;
             pointer-events: none;
             z-index: -1;
         }
 
-        @keyframes oceanWaves {
-            0%, 100% {
-                transform: translateX(0px) translateY(0px) scale(1);
-                opacity: 0.3;
-            }
-            25% {
-                transform: translateX(-10px) translateY(-5px) scale(1.05);
-                opacity: 0.4;
-            }
-            50% {
-                transform: translateX(5px) translateY(-8px) scale(0.95);
-                opacity: 0.5;
-            }
-            75% {
-                transform: translateX(-5px) translateY(3px) scale(1.02);
-                opacity: 0.35;
-            }
+        @keyframes watercolorFlow {
+            0%, 100% { transform: translateX(0px) translateY(0px) scale(1); opacity: 0.4; }
+            33% { transform: translateX(-5px) translateY(-3px) scale(1.02); opacity: 0.6; }
+            66% { transform: translateX(3px) translateY(-2px) scale(0.98); opacity: 0.5; }
         }
 
-        /* Main Content Container - Dark with pale white text */
+        /* Enhanced content readability with white background and black text */
         .main .block-container {
-            background: rgba(10, 10, 15, 0.85) !important;
+            background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(15px);
             border-radius: 20px;
             padding: 2rem;
             margin-top: 1rem;
-            box-shadow: 0 12px 40px rgba(0, 100, 200, 0.2);
-            border: 2px solid rgba(0, 80, 160, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* All Text Pale White */
-        .main .block-container *,
-        .stMarkdown,
-        .stMarkdown p,
-        .stText,
-        div[data-testid="stMarkdownContainer"] *,
-        .stSelectbox label,
-        .stTextInput label,
-        .stTextArea label,
-        .stDateInput label,
-        .stMetric label,
-        .stMetric .metric-value,
-        .stDataFrame,
-        .stAlert,
-        .stInfo,
-        .stSuccess,
-        .stWarning,
-        .stError {
-            color: #E8E8E8 !important;
+        /* Force black text in main content */
+        .main .block-container * {
+            color: #1a1a1a !important;
         }
 
-        /* Sidebar - Dark Ocean Theme */
-        .css-1d391kg,
-        section[data-testid="stSidebar"] > div {
-            background: rgba(5, 5, 10, 0.95) !important;
+        /* Sidebar styling with watercolor theme */
+        .css-1d391kg {
+            background: rgba(240, 249, 255, 0.92) !important;
             backdrop-filter: blur(20px);
-            border-right: 2px solid rgba(0, 80, 160, 0.4);
+            border-right: 2px solid rgba(135, 206, 235, 0.3);
         }
 
-        /* Sidebar text pale white */
-        .css-1d391kg *,
-        section[data-testid="stSidebar"] * {
-            color: #E8E8E8 !important;
+        /* Sidebar text black */
+        .css-1d391kg * {
+            color: #1a1a1a !important;
         }
 
-        /* Headers - Bright blue for contrast */
-        h1, h2, h3, h4, h5, h6 {
-            color: #4FC3F7 !important;
-            font-weight: 600 !important;
-            text-shadow: 0 0 10px rgba(79, 195, 247, 0.3);
-        }
-
-        /* 3D Floating Boat Buttons */
-        .stButton button {
-            background: linear-gradient(145deg, #1E3A8A, #3B82F6, #1E40AF) !important;
-            color: #FFFFFF !important;
-            border: none !important;
-            border-radius: 25px !important;
-            padding: 12px 24px !important;
-            font-weight: 600 !important;
-            font-size: 14px !important;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
-            box-shadow:
-                0 8px 16px rgba(30, 58, 138, 0.3),
-                0 4px 8px rgba(59, 130, 246, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-            transform: translateY(-2px) !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            position: relative !important;
-            overflow: hidden !important;
-            min-height: 42px !important;
-            min-width: 120px !important;
-        }
-
-        /* Boat floating animation */
-        .stButton button::before {
-            content: '' !important;
-            position: absolute !important;
-            top: -2px !important;
-            left: -2px !important;
-            right: -2px !important;
-            bottom: -2px !important;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent) !important;
-            border-radius: 25px !important;
-            animation: boatFloat 4s ease-in-out infinite !important;
-            z-index: -1 !important;
-        }
-
-        @keyframes boatFloat {
-            0%, 100% {
-                transform: translateY(0px) rotate(0deg);
-                box-shadow: 0 8px 16px rgba(30, 58, 138, 0.3);
-            }
-            25% {
-                transform: translateY(-3px) rotate(0.5deg);
-                box-shadow: 0 12px 20px rgba(30, 58, 138, 0.4);
-            }
-            50% {
-                transform: translateY(-1px) rotate(0deg);
-                box-shadow: 0 10px 18px rgba(30, 58, 138, 0.35);
-            }
-            75% {
-                transform: translateY(-2px) rotate(-0.5deg);
-                box-shadow: 0 11px 19px rgba(30, 58, 138, 0.38);
-            }
-        }
-
-        .stButton button:hover {
-            background: linear-gradient(145deg, #2563EB, #60A5FA, #3B82F6) !important;
-            transform: translateY(-4px) scale(1.02) !important;
-            box-shadow:
-                0 12px 24px rgba(37, 99, 235, 0.4),
-                0 6px 12px rgba(96, 165, 250, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-        }
-
-        .stButton button:active {
-            transform: translateY(-1px) scale(0.98) !important;
-            box-shadow:
-                0 4px 8px rgba(30, 58, 138, 0.4),
-                inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        /* Metric cards with dark theme */
-        [data-testid="metric-container"] {
-            background: rgba(15, 15, 25, 0.8) !important;
-            border-radius: 15px !important;
-            padding: 1.5rem !important;
-            backdrop-filter: blur(12px) !important;
-            border: 2px solid rgba(0, 80, 160, 0.3) !important;
-            box-shadow: 0 8px 20px rgba(0, 100, 200, 0.1) !important;
-        }
-
-        [data-testid="metric-container"] * {
-            color: #E8E8E8 !important;
-        }
-
-        /* Alert boxes with dark theme */
-        .stAlert {
-            background: rgba(20, 20, 30, 0.85) !important;
-            backdrop-filter: blur(12px) !important;
-            border-radius: 12px !important;
-            border-left: 4px solid #4FC3F7 !important;
-            color: #E8E8E8 !important;
-        }
-
-        .stAlert * {
-            color: #E8E8E8 !important;
-        }
-
-        /* Input fields with dark theme */
-        .stTextInput > div > div > input,
-        .stTextArea > div > div > textarea,
-        .stSelectbox > div > div > input,
-        .stDateInput > div > div > input {
-            background: rgba(25, 25, 35, 0.9) !important;
-            color: #E8E8E8 !important;
-            border: 2px solid rgba(0, 80, 160, 0.4) !important;
-            border-radius: 8px !important;
-        }
-
-        /* Tabs with dark theme */
+        /* Tab styling with better contrast */
         .stTabs [data-baseweb="tab"] {
-            background: rgba(20, 20, 30, 0.8) !important;
-            border-radius: 10px 10px 0 0 !important;
-            backdrop-filter: blur(8px) !important;
-            border: 1px solid rgba(0, 80, 160, 0.4) !important;
-            color: #E8E8E8 !important;
+            background: rgba(255, 255, 255, 0.85) !important;
+            border-radius: 10px 10px 0 0;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(135, 206, 235, 0.3);
+            color: #1a1a1a !important;
         }
 
         .stTabs [data-baseweb="tab"]:hover {
-            background: rgba(30, 30, 45, 0.9) !important;
-            color: #4FC3F7 !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #0d47a1 !important;
         }
 
         .stTabs [data-baseweb="tab"][aria-selected="true"] {
-            background: rgba(40, 40, 60, 1) !important;
-            color: #4FC3F7 !important;
-            font-weight: bold !important;
+            background: rgba(255, 255, 255, 1) !important;
+            color: #0d47a1 !important;
+            font-weight: bold;
         }
 
-        /* DataFrame styling */
+        /* Metric cards with white background and black text */
+        [data-testid="metric-container"] {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-radius: 12px;
+            padding: 1.2rem;
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(135, 206, 235, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-testid="metric-container"] * {
+            color: #1a1a1a !important;
+        }
+
+        /* Headers with dark blue color for better contrast */
+        h1, h2, h3, h4, h5, h6 {
+            color: #0d47a1 !important;
+            font-weight: 600 !important;
+        }
+
+        /* Success/info/warning boxes with proper contrast */
+        .stAlert {
+            background: rgba(255, 255, 255, 0.92) !important;
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+            border-left: 4px solid #4682b4;
+            color: #1a1a1a !important;
+        }
+
+        .stAlert * {
+            color: #1a1a1a !important;
+        }
+
+        /* Input fields */
+        .stTextInput > div > div > input {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #1a1a1a !important;
+            border: 2px solid rgba(135, 206, 235, 0.3) !important;
+        }
+
+        .stTextArea > div > div > textarea {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #1a1a1a !important;
+            border: 2px solid rgba(135, 206, 235, 0.3) !important;
+        }
+
+        /* Selectbox styling */
+        .stSelectbox > div > div > div {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #1a1a1a !important;
+            border: 2px solid rgba(135, 206, 235, 0.3) !important;
+        }
+
+        .stSelectbox > div > div > div > div {
+            color: #1a1a1a !important;
+        }
+
+        .stSelectbox label {
+            color: #1a1a1a !important;
+            font-weight: 600 !important;
+        }
+
+        /* Selectbox dropdown options */
+        .stSelectbox [data-baseweb="select"] > div {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #1a1a1a !important;
+        }
+
+        /* Selectbox dropdown menu */
+        .stSelectbox [data-baseweb="popover"] {
+            background: rgba(255, 255, 255, 0.98) !important;
+        }
+
+        .stSelectbox [data-baseweb="menu"] {
+            background: rgba(255, 255, 255, 0.98) !important;
+            border: 1px solid rgba(135, 206, 235, 0.5) !important;
+            border-radius: 8px !important;
+        }
+
+        .stSelectbox [data-baseweb="menu"] > ul {
+            background: rgba(255, 255, 255, 0.98) !important;
+        }
+
+        .stSelectbox [data-baseweb="menu"] > ul > li {
+            background: rgba(255, 255, 255, 0.98) !important;
+            color: #1a1a1a !important;
+        }
+
+        .stSelectbox [data-baseweb="menu"] > ul > li:hover {
+            background: rgba(135, 206, 235, 0.2) !important;
+            color: #1a1a1a !important;
+        }
+
+        .stSelectbox [data-baseweb="menu"] > ul > li[aria-selected="true"] {
+            background: rgba(135, 206, 235, 0.3) !important;
+            color: #1a1a1a !important;
+        }
+
+        /* Additional selectbox styling for all states */
+        .stSelectbox div[data-baseweb="select"] {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #1a1a1a !important;
+        }
+
+        .stSelectbox div[data-baseweb="select"] > div {
+            color: #1a1a1a !important;
+        }
+
+        .stSelectbox div[data-baseweb="select"] span {
+            color: #1a1a1a !important;
+        }
+
+        /* Multiselect styling */
+        .stMultiSelect > div > div > div {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #1a1a1a !important;
+            border: 2px solid rgba(135, 206, 235, 0.3) !important;
+        }
+
+        .stMultiSelect label {
+            color: #1a1a1a !important;
+            font-weight: 600 !important;
+        }
+
+        /* Multiselect dropdown menu */
+        .stMultiSelect [data-baseweb="popover"] {
+            background: rgba(255, 255, 255, 0.98) !important;
+        }
+
+        .stMultiSelect [data-baseweb="menu"] {
+            background: rgba(255, 255, 255, 0.98) !important;
+            border: 1px solid rgba(135, 206, 235, 0.5) !important;
+            border-radius: 8px !important;
+        }
+
+        .stMultiSelect [data-baseweb="menu"] > ul {
+            background: rgba(255, 255, 255, 0.98) !important;
+        }
+
+        .stMultiSelect [data-baseweb="menu"] > ul > li {
+            background: rgba(255, 255, 255, 0.98) !important;
+            color: #1a1a1a !important;
+        }
+
+        .stMultiSelect [data-baseweb="menu"] > ul > li:hover {
+            background: rgba(135, 206, 235, 0.2) !important;
+            color: #1a1a1a !important;
+        }
+
+        .stMultiSelect div[data-baseweb="select"] {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #1a1a1a !important;
+        }
+
+        .stMultiSelect div[data-baseweb="select"] > div {
+            color: #1a1a1a !important;
+        }
+
+        .stMultiSelect div[data-baseweb="select"] span {
+            color: #1a1a1a !important;
+        }
+
+        /* Buttons */
+        .stButton > button {
+            background: rgba(13, 71, 161, 0.9) !important;
+            color: white !important;
+            border-radius: 8px;
+            border: none;
+        }
+
+        .stButton > button:hover {
+            background: rgba(13, 71, 161, 1) !important;
+            transform: translateY(-1px);
+        }
+
+        /* Dataframes */
         .stDataFrame {
-            background: rgba(15, 15, 25, 0.9) !important;
-            border-radius: 8px !important;
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-radius: 10px;
         }
 
-        /* Expander styling */
-        .streamlit-expanderHeader {
-            background: rgba(20, 20, 30, 0.8) !important;
-            color: #E8E8E8 !important;
-            border-radius: 8px !important;
-        }
-
-        /* Progress bars */
-        .stProgress > div > div {
-            background: linear-gradient(90deg, #1E3A8A, #3B82F6) !important;
-        }
-
-        /* Remove emojis from headings */
-        h1 .emoji, h2 .emoji, h3 .emoji, h4 .emoji, h5 .emoji, h6 .emoji {
-            display: none !important;
+        /* Ensure all text is readable */
+        p, span, div, label, li {
+            color: #1a1a1a !important;
         }
     </style>
     """, unsafe_allow_html=True)
@@ -1410,7 +1251,7 @@ def main():
         </p>
         <div style="margin-top: 1rem; opacity: 0.8;">
             <span style="color: #b3e5fc; font-size: 0.9rem;">
-                Research-grade • AI-powered • Real-time analysis
+                🏛️ Research-grade • 🔬 AI-powered • 📊 Real-time analysis
             </span>
         </div>
     </div>
@@ -1435,281 +1276,417 @@ def main():
             st.rerun()
         return
 
+    # Main page layout with sliding windows
     st.markdown("---")
 
-    # Main Layout: Map (left) + Query Interface (right)
-    main_col1, main_col2 = st.columns([3, 2])
+    # Initialize sliding window states
+    if 'ai_window_minimized' not in st.session_state:
+        st.session_state.ai_window_minimized = False
+    if 'show_ai_results' not in st.session_state:
+        st.session_state.show_ai_results = False
 
-    with main_col1:
-        # Enhanced Interactive Map (Always Visible)
-        st.markdown("### Global ARGO Float Distribution Map")
-        create_enhanced_float_map()
+    # Create adaptive layout based on AI window state
+    if st.session_state.ai_window_minimized or not st.session_state.show_ai_results:
+        # Full width map when AI is minimized
+        with st.container():
+            st.markdown("## 🌊 Global ARGO Float Monitoring System")
+            create_enhanced_float_map()
+    else:
+        # Split layout when AI is active
+        map_col, ai_col = st.columns([6, 4])
 
-    with main_col2:
-        # Advanced Query Interface
-        st.markdown("### Scientific Query Interface")
+        with map_col:
+            st.markdown("## 🌊 Global ARGO Float Monitoring System")
+            create_enhanced_float_map()
 
-        # Check for preset query
-        preset_query = st.session_state.get('preset_query', '')
-        if preset_query:
-            st.session_state.preset_query = ''  # Clear after using
+        with ai_col:
+            # AI Query Interface sliding window
+            with st.container():
+                # AI Window header with minimize/maximize
+                col_ai_btn, col_ai_title = st.columns([1, 8])
+                with col_ai_btn:
+                    if st.button("📖" if st.session_state.ai_window_minimized else "📕",
+                               help="Minimize/Maximize AI Analysis",
+                               key="toggle_ai_window"):
+                        st.session_state.ai_window_minimized = not st.session_state.ai_window_minimized
+                        st.rerun()
 
-        col1, col2, col3 = st.columns([4, 1, 1])
-        with col1:
-            query = st.text_area(
-                "Scientific Query",
-                value=preset_query,
-                height=100,
-                placeholder="""Examples:
-• Analyze temperature gradients in the North Atlantic
-• Show salinity profiles below 2000m depth
-• Create time series of temperature anomalies
-• Compare ocean warming trends by basin""",
-                help="Enter natural language queries about oceanographic data analysis"
-            )
-        with col2:
-            submit_btn = st.button("Analyze", type="primary", use_container_width=True)
-            if st.button("Examples", use_container_width=True):
-                st.session_state.show_examples = not st.session_state.get('show_examples', False)
-        with col3:
-            if st.button("Clear Results", use_container_width=True, disabled=st.session_state.query_results is None):
-                st.session_state.query_results = None
-                st.session_state.data_page = 0
-                st.rerun()
+                with col_ai_title:
+                    st.markdown("### 🤖 AI Scientific Analysis")
 
-        # Show examples if requested
-        if st.session_state.get('show_examples', False):
-            with st.expander("Example Scientific Queries", expanded=True):
-                example_categories = {
-                    "Temperature Analysis": [
-                        "Show temperature vs depth profiles for the last 6 months",
-                        "Analyze temperature anomalies in the tropical Pacific",
-                        "Create a heatmap of sea surface temperature"
-                    ],
-                    "Salinity Studies": [
-                        "Plot salinity distribution in the Mediterranean",
-                        "Compare deep water salinity trends",
-                        "Analyze halocline structure"
-                    ],
-                    "Geographic Analysis": [
-                        "Map ARGO float trajectories in the Southern Ocean",
-                        "Regional temperature comparison between Atlantic basins",
-                        "Analyze upwelling zones temperature profiles"
-                    ]
-                }
+                if not st.session_state.ai_window_minimized:
+                    # AI Input Section
+                    with st.container():
+                        st.markdown("""
+                        <div style="background-color: #f0f9ff; padding: 1rem; border-radius: 8px; border: 1px solid #e0f2fe;">
+                        """, unsafe_allow_html=True)
 
-                for category, examples in example_categories.items():
-                    st.write(f"**{category}**")
-                    for example in examples:
-                        if st.button(example, key=example):
-                            st.session_state.preset_query = example
-                            st.rerun()
+                        # Check for preset query
+                        preset_query = st.session_state.get('preset_query', '')
+                        if preset_query:
+                            st.session_state.preset_query = ''  # Clear after using
 
-        # Process query when submitted
-        if submit_btn and query:
-            with st.spinner("Processing your query with semantic search and LLM..."):
-                result = process_query(query)
-                st.session_state.query_results = result
-                st.session_state.data_page = 0  # Reset to first page
-                st.rerun()
-    
-        # Advanced Scientific Results Display
-        if st.session_state.query_results:
-            result = st.session_state.query_results
-
-            st.markdown("---")
-            st.markdown("## Scientific Analysis Results")
-
-            # Advanced metrics display
-            create_analysis_metrics(result)
-
-            # Professional results tabs
-            tab1, tab2, tab3, tab4, tab5 = st.tabs([
-                "AI Scientific Analysis",
-                "Advanced Visualization",
-                "Data Analysis",
-                "Statistical Summary",
-                "Technical Details"
-            ])
-
-            with tab1:
-                st.markdown("### AI-Powered Scientific Interpretation")
-                if result.get('llm_response'):
-                    # Enhanced AI response display
-                    st.markdown(f"""
-                    <div style="background-color: rgba(30,30,45,0.9); padding: 1.5rem; border-radius: 10px;
-                               border-left: 4px solid #4FC3F7; color: #E8E8E8;">
-                        <h4 style="color: #4FC3F7; margin-top: 0;">Scientific Analysis</h4>
-                        <p style="margin-bottom: 0; line-height: 1.6; color: #E8E8E8;">{result['llm_response']}</p>
-                    </div>
-                    """, unsafe_allow_html=True)
-                else:
-                    st.info("No AI analysis available for this query")
-
-            with tab2:
-                st.markdown("### Advanced Scientific Visualization")
-                if result.get('sql_data') and len(result['sql_data']) > 0:
-                    df = pd.DataFrame(result['sql_data'])
-                    create_advanced_visualization(df, result)
-                else:
-                    st.info("No data available for visualization")
-
-            with tab3:
-                st.markdown("### Oceanographic Data Analysis")
-                if result.get('sql_data'):
-                    df = pd.DataFrame(result['sql_data'])
-
-                    # Data overview
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        st.metric("Total Records", len(df))
-                    with col2:
-                        st.metric("Parameters", len(df.columns))
-                    with col3:
-                        numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns
-                        st.metric("Numeric Variables", len(numeric_cols))
-
-                    # Interactive data table with filters
-                    st.markdown("#### Data Explorer")
-
-                    # Column selector
-                    if len(df.columns) > 5:
-                        selected_cols = st.multiselect(
-                            "Select columns to display:",
-                            df.columns.tolist(),
-                            default=df.columns.tolist()[:5]
+                        query = st.text_area(
+                            "Ask AI about the data:",
+                            value=preset_query,
+                            height=100,
+                            placeholder="""Examples:
+• Analyze temperature gradients
+• Show salinity profiles
+• Create time series plots
+• Compare ocean trends""",
+                            help="Enter natural language queries",
+                            key="ai_query_input"
                         )
-                        if selected_cols:
-                            df_display = df[selected_cols]
-                        else:
-                            df_display = df
-                    else:
-                        df_display = df
 
-                    # Data filters
-                    if len(df) > 100:
-                        sample_size = st.slider("Sample size", 10, min(1000, len(df)), 100)
-                        df_display = df_display.head(sample_size)
-
-                    st.dataframe(df_display, use_container_width=True, height=400)
-
-                    # Enhanced download options
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        csv = df.to_csv(index=False)
-                        st.download_button(
-                            "Download CSV",
-                            csv,
-                            f"argo_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",
-                            "text/csv",
-                            use_container_width=True
-                        )
-                    with col2:
-                        json_data = df.to_json(orient='records', indent=2)
-                        st.download_button(
-                            "Download JSON",
-                            json_data,
-                            f"argo_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.json",
-                            "application/json",
-                            use_container_width=True
-                        )
-                    with col3:
-                        # Data summary
-                        if st.button("Generate Report", use_container_width=True):
-                            st.info("Comprehensive data report functionality ready")
-                else:
-                    st.info("No data retrieved for analysis")
-
-            with tab4:
-                st.markdown("### Statistical Analysis")
-                if result.get('sql_data'):
-                    df = pd.DataFrame(result['sql_data'])
-                    numeric_df = df.select_dtypes(include=['float64', 'int64'])
-
-                    if not numeric_df.empty:
                         col1, col2 = st.columns(2)
-
                         with col1:
-                            st.markdown("#### Descriptive Statistics")
-                            st.dataframe(numeric_df.describe(), use_container_width=True)
-
+                            submit_btn = st.button("🔍 Analyze", type="primary", use_container_width=True)
                         with col2:
-                            st.markdown("#### Correlation Matrix")
-                            if len(numeric_df.columns) > 1:
-                                corr_matrix = numeric_df.corr()
-                                fig = px.imshow(corr_matrix,
-                                              text_auto=True,
-                                              title="Parameter Correlations",
-                                              color_continuous_scale='RdBu_r')
-                                fig.update_layout(height=400)
-                                st.plotly_chart(fig, use_container_width=True)
-                            else:
-                                st.info("Need multiple numeric columns for correlation analysis")
+                            if st.button("🗑️ Clear", use_container_width=True, disabled=st.session_state.query_results is None):
+                                st.session_state.query_results = None
+                                st.session_state.data_page = 0
+                                st.session_state.show_ai_results = False
+                                st.rerun()
 
-                        # Distribution analysis
-                        st.markdown("#### Distribution Analysis")
-                        if len(numeric_df.columns) > 0:
-                            selected_param = st.selectbox("Select parameter for distribution:", numeric_df.columns)
+                        # Quick examples toggle
+                        if st.button("📚 Show Examples", use_container_width=True):
+                            st.session_state.show_examples = not st.session_state.get('show_examples', False)
 
+                        st.markdown("</div>", unsafe_allow_html=True)
+
+                        # Display AI Results in the sliding window
+                        if st.session_state.query_results:
+                            result = st.session_state.query_results
+
+                            st.markdown("---")
+                            st.markdown("### 🔬 Analysis Results")
+
+                            # Quick metrics
                             col1, col2 = st.columns(2)
                             with col1:
-                                fig_hist = px.histogram(numeric_df, x=selected_param,
-                                                      title=f"Distribution of {selected_param}")
-                                st.plotly_chart(fig_hist, use_container_width=True)
-
+                                processing_time = result['processing_time']
+                                st.metric("Time", f"{processing_time:.1f}s")
                             with col2:
-                                fig_box = px.box(numeric_df, y=selected_param,
-                                               title=f"Box Plot of {selected_param}")
-                                st.plotly_chart(fig_box, use_container_width=True)
-                    else:
-                        st.info("No numeric data available for statistical analysis")
+                                data_count = len(result.get('sql_data', []))
+                                st.metric("Data", f"{data_count:,}")
+
+                            # AI Response - Enhanced display
+                            if result.get('llm_response'):
+                                st.markdown("**🤖 AI Analysis:**")
+                                st.markdown(f"""
+                                <div style="background-color: #f0f9ff; padding: 1rem; border-radius: 8px;
+                                           border-left: 3px solid #0ea5e9; font-size: 0.9rem; max-height: 300px; overflow-y: auto;">
+                                    {result['llm_response']}
+                                </div>
+                                """, unsafe_allow_html=True)
+
+                            # Data preview with scrollable table
+                            if result.get('sql_data') and len(result['sql_data']) > 0:
+                                df = pd.DataFrame(result['sql_data'])
+
+                                st.markdown("**📊 Data Preview:**")
+                                # Show first 10 rows in a compact format
+                                st.dataframe(df.head(10), use_container_width=True, height=200)
+
+                                # Show basic chart if data available
+                                numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
+                                if len(numeric_cols) >= 2:
+                                    st.markdown("**📈 Quick Chart:**")
+                                    fig = px.scatter(df.head(100),
+                                                   x=numeric_cols[0],
+                                                   y=numeric_cols[1],
+                                                   height=250,
+                                                   template="plotly_white")
+                                    fig.update_layout(margin=dict(l=0, r=0, t=30, b=0))
+                                    st.plotly_chart(fig, use_container_width=True)
+
+                                # Download button
+                                csv_data = df.to_csv(index=False)
+                                st.download_button(
+                                    "📥 Download Full Dataset",
+                                    csv_data,
+                                    f"argo_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                                    "text/csv",
+                                    use_container_width=True
+                                )
+
+                            # Button to view detailed results
+                            if st.button("🔍 View Detailed Analysis", use_container_width=True, type="secondary"):
+                                st.session_state.show_detailed_results = True
+                                st.rerun()
+
                 else:
-                    st.info("No data available for statistical analysis")
+                    st.info("🤖 AI Analysis minimized - Click 📖 to expand")
 
-            with tab5:
-                st.markdown("### Technical Analysis Details")
+    # Floating AI Query Box (always visible)
+    if st.session_state.ai_window_minimized or not st.session_state.show_ai_results:
+        with st.sidebar:
+            st.markdown("---")
+            st.markdown("### 🚀 Quick AI Query")
 
-                col1, col2 = st.columns(2)
+            quick_query = st.text_input(
+                "Enter AI query:",
+                placeholder="Ask about ARGO data...",
+                key="quick_ai_query"
+            )
+
+            if st.button("🔍 Analyze", key="quick_analyze_btn", use_container_width=True, type="primary"):
+                if quick_query.strip():
+                    st.session_state.show_ai_results = True
+                    st.session_state.ai_window_minimized = False
+                    # Process the query
+                    with st.spinner("Processing query..."):
+                        result = process_query(quick_query)
+                        st.session_state.query_results = result
+                        st.session_state.data_page = 0
+                    st.rerun()
+                else:
+                    st.warning("Please enter a query")
+
+    # Show examples if requested
+    if st.session_state.get('show_examples', False):
+        with st.expander("📚 Example Scientific Queries", expanded=True):
+            example_categories = {
+                "🌡️ Temperature Analysis": [
+                    "Show temperature vs depth profiles for the last 6 months",
+                    "Analyze temperature anomalies in the tropical Pacific",
+                    "Create a heatmap of sea surface temperature"
+                ],
+                "🧂 Salinity Studies": [
+                    "Plot salinity distribution in the Mediterranean",
+                    "Compare deep water salinity trends",
+                    "Analyze halocline structure"
+                ],
+                "🗺️ Geographic Analysis": [
+                    "Map ARGO float trajectories in the Southern Ocean",
+                    "Regional temperature comparison between Atlantic basins",
+                    "Analyze upwelling zones temperature profiles"
+                ]
+            }
+
+            for category, examples in example_categories.items():
+                st.write(f"**{category}**")
+                for example in examples:
+                    if st.button(example, key=example):
+                        st.session_state.preset_query = example
+                        st.rerun()
+
+        # Process query when submitted
+        if 'submit_btn' in locals() and submit_btn and query:
+            with st.spinner("Processing query..."):
+                result = process_query(query)
+                st.session_state.query_results = result
+                st.session_state.data_page = 0
+                st.session_state.show_ai_results = True
+                st.rerun()
+
+    
+    # Advanced Scientific Results Display (only when requested)
+    if st.session_state.query_results and st.session_state.get('show_detailed_results', False):
+        result = st.session_state.query_results
+
+        # Add a button to close detailed results
+        col_close, col_title = st.columns([1, 10])
+        with col_close:
+            if st.button("❌", help="Close Detailed Analysis", key="close_detailed"):
+                st.session_state.show_detailed_results = False
+                st.rerun()
+        with col_title:
+            st.markdown("## 🧬 Detailed Scientific Analysis Results")
+
+        # Advanced metrics display
+        create_analysis_metrics(result)
+
+        # Professional results tabs
+        tab1, tab2, tab3, tab4, tab5 = st.tabs([
+            "🧠 AI Scientific Analysis",
+            "📊 Advanced Visualization",
+            "🔬 Data Analysis",
+            "📈 Statistical Summary",
+            "⚙️ Technical Details"
+        ])
+
+        with tab1:
+            st.markdown("### 🤖 AI-Powered Scientific Interpretation")
+            if result.get('llm_response'):
+                # Enhanced AI response display
+                st.markdown(f"""
+                <div style="background-color: #f0f9ff; padding: 1.5rem; border-radius: 10px;
+                           border-left: 4px solid #0ea5e9;">
+                    <h4 style="color: #0c4a6e; margin-top: 0;">Scientific Analysis</h4>
+                    <p style="margin-bottom: 0; line-height: 1.6;">{result['llm_response']}</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+
+            else:
+                st.info("🔍 No AI analysis available for this query")
+
+        with tab2:
+            st.markdown("### 📊 Advanced Scientific Visualization")
+            if result.get('sql_data') and len(result['sql_data']) > 0:
+                df = pd.DataFrame(result['sql_data'])
+                create_advanced_visualization(df, result)
+            else:
+                st.info("📈 No data available for visualization")
+
+        with tab3:
+            st.markdown("### 🔬 Oceanographic Data Analysis")
+            if result.get('sql_data'):
+                df = pd.DataFrame(result['sql_data'])
+
+                # Data overview
+                col1, col2, col3 = st.columns(3)
                 with col1:
-                    st.markdown("#### Query Matching")
-                    st.write("**Best Match ID:**", result.get('best_match_id', 'N/A'))
-                    st.write("**Similarity Score:**", f"{result.get('similarity', 0):.4f}")
-                    st.write("**Processing Time:**", f"{result.get('processing_time', 0):.3f} seconds")
-
-                    # Performance indicators
-                    if result.get('processing_time', 0) < 2:
-                        st.success("Excellent performance")
-                    elif result.get('processing_time', 0) < 5:
-                        st.info("Good performance")
-                    else:
-                        st.warning("Consider query optimization")
-
+                    st.metric("Total Records", len(df))
                 with col2:
-                    st.markdown("#### System Operations")
-                    st.write("**SQL Generation:**", "Success" if result.get('sql_executed') else "Failed")
-                    st.write("**Visualization:**", "Created" if result.get('visualization_created') else "None")
-                    st.write("**Data Retrieval:**", f"{len(result.get('sql_data', []))} records")
+                    st.metric("Parameters", len(df.columns))
+                with col3:
+                    numeric_cols = df.select_dtypes(include=['float64', 'int64']).columns
+                    st.metric("Numeric Variables", len(numeric_cols))
 
-                # SQL Query Analysis
-                if result.get('sql_executed') and result.get('sql'):
-                    st.markdown("#### Generated SQL Query")
-                    st.code(result['sql'], language='sql')
+                # Interactive data table with filters
+                st.markdown("#### 🗄️ Data Explorer")
 
-                    # SQL complexity analysis
-                    sql_lines = result['sql'].count('\n') + 1
-                    if sql_lines < 5:
-                        st.success("Simple query - Fast execution")
-                    elif sql_lines < 15:
-                        st.info("Moderate query complexity")
+                # Column selector
+                if len(df.columns) > 5:
+                    selected_cols = st.multiselect(
+                        "Select columns to display:",
+                        df.columns.tolist(),
+                        default=df.columns.tolist()[:5]
+                    )
+                    if selected_cols:
+                        df_display = df[selected_cols]
                     else:
-                        st.warning("Complex query - May take time")
+                        df_display = df
+                else:
+                    df_display = df
 
-                # Semantic matching details
-                if result.get('matched_sample'):
-                    with st.expander("Semantic Matching Details", expanded=False):
-                        st.json(result['matched_sample'])
+                # Data filters
+                if len(df) > 100:
+                    sample_size = st.slider("Sample size", 10, min(1000, len(df)), 100)
+                    df_display = df_display.head(sample_size)
 
-    # Map is now always visible in main layout above
+                st.dataframe(df_display, use_container_width=True, height=400)
+
+                # Enhanced download options
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    csv = df.to_csv(index=False)
+                    st.download_button(
+                        "📊 Download CSV",
+                        csv,
+                        f"argo_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.csv",
+                        "text/csv",
+                        use_container_width=True
+                    )
+                with col2:
+                    json_data = df.to_json(orient='records', indent=2)
+                    st.download_button(
+                        "📄 Download JSON",
+                        json_data,
+                        f"argo_analysis_{pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')}.json",
+                        "application/json",
+                        use_container_width=True
+                    )
+                with col3:
+                    # Data summary
+                    if st.button("📋 Generate Report", use_container_width=True):
+                        st.info("Comprehensive data report functionality ready")
+
+            else:
+                st.info("🔍 No data retrieved for analysis")
+
+        with tab4:
+            st.markdown("### 📈 Statistical Analysis")
+            if result.get('sql_data'):
+                df = pd.DataFrame(result['sql_data'])
+                numeric_df = df.select_dtypes(include=['float64', 'int64'])
+
+                if not numeric_df.empty:
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+                        st.markdown("#### 📊 Descriptive Statistics")
+                        st.dataframe(numeric_df.describe(), use_container_width=True)
+
+                    with col2:
+                        st.markdown("#### 🔗 Correlation Matrix")
+                        if len(numeric_df.columns) > 1:
+                            corr_matrix = numeric_df.corr()
+                            fig = px.imshow(corr_matrix,
+                                          text_auto=True,
+                                          title="Parameter Correlations",
+                                          color_continuous_scale='RdBu_r')
+                            fig.update_layout(height=400)
+                            st.plotly_chart(fig, use_container_width=True)
+                        else:
+                            st.info("Need multiple numeric columns for correlation analysis")
+
+                    # Distribution analysis
+                    st.markdown("#### 📈 Distribution Analysis")
+                    if len(numeric_df.columns) > 0:
+                        selected_param = st.selectbox("Select parameter for distribution:", numeric_df.columns)
+
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            fig_hist = px.histogram(numeric_df, x=selected_param,
+                                                  title=f"Distribution of {selected_param}")
+                            st.plotly_chart(fig_hist, use_container_width=True)
+
+                        with col2:
+                            fig_box = px.box(numeric_df, y=selected_param,
+                                           title=f"Box Plot of {selected_param}")
+                            st.plotly_chart(fig_box, use_container_width=True)
+                else:
+                    st.info("🔍 No numeric data available for statistical analysis")
+            else:
+                st.info("📊 No data available for statistical analysis")
+
+        with tab5:
+            st.markdown("### ⚙️ Technical Analysis Details")
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("#### 🔍 Query Matching")
+                st.write("**Best Match ID:**", result.get('best_match_id', 'N/A'))
+                st.write("**Similarity Score:**", f"{result.get('similarity', 0):.4f}")
+                st.write("**Processing Time:**", f"{result.get('processing_time', 0):.3f} seconds")
+
+                # Performance indicators
+                if result.get('processing_time', 0) < 2:
+                    st.success("⚡ Excellent performance")
+                elif result.get('processing_time', 0) < 5:
+                    st.info("🔄 Good performance")
+                else:
+                    st.warning("⏳ Consider query optimization")
+
+            with col2:
+                st.markdown("#### 🛠️ System Operations")
+                st.write("**SQL Generation:**", "✅ Success" if result.get('sql_executed') else "❌ Failed")
+                st.write("**Visualization:**", "✅ Created" if result.get('visualization_created') else "❌ None")
+                st.write("**Data Retrieval:**", f"{len(result.get('sql_data', []))} records")
+
+            # SQL Query Analysis
+            if result.get('sql_executed') and result.get('sql'):
+                st.markdown("#### 💾 Generated SQL Query")
+                st.code(result['sql'], language='sql')
+
+                # SQL complexity analysis
+                sql_lines = result['sql'].count('\n') + 1
+                if sql_lines < 5:
+                    st.success("🟢 Simple query - Fast execution")
+                elif sql_lines < 15:
+                    st.info("🟡 Moderate query complexity")
+                else:
+                    st.warning("🟠 Complex query - May take time")
+
+            # Semantic matching details
+            if result.get('matched_sample'):
+                with st.expander("🧬 Semantic Matching Details", expanded=False):
+                    st.json(result['matched_sample'])
+
 
 if __name__ == "__main__":
     main()

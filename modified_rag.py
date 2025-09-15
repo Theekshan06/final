@@ -10,7 +10,6 @@ NEW COMPREHENSIVE RAG SYSTEM
 
 import json
 import chromadb
-from sentence_transformers import SentenceTransformer
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -23,29 +22,15 @@ from groq import Groq
 import duckdb
 from typing import Dict, List, Tuple, Any
 
+# ChromaDB has built-in embeddings, so we don't need sentence-transformers
+# Keeping the code structure for potential future advanced embedding models
+
 class ComprehensiveRAGSystem:
     """Complete RAG system with ChromaDB, Groq API, and visualization"""
 
     def __init__(self, groq_api_key: str = None):
-        # Try to use a local or cached model, fallback to simple TF-IDF if needed
-        self.embedding_model_name = "all-MiniLM-L6-v2"
-        print(f"Loading embedding model: {self.embedding_model_name}")
-        try:
-            # Try with local files only first
-            self.embedding_model = SentenceTransformer(self.embedding_model_name, local_files_only=True)
-            print("Loaded model from local cache")
-        except Exception as e:
-            print(f"Local model failed: {e}")
-            try:
-                # Try without local_files_only restriction
-                print("Attempting to download model...")
-                self.embedding_model = SentenceTransformer(self.embedding_model_name, trust_remote_code=True)
-                print("Downloaded model successfully")
-            except Exception as e2:
-                print(f"Model download failed: {e2}")
-                print("Using fallback simple embedding approach...")
-                self.embedding_model = None
-                self.use_simple_embeddings = True
+        # ChromaDB has built-in embedding functions, no need for external models
+        print("Using ChromaDB built-in embeddings for semantic search")
 
         # Initialize ChromaDB in new directory
         self.chroma_path = "./new_comprehensive_chromadb"
@@ -69,45 +54,45 @@ class ComprehensiveRAGSystem:
         self.response_cache = {}
         self.cache_max_size = 100  # Keep last 100 responses
 
-        # Fast-path queries for instant responses (FIXED: QC flags are integers, not strings)
+        # Fast-path queries for instant responses
         self.fast_path_queries = {
             "temperature data": {
-                "sql": "SELECT p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN (1, 2) ORDER BY p.profile_date DESC LIMIT 500",
+                "sql": "SELECT p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT 500",
                 "viz_type": "scatter",
                 "response": "🔬 **Scientific Analysis**: Retrieved 500 high-quality temperature measurements from ARGO floats with excellent QC flags. Temperature range spans typical oceanic values with good spatial distribution. 🌊 **Oceanographic Context**: These measurements represent the thermal structure of ocean waters, crucial for understanding heat transport and climate patterns. ⚠️ **Data Notes**: All data quality-controlled (QC flags 1-2). 📊 **Recommendations**: Plot temperature vs depth for vertical structure analysis."
             },
             "show salinity": {
-                "sql": "SELECT p.latitude, p.longitude, m.pressure, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NOT NULL AND m.salinity_qc IN (1, 2) ORDER BY p.profile_date DESC LIMIT 500",
+                "sql": "SELECT p.latitude, p.longitude, m.pressure, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT 500",
                 "viz_type": "scatter",
                 "response": "🔬 **Scientific Analysis**: Retrieved 500 quality-controlled salinity measurements showing oceanic salt content distribution. Salinity values indicate water mass characteristics and mixing processes. 🌊 **Oceanographic Context**: Salinity is fundamental for density-driven circulation and identifying different water masses. ⚠️ **Data Notes**: High-quality data with QC validation. 📊 **Recommendations**: Analyze salinity vs temperature for water mass identification."
             },
             "temperature vs depth": {
-                "sql": "SELECT m.temperature, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.pressure IS NOT NULL AND m.pressure > 0 AND m.temperature_qc IN (1, 2) ORDER BY m.pressure LIMIT 1000",
+                "sql": "SELECT m.temperature, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.pressure IS NOT NULL AND m.temperature > 0 AND m.pressure > 0 AND m.temperature_qc IN ('1', '2') ORDER BY m.pressure LIMIT 1000",
                 "viz_type": "line",
                 "response": "🔬 **Scientific Analysis**: Generated temperature-depth profile showing vertical thermal structure from surface to deep waters. Clear thermocline structure visible with temperature gradients. 🌊 **Oceanographic Context**: Vertical temperature profiles reveal ocean stratification, mixed layer depth, and thermocline characteristics critical for climate studies. ⚠️ **Data Notes**: Pressure converted to approximate depth (1 dbar ≈ 1 meter). 📊 **Recommendations**: Analyze seasonal variations and compare with climatological means."
             },
             "salinity profiles": {
-                "sql": "SELECT m.salinity, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NOT NULL AND m.pressure IS NOT NULL AND m.salinity > 0 AND m.pressure > 0 AND m.salinity_qc IN (1, 2) ORDER BY m.pressure LIMIT 1000",
+                "sql": "SELECT m.salinity, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NOT NULL AND m.pressure IS NOT NULL AND m.salinity > 0 AND m.pressure > 0 AND m.salinity_qc IN ('1', '2') ORDER BY m.pressure LIMIT 1000",
                 "viz_type": "line",
                 "response": "🔬 **Scientific Analysis**: Vertical salinity profiles showing halocline structure and deep water characteristics. Salinity variations indicate water mass properties and mixing. 🌊 **Oceanographic Context**: Salinity profiles help identify water mass boundaries, mixing zones, and thermohaline circulation patterns. ⚠️ **Data Notes**: Quality-controlled measurements with validated QC flags. 📊 **Recommendations**: Combine with temperature data for T-S diagram analysis."
             },
             "recent temperature": {
-                "sql": "SELECT p.profile_date, p.latitude, p.longitude, m.temperature, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND p.profile_date >= DATE('now', '-6 months') AND m.temperature_qc IN (1, 2) ORDER BY p.profile_date DESC LIMIT 800",
+                "sql": "SELECT p.profile_date, p.latitude, p.longitude, m.temperature, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND p.profile_date >= DATE('now', '-6 months') AND m.temperature_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT 800",
                 "viz_type": "scatter",
                 "response": "🔬 **Scientific Analysis**: Recent 6-month temperature dataset showing current ocean thermal state. Good spatial and temporal coverage with high-quality measurements. 🌊 **Oceanographic Context**: Recent data captures current climate conditions and short-term variability in ocean temperature. ⚠️ **Data Notes**: Time-filtered for relevance to current conditions. 📊 **Recommendations**: Compare with historical data for anomaly detection."
             },
             "temperature heatmap": {
-                "sql": "SELECT p.latitude, p.longitude, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.pressure < 50 AND m.temperature_qc IN (1, 2) GROUP BY ROUND(p.latitude,1), ROUND(p.longitude,1) HAVING COUNT(*) > 5 ORDER BY avg_temp DESC LIMIT 1000",
+                "sql": "SELECT p.latitude, p.longitude, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.pressure < 50 AND m.temperature_qc IN ('1', '2') GROUP BY ROUND(p.latitude,1), ROUND(p.longitude,1) HAVING COUNT(*) > 5 ORDER BY avg_temp DESC LIMIT 1000",
                 "viz_type": "heatmap",
                 "response": "🔬 **Scientific Analysis**: Surface temperature heatmap showing geographic temperature distribution. Averaged temperatures by location reveal spatial patterns and thermal gradients. 🌊 **Oceanographic Context**: Surface temperature maps show oceanographic fronts, upwelling zones, and regional climate patterns. ⚠️ **Data Notes**: Surface waters only (< 50m depth), spatially averaged. 📊 **Recommendations**: Analyze seasonal patterns and identify thermal fronts."
             },
             "ocean temperature": {
-                "sql": "SELECT p.profile_date, AVG(m.temperature) as daily_avg_temp, COUNT(m.temperature) as measurement_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN (1, 2) GROUP BY DATE(p.profile_date) ORDER BY p.profile_date DESC LIMIT 365",
+                "sql": "SELECT p.profile_date, AVG(m.temperature) as daily_avg_temp, COUNT(m.temperature) as measurement_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') GROUP BY DATE(p.profile_date) ORDER BY p.profile_date DESC LIMIT 365",
                 "viz_type": "line",
                 "response": "🔬 **Scientific Analysis**: Daily averaged ocean temperatures showing temporal trends and variability. Consistent measurement coverage with quality-controlled data. 🌊 **Oceanographic Context**: Time series reveals seasonal cycles, climate trends, and ocean-atmosphere heat exchange patterns. ⚠️ **Data Notes**: Daily averages from multiple profiles, 1-year time series. 📊 **Recommendations**: Analyze for seasonal signals and long-term trends."
             },
             "depth profiles": {
-                "sql": "SELECT m.pressure, AVG(m.temperature) as avg_temp, AVG(m.salinity) as avg_sal, COUNT(*) as n_measurements FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN (1, 2) AND m.salinity_qc IN (1, 2) GROUP BY CAST(m.pressure/10 AS INTEGER)*10 ORDER BY m.pressure LIMIT 700",
+                "sql": "SELECT m.pressure, AVG(m.temperature) as avg_temp, AVG(m.salinity) as avg_sal, COUNT(*) as n_measurements FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') GROUP BY CAST(m.pressure/10 AS INTEGER)*10 ORDER BY m.pressure LIMIT 700",
                 "viz_type": "line",
                 "response": "🔬 **Scientific Analysis**: Comprehensive depth profiles showing averaged temperature and salinity structure. Clear stratification patterns with well-defined layers. 🌊 **Oceanographic Context**: Vertical structure reveals mixed layer, thermocline/halocline, and deep water characteristics essential for ocean dynamics. ⚠️ **Data Notes**: Depth-binned averages, dual-parameter quality control. 📊 **Recommendations**: Identify mixed layer depth and analyze density structure."
             }
@@ -839,27 +824,27 @@ class ComprehensiveRAGSystem:
 
         try:
             # Enhanced structured prompt
-            full_prompt = f"""You are Dr. ARGO, a world-class oceanographic data analyst. Provide concise, accurate analysis only for what was requested.
+            full_prompt = f"""You are Dr. ARGO, a world-class oceanographic data analyst. Analyze the provided SQL data results and answer the user's question directly using the actual data.
 
-CONTEXT DATA:
+ACTUAL DATA RESULTS:
 {context}
 
-USER QUERY: {prompt}
+USER QUESTION: {prompt}
 
 ANALYSIS INSTRUCTIONS:
-1. Focus ONLY on what the user specifically asked for
-2. Provide SHORT, DIRECT answers without unnecessary elaboration
-3. Use SPECIFIC NUMBERS from the data when available
-4. Be CONCISE - maximum 2-3 sentences total
-5. Do NOT include confidence scores, match quality, or validation warnings
+1. Use ONLY the specific data provided in the SQL results above
+2. Extract the exact information the user requested from the data
+3. Provide concrete numbers, ranges, and statistics from the actual results
+4. If asked for float IDs, list the actual IDs from the data
+5. Be precise and factual based on the real data
 
 RESPONSE REQUIREMENTS:
-- Direct answer to the query only
-- Include key numbers if relevant
-- Keep response under 100 words
-- Focus on the specific request, not general oceanographic context
+- Answer using the actual data provided
+- Include specific numbers, ranges, or lists from the results
+- Keep response under 100 words but include relevant details
+- Do not make up or guess any information
 
-Provide a brief, expert answer addressing only the user's specific question."""
+Analyze the real data above and provide a direct, factual answer."""
 
             chat_completion = self.groq_client.chat.completions.create(
                 messages=[
@@ -949,11 +934,14 @@ Provide a brief, expert answer addressing only the user's specific question."""
             viz_result = self.generate_visualization(sql_data, plot_config or {})
             result['visualization'] = viz_result
 
-        # Step 5: Generate LLM response
+        # Step 5: Generate LLM response with enhanced data analysis
         print("4. Generating LLM response...")
         context = f"Best match: {best_match['content']}\n"
+
         if not sql_data.empty:
-            context += f"Data summary: {len(sql_data)} rows returned\n"
+            # Enhanced data analysis context
+            context += self.generate_data_summary(sql_data, user_query)
+
         if plot_config:
             context += f"Visualization type: {plot_config.get('type', 'unknown')}\n"
 
@@ -961,6 +949,57 @@ Provide a brief, expert answer addressing only the user's specific question."""
         result['llm_response'] = llm_response
 
         return result
+
+    def generate_data_summary(self, sql_data, user_query):
+        """Generate intelligent data summary for LLM context"""
+        import numpy as np
+
+        summary = f"SQL Data Analysis ({len(sql_data)} records):\n"
+
+        # Column analysis
+        columns = sql_data.columns.tolist()
+        summary += f"Columns: {', '.join(columns)}\n"
+
+        # Specific analysis based on query type and available columns
+        if 'float_id' in columns:
+            unique_floats = sql_data['float_id'].nunique()
+            float_list = sql_data['float_id'].unique()
+            summary += f"Unique Floats: {unique_floats} (IDs: {', '.join(map(str, sorted(float_list)[:10]))}{'...' if len(float_list) > 10 else ''})\n"
+
+        # Numeric column analysis
+        numeric_cols = sql_data.select_dtypes(include=[np.number]).columns
+        for col in numeric_cols:
+            if col in sql_data.columns and not sql_data[col].isna().all():
+                data_col = sql_data[col].dropna()
+                if len(data_col) > 0:
+                    summary += f"{col}: Range {data_col.min():.2f} to {data_col.max():.2f}, Mean {data_col.mean():.2f}\n"
+
+        # Geographic analysis
+        if 'latitude' in columns and 'longitude' in columns:
+            lat_range = f"{sql_data['latitude'].min():.2f} to {sql_data['latitude'].max():.2f}"
+            lon_range = f"{sql_data['longitude'].min():.2f} to {sql_data['longitude'].max():.2f}"
+            summary += f"Geographic Coverage: Lat {lat_range}, Lon {lon_range}\n"
+
+        # Temporal analysis
+        if 'profile_date' in columns:
+            dates = sql_data['profile_date'].dropna()
+            if len(dates) > 0:
+                summary += f"Time Range: {dates.min()} to {dates.max()}\n"
+
+        # Quality control analysis
+        qc_cols = [col for col in columns if 'qc' in col.lower()]
+        if qc_cols:
+            for qc_col in qc_cols[:2]:  # Limit to 2 QC columns
+                qc_counts = sql_data[qc_col].value_counts()
+                summary += f"{qc_col}: {dict(qc_counts.head(3))}\n"
+
+        # Measurement analysis
+        if 'measurement_id' in columns:
+            measurements_per_profile = sql_data.groupby('profile_id')['measurement_id'].count() if 'profile_id' in columns else None
+            if measurements_per_profile is not None:
+                summary += f"Measurements per Profile: Avg {measurements_per_profile.mean():.0f}, Range {measurements_per_profile.min()}-{measurements_per_profile.max()}\n"
+
+        return summary
 
     def check_fast_path(self, query: str) -> Dict:
         """Check if query matches fast-path patterns for instant responses"""
@@ -1062,8 +1101,8 @@ Provide a brief, expert answer addressing only the user's specific question."""
             # Step 2: Check if LLM thinks plotting is needed
             plot_decision = self.llm_decide_plotting(user_query, best_match['content'])
 
-            # Step 3: Generate SQL intelligently using LLM
-            sql_generated = self.generate_intelligent_sql(user_query, search_results)
+            # Step 3: Generate visualization-aware SQL using LLM
+            sql_generated = self.generate_visualization_aware_sql(user_query, search_results, plot_decision)
 
             if sql_generated["success"]:
                 try:
@@ -1162,31 +1201,57 @@ Provide a brief, expert answer addressing only the user's specific question."""
         return "\n".join(context_parts)
 
     def llm_decide_plotting(self, user_query: str, matched_content: str) -> Dict:
-        """Use LLM to decide if plotting is needed and what type"""
+        """Intelligent oceanographic visualization decision with domain expertise"""
         if not self.groq_client:
-            return {"needs_plotting": False, "plot_type": "none"}
+            return self._fallback_plot_detection(user_query)
 
         prompt = f"""
-        Analyze this user query and determine if a visualization/plot is needed:
+        OCEANOGRAPHIC VISUALIZATION INTELLIGENCE
 
         User Query: "{user_query}"
-        Matched Sample: {matched_content}
+        Matched Context: {matched_content}
 
-        Respond with JSON format:
+        OCEANOGRAPHIC ANALYSIS PATTERNS:
+        1. VERTICAL ANALYSIS (depth_profile):
+           Triggers: "profile", "depth", "vertical", "thermocline", "vs pressure"
+           Data needed: pressure + parameter (temperature/salinity)
+           Plot: Parameter vs Pressure (Y-axis inverted for ocean convention)
+
+        2. WATER MASS ANALYSIS (ts_diagram):
+           Triggers: "T-S", "temperature vs salinity", "water mass", "mixing"
+           Data needed: temperature + salinity
+           Plot: Temperature vs Salinity scatter (colored by depth)
+
+        3. SPATIAL ANALYSIS (geographic_heatmap):
+           Triggers: "map", "spatial", "geographic", "distribution", "heatmap"
+           Data needed: latitude + longitude + parameter
+           Plot: Geographic map with parameter overlay
+
+        4. TEMPORAL ANALYSIS (time_series):
+           Triggers: "time", "temporal", "evolution", "trends", "seasonal"
+           Data needed: date + parameter
+           Plot: Parameter vs Time line chart
+
+        5. CORRELATION ANALYSIS (parameter_scatter):
+           Triggers: "vs", "versus", "correlation", "relationship", "compare"
+           Data needed: two parameters
+           Plot: Parameter1 vs Parameter2 scatter
+
+        6. COMPARATIVE ANALYSIS (multi_comparison):
+           Triggers: "compare", "multiple", "different floats"
+           Data needed: float_id + parameters
+           Plot: Multiple series comparison
+
+        Respond with JSON:
         {{
             "needs_plotting": true/false,
-            "plot_type": "line|scatter|heatmap|histogram|none",
-            "reason": "brief explanation"
+            "plot_type": "depth_profile|ts_diagram|geographic_heatmap|time_series|parameter_scatter|multi_comparison|none",
+            "analysis_intent": "vertical_analysis|water_mass_analysis|spatial_analysis|temporal_analysis|correlation_analysis|comparative_analysis|data_query",
+            "required_columns": ["column1", "column2"],
+            "reason": "oceanographic analysis explanation"
         }}
 
-        Plot types:
-        - line: for time series, depth profiles
-        - scatter: for correlations, relationships
-        - heatmap: for geographic data, temperature distributions
-        - histogram: for distributions, frequency analysis
-        - none: for simple data queries
-
-        Look for keywords like: plot, graph, chart, heatmap, visualization, show, display
+        CRITICAL: Consider oceanographic domain context, not just plot keywords.
         """
 
         try:
@@ -1213,14 +1278,75 @@ Provide a brief, expert answer addressing only the user's specific question."""
                     "reason": "keyword detection fallback"
                 }
         except Exception as e:
-            # Fallback to simple keyword detection
-            plot_keywords = ['plot', 'graph', 'chart', 'heatmap', 'visualization', 'show', 'display']
-            needs_plot = any(keyword in user_query.lower() for keyword in plot_keywords)
+            return self._fallback_plot_detection(user_query)
+
+    def _fallback_plot_detection(self, user_query: str) -> Dict:
+        """Fallback oceanographic plot detection using domain patterns"""
+        query_lower = user_query.lower()
+
+        # Oceanographic pattern detection
+        if any(word in query_lower for word in ['profile', 'depth', 'vertical', 'thermocline']):
             return {
-                "needs_plotting": needs_plot,
-                "plot_type": "line" if needs_plot else "none",
-                "reason": f"LLM failed, used keyword detection: {str(e)}"
+                "needs_plotting": True,
+                "plot_type": "depth_profile",
+                "analysis_intent": "vertical_analysis",
+                "required_columns": ["pressure", "temperature"],
+                "reason": "Detected depth profile request"
             }
+
+        elif any(word in query_lower for word in ['t-s', 'temperature vs salinity', 'water mass']):
+            return {
+                "needs_plotting": True,
+                "plot_type": "ts_diagram",
+                "analysis_intent": "water_mass_analysis",
+                "required_columns": ["temperature", "salinity"],
+                "reason": "Detected T-S diagram request"
+            }
+
+        elif any(word in query_lower for word in ['map', 'spatial', 'geographic', 'heatmap']):
+            return {
+                "needs_plotting": True,
+                "plot_type": "geographic_heatmap",
+                "analysis_intent": "spatial_analysis",
+                "required_columns": ["latitude", "longitude", "temperature"],
+                "reason": "Detected spatial analysis request"
+            }
+
+        elif any(word in query_lower for word in ['time', 'temporal', 'evolution', 'trend']):
+            return {
+                "needs_plotting": True,
+                "plot_type": "time_series",
+                "analysis_intent": "temporal_analysis",
+                "required_columns": ["profile_date", "temperature"],
+                "reason": "Detected time series request"
+            }
+
+        elif ' vs ' in query_lower or 'versus' in query_lower:
+            return {
+                "needs_plotting": True,
+                "plot_type": "parameter_scatter",
+                "analysis_intent": "correlation_analysis",
+                "required_columns": ["temperature", "salinity"],
+                "reason": "Detected parameter comparison"
+            }
+
+        # Basic visualization keywords
+        elif any(word in query_lower for word in ['plot', 'chart', 'graph', 'show', 'display', 'visualize']):
+            return {
+                "needs_plotting": True,
+                "plot_type": "depth_profile",  # Default to most common oceanographic plot
+                "analysis_intent": "vertical_analysis",
+                "required_columns": ["pressure", "temperature"],
+                "reason": "General visualization request - defaulting to depth profile"
+            }
+
+        return {
+            "needs_plotting": False,
+            "plot_type": "none",
+            "analysis_intent": "data_query",
+            "required_columns": [],
+            "reason": "No visualization indicators detected"
+        }
 
     def create_visualization(self, data: List[Dict], plot_type: str, query: str) -> Dict:
         """Create interactive visualization from data using Plotly"""
@@ -1409,28 +1535,42 @@ Provide a brief, expert answer addressing only the user's specific question."""
                 pass
 
         prompt = f"""
-        Generate a SQL query for ARGO oceanographic data based on the user's request.
+        ARGO OCEANOGRAPHIC SQL GENERATOR - ANTI-HALLUCINATION MODE
 
         User Query: "{user_query}"
 
         Database Schema:
         {schema_info}
 
-        Similar examples from database:
+        Similar validated examples:
         {json.dumps(context_samples, indent=2)}
 
-        Instructions:
-        1. Create a SQL query that answers the user's question
-        2. Use proper table joins (profiles JOIN measurements ON profiles.profile_id = measurements.profile_id)
-        3. Add appropriate WHERE clauses and LIMIT to avoid massive results
-        4. For temperature vs depth queries, use temperature and pressure columns
-        5. Include QC filters (temperature_qc IN ('1', '2') for good data)
-        6. IMPORTANT: Filter out invalid data - exclude NULL values and zeros
-        7. For temperature: WHERE temperature IS NOT NULL AND temperature > 0
-        8. For pressure: WHERE pressure IS NOT NULL AND pressure > 0
-        9. Return only valid SQL without explanation
+        CRITICAL ANTI-HALLUCINATION RULES:
+        1. ✓ COLUMN VALIDATION: Only use columns that exist in schema above
+        2. ✓ DATA TYPE ACCURACY: QC flags are INTEGERS (1,2,3) NOT strings ('1','2','3')
+        3. ✓ OCEANOGRAPHIC DOMAIN: Temperature CAN BE NEGATIVE (polar waters -2°C to +30°C)
+        4. ✓ STRING IDENTIFIERS: float_id is STRING, use quotes: float_id = '2900826'
+        5. ✓ NULL HANDLING: Use IS NOT NULL, never exclude valid negative temperatures
 
-        SQL Query:
+        STEP-BY-STEP VALIDATION:
+        Step 1: Verify all column names exist in schema
+        Step 2: Apply correct data types (integer QC, string float_id)
+        Step 3: Use proper table joins (profiles.profile_id = measurements.profile_id)
+        Step 4: Include oceanographically valid ranges (temperature IS NOT NULL only)
+        Step 5: Add LIMIT for performance
+
+        COMMON HALLUCINATION PREVENTION:
+        ❌ NEVER use: temperature > 0 (excludes polar waters)
+        ❌ NEVER use: temperature_qc IN ('1','2') (QC flags are integers)
+        ❌ NEVER use: float_id = 2900826 (missing quotes for string)
+        ❌ NEVER use: temp, sal, lat, lon (use full column names)
+
+        ✅ ALWAYS use: temperature IS NOT NULL
+        ✅ ALWAYS use: temperature_qc IN (1,2)
+        ✅ ALWAYS use: float_id = '2900826'
+        ✅ ALWAYS use: temperature, salinity, latitude, longitude
+
+        Generate ONLY validated SQL query:
         """
 
         try:
@@ -1448,14 +1588,145 @@ Provide a brief, expert answer addressing only the user's specific question."""
             elif "```" in sql_query:
                 sql_query = sql_query.split("```")[1].split("```")[0].strip()
 
-            # Basic validation
-            if not sql_query.upper().startswith('SELECT'):
-                return {"success": False, "error": "Generated query is not a SELECT statement"}
+            # Enhanced validation
+            validation_result = self.validate_generated_sql(sql_query, user_query)
+            if not validation_result["valid"]:
+                return {"success": False, "error": f"SQL validation failed: {validation_result['error']}"}
 
             return {"success": True, "sql": sql_query}
 
         except Exception as e:
             return {"success": False, "error": f"LLM SQL generation failed: {str(e)}"}
+
+    def generate_visualization_aware_sql(self, user_query: str, search_results: List[Dict], plot_decision: Dict) -> Dict:
+        """Generate SQL that includes required columns for visualization"""
+        if not self.groq_client:
+            return {"success": False, "error": "LLM not available"}
+
+        # Get database schema information
+        schema_info = self.get_database_schema()
+
+        # Build visualization requirements
+        viz_requirements = ""
+        if plot_decision.get("needs_plotting", False):
+            required_cols = plot_decision.get("required_columns", [])
+            analysis_intent = plot_decision.get("analysis_intent", "")
+            plot_type = plot_decision.get("plot_type", "")
+
+            viz_requirements = f"""
+            VISUALIZATION REQUIREMENTS DETECTED:
+            Analysis Intent: {analysis_intent}
+            Plot Type: {plot_type}
+            Required Columns: {', '.join(required_cols)}
+
+            CRITICAL: SQL must include ALL required columns for visualization.
+            """
+
+        # Prepare context from search results
+        context_samples = []
+        for result in search_results[:3]:
+            try:
+                sample = json.loads(result['content'])
+                if 'metadata' in result and 'sql_template' in result['metadata']:
+                    context_samples.append({
+                        "id": result['id'],
+                        "similarity": result['similarity'],
+                        "sql_template": result['metadata']['sql_template']
+                    })
+            except:
+                pass
+
+        prompt = f"""
+        ARGO OCEANOGRAPHIC SQL GENERATOR - VISUALIZATION-AWARE MODE
+
+        User Query: "{user_query}"
+
+        {viz_requirements}
+
+        Database Schema:
+        {schema_info}
+
+        Similar validated examples:
+        {json.dumps(context_samples, indent=2)}
+
+        VISUALIZATION-AWARE SQL GENERATION RULES:
+        1. ✓ Include ALL required columns for visualization
+        2. ✓ For depth profiles: MUST include pressure AND parameter columns
+        3. ✓ For spatial analysis: MUST include latitude, longitude AND parameter
+        4. ✓ For time series: MUST include profile_date AND parameter
+        5. ✓ For correlations: MUST include both parameter columns
+        6. ✓ Order data appropriately for visualization (pressure ASC for profiles)
+        7. ✓ Use proper quality filters for clean visualizations
+        8. ✓ Include sufficient data points (avoid overly restrictive filters)
+
+        OCEANOGRAPHIC PLOT-SPECIFIC SQL PATTERNS:
+        - Depth Profile: SELECT pressure, temperature, salinity ORDER BY pressure ASC
+        - T-S Diagram: SELECT temperature, salinity, pressure (for coloring by depth)
+        - Geographic: SELECT latitude, longitude, AVG(parameter) GROUP BY lat/lon bins
+        - Time Series: SELECT profile_date, AVG(parameter) GROUP BY date ORDER BY date
+
+        Generate SQL that provides the RIGHT DATA for the intended visualization:
+        """
+
+        try:
+            response = self.groq_client.chat.completions.create(
+                messages=[{"role": "user", "content": prompt}],
+                model="llama-3.1-8b-instant",
+                temperature=0.1
+            )
+
+            sql_query = response.choices[0].message.content.strip()
+
+            # Clean up the response
+            if "```sql" in sql_query:
+                sql_query = sql_query.split("```sql")[1].split("```")[0].strip()
+            elif "```" in sql_query:
+                sql_query = sql_query.split("```")[1].split("```")[0].strip()
+
+            # Enhanced validation with visualization requirements
+            validation_result = self.validate_visualization_sql(sql_query, user_query, plot_decision)
+            if not validation_result["valid"]:
+                return {"success": False, "error": f"Visualization SQL validation failed: {validation_result['error']}"}
+
+            return {"success": True, "sql": sql_query}
+
+        except Exception as e:
+            # Fallback to original method
+            return self.generate_intelligent_sql(user_query, search_results)
+
+    def validate_visualization_sql(self, sql_query: str, user_query: str, plot_decision: Dict) -> dict:
+        """Validate SQL includes required columns for visualization"""
+        base_validation = self.validate_generated_sql(sql_query, user_query)
+        if not base_validation["valid"]:
+            return base_validation
+
+        # Additional visualization-specific validation
+        if not plot_decision.get("needs_plotting", False):
+            return {"valid": True, "error": None}
+
+        required_columns = plot_decision.get("required_columns", [])
+        sql_lower = sql_query.lower()
+
+        missing_columns = []
+        for col in required_columns:
+            if col.lower() not in sql_lower:
+                missing_columns.append(col)
+
+        if missing_columns:
+            return {
+                "valid": False,
+                "error": f"SQL missing required columns for {plot_decision['plot_type']}: {', '.join(missing_columns)}"
+            }
+
+        # Check for appropriate ordering for specific plot types
+        plot_type = plot_decision.get("plot_type", "")
+        if plot_type == "depth_profile" and "order by" not in sql_lower:
+            return {
+                "valid": False,
+                "error": "Depth profile requires ORDER BY pressure for proper visualization"
+            }
+
+        return {"valid": True, "error": None}
 
     def generate_fallback_sql(self, user_query: str) -> str:
         """Generate simple fallback SQL queries for common cases"""
@@ -1536,19 +1807,207 @@ Provide a brief, expert answer addressing only the user's specific question."""
 
         return None
 
-    def get_database_schema(self) -> str:
-        """Get database schema information for LLM context"""
-        schema_info = """
-        Tables:
-        1. profiles: profile_id, float_id, profile_date, latitude, longitude
-        2. measurements: measurement_id, profile_id, pressure, temperature, salinity, temperature_qc, salinity_qc
-        3. floats: float_id, wmo_number, deployment_date, deployment_latitude, deployment_longitude
+    def validate_generated_sql(self, sql_query: str, user_query: str) -> dict:
+        """Validate generated SQL to prevent common hallucinations"""
 
-        Common Query Patterns:
-        - Join profiles and measurements on profile_id
-        - Use temperature_qc IN ('1', '2') for good quality data
-        - pressure represents depth (higher pressure = deeper)
-        - Always use LIMIT to prevent large result sets
+        # Valid columns in our schema
+        valid_columns = {
+            'measurements': ['measurement_id', 'profile_id', 'pressure', 'depth', 'temperature', 'salinity',
+                           'temperature_qc', 'salinity_qc', 'pressure_qc', 'dissolved_oxygen', 'ph_in_situ',
+                           'chlorophyll_a', 'potential_temperature', 'potential_density'],
+            'profiles': ['profile_id', 'float_id', 'cycle_number', 'profile_date', 'latitude', 'longitude',
+                        'max_pressure', 'num_levels', 'data_mode', 'data_quality_flag'],
+            'floats': ['float_id', 'wmo_number', 'deployment_date', 'deployment_latitude', 'deployment_longitude',
+                      'current_status', 'last_latitude', 'last_longitude', 'total_profiles']
+        }
+
+        errors = []
+
+        # 1. Check for basic SQL structure
+        if not sql_query.upper().strip().startswith('SELECT'):
+            errors.append("Query must be a SELECT statement")
+
+        # 2. Check for hallucinated column names
+        sql_lower = sql_query.lower()
+        hallucinated_columns = ['temp', 'sal', 'lat', 'lon', 'depth_meters', 'temp_qc', 'sal_qc']
+        for bad_col in hallucinated_columns:
+            if bad_col in sql_lower:
+                errors.append(f"Hallucinated column '{bad_col}' detected. Use full column names.")
+
+        # 3. Check for string QC flags (common hallucination)
+        if "temperature_qc in ('1'," in sql_lower or "salinity_qc in ('1'," in sql_lower:
+            errors.append("QC flags are integers, not strings. Use IN (1, 2) not IN ('1', '2')")
+
+        # 4. Check for temperature > 0 filter (oceanographic error)
+        if "temperature > 0" in sql_lower:
+            errors.append("Never filter temperature > 0. Ocean temperatures can be negative in polar waters.")
+
+        # 5. Check float_id without quotes (if specific float mentioned)
+        import re
+        float_match = re.search(r'float_id\s*=\s*(\d+)', sql_lower)
+        if float_match:
+            errors.append("Float IDs are strings. Use float_id = '2900826' not float_id = 2900826")
+
+        # 6. Check for proper joins
+        if 'join' in sql_lower and 'profile_id' not in sql_lower:
+            errors.append("Use profile_id for joining profiles and measurements tables")
+
+        # 7. Check for LIMIT (performance)
+        if 'limit' not in sql_lower and ('select *' in sql_lower or 'join' in sql_lower):
+            errors.append("Add LIMIT clause to prevent massive result sets")
+
+        if errors:
+            return {"valid": False, "error": "; ".join(errors)}
+
+        return {"valid": True, "error": None}
+
+    def get_database_schema(self) -> str:
+        """Get comprehensive database schema information for LLM context"""
+        schema_info = """
+        ARGO OCEANOGRAPHIC DATABASE SCHEMA (7.1M measurements, 42K profiles, 767 floats):
+
+        === 1. FLOATS TABLE (767 records) - Float Hardware & Deployment Info ===
+        Purpose: Autonomous oceanographic sensors that drift and profile the ocean
+
+        COLUMNS & SCIENTIFIC USES:
+        • float_id (string, PK): Unique 7-digit identifier (e.g., '2900826')
+          Use: Primary identifier for tracking individual floats
+        • wmo_number (int64): World Meteorological Organization identifier
+          Use: International standardized float identification
+        • program_name (string): Research program (e.g., 'ARGO', 'Euro-Argo')
+          Use: Identify funding source, research focus, data protocols
+        • platform_type (string): Float model/manufacturer (e.g., 'APEX', 'NOVA')
+          Use: Understand sensor capabilities, measurement accuracy
+        • deployment_date (string): When float was released into ocean
+          Use: Calculate float age, operational lifespan analysis
+        • deployment_latitude/longitude (float64): Initial drop location
+          Use: Starting point for drift analysis, regional studies
+        • deployment_depth (string): Water depth at deployment site
+          Use: Understand bathymetry, deep vs shallow water deployment
+        • current_status (string): Operational status ('ACTIVE', 'INACTIVE')
+          Use: Filter for currently reporting floats
+        • last_latitude/longitude (float64): Most recent known position
+          Use: Current location, drift path analysis
+        • cycle_time_days (int64): Days between dive cycles (typically 10)
+          Use: Data frequency analysis, temporal resolution planning
+        • total_profiles (int64): Number of completed dive cycles
+          Use: Data availability assessment, float productivity
+
+        DATA EXTRACTION EXAMPLES:
+        - Active floats: WHERE current_status = 'ACTIVE'
+        - Recent deployments: WHERE deployment_date >= '2020-01-01'
+        - Pacific floats: WHERE deployment_longitude BETWEEN 120 AND -70
+        - High-productivity floats: WHERE total_profiles > 100
+
+        === 2. PROFILES TABLE (42,056 records) - Individual Dive Cycles ===
+        Purpose: Each record represents one complete dive cycle (surface → deep → surface)
+
+        COLUMNS & SCIENTIFIC USES:
+        • profile_id (int64, PK): Unique dive cycle identifier
+          Use: Primary key for linking to measurements
+        • float_id (string, FK): Links to floats table
+          Use: Group all dives from same float
+        • cycle_number (int64): Sequential dive number (1, 2, 3...)
+          Use: Track float aging, temporal analysis
+        • profile_direction (string): 'A' (ascending) or 'D' (descending)
+          Use: Distinguish upward vs downward measurements
+        • profile_date (string): Date/time of dive cycle
+          Use: Time series analysis, seasonal studies
+        • latitude/longitude (float64): Location of this specific dive
+          Use: Spatial analysis, current tracking, regional studies
+        • max_pressure (float64): Deepest point reached (dbar)
+          Use: Analyze dive depth capability, deep water access
+        • num_levels (int64): Number of measurement points in profile
+          Use: Data density assessment, vertical resolution
+        • data_mode (string): 'R' (real-time) or 'D' (delayed-mode)
+          Use: Data quality level - delayed mode has better calibration
+        • data_quality_flag (int64): Overall profile quality assessment
+          Use: Filter high-quality profiles for scientific analysis
+
+        DATA EXTRACTION EXAMPLES:
+        - Recent profiles: WHERE profile_date >= '2023-01-01'
+        - Deep profiles: WHERE max_pressure > 2000
+        - High-resolution profiles: WHERE num_levels > 100
+        - Quality profiles: WHERE data_mode = 'D' AND data_quality_flag <= 2
+
+        === 3. MEASUREMENTS TABLE (7,118,411 records) - Sensor Data at Each Depth ===
+        Purpose: Individual sensor readings at specific depths during each dive
+
+        CORE PHYSICAL PARAMETERS:
+        • measurement_id (int64, PK): Unique measurement identifier
+        • profile_id (int64, FK): Links to profiles table
+        • pressure (float64): Water pressure in dbar (1 dbar ≈ 1 meter depth)
+          Use: Depth reference, water column structure, pressure effects
+        • depth (float64): Calculated depth in meters from pressure
+          Use: Easier depth visualization, mixed layer analysis
+        • temperature (float64): Water temperature in °C (CAN BE NEGATIVE!)
+          Use: Ocean heat content, climate change, thermocline analysis
+          Range: Typically -2°C to +30°C (polar to tropical waters)
+        • salinity (float64): Practical salinity in PSU (no units)
+          Use: Water mass identification, circulation patterns, evaporation
+          Range: Typically 32-37 PSU (freshwater mixing to hypersaline)
+
+        QUALITY CONTROL FLAGS (ALL INTEGERS):
+        • temperature_qc (int64): 1=good, 2=probably good, 3=probably bad, 4=bad
+        • salinity_qc (int64): Same quality scale
+        • pressure_qc (int64): Pressure measurement quality
+          Use: Filter data by reliability, exclude bad measurements
+
+        BIOGEOCHEMICAL PARAMETERS (Advanced floats only):
+        • dissolved_oxygen (string): O₂ concentration (mg/L or μmol/kg)
+          Use: Ocean health, hypoxic zones, biological productivity
+        • ph_in_situ (string): Ocean acidity (pH scale)
+          Use: Ocean acidification studies, carbon cycle
+        • chlorophyll_a (string): Phytoplankton indicator (mg/m³)
+          Use: Primary productivity, ecosystem health, algal blooms
+        • particle_backscattering (string): Water clarity (optical)
+          Use: Particle concentration, water quality
+
+        DERIVED PARAMETERS:
+        • potential_temperature (string): Temperature corrected for pressure
+          Use: Water mass analysis, removing pressure effects
+        • potential_density (string): Density corrected for pressure
+          Use: Ocean stratification, buoyancy, mixing analysis
+        • mixed_layer_depth (string): Surface mixed layer thickness
+          Use: Air-sea interaction, seasonal mixing
+
+        DATA EXTRACTION EXAMPLES:
+        - Surface waters: WHERE pressure < 50
+        - Deep ocean: WHERE pressure > 2000
+        - Temperature profiles: SELECT pressure, temperature ORDER BY pressure
+        - Water mass analysis: SELECT temperature, salinity, potential_density
+        - Quality data only: WHERE temperature_qc IN (1, 2) AND salinity_qc IN (1, 2)
+        - Biogeochemical data: WHERE dissolved_oxygen IS NOT NULL
+
+        === KEY RELATIONSHIPS & JOINS ===
+        floats.float_id → profiles.float_id → measurements.profile_id
+
+        Common Analysis Patterns:
+        - Float trajectory: JOIN floats+profiles for lat/lon over time
+        - Depth profiles: JOIN profiles+measurements for vertical structure
+        - Full context: JOIN all three tables for complete oceanographic analysis
+
+        === CRITICAL SQL RULES ===
+        1. QC FLAGS ARE INTEGERS: temperature_qc IN (1, 2) NOT ('1', '2')
+        2. TEMPERATURE CAN BE NEGATIVE: Never filter temperature > 0
+        3. FLOAT IDs ARE STRINGS: float_id = '2900826' with quotes
+        4. PRESSURE = DEPTH: Use pressure for depth-based queries
+        5. QUALITY FILTERING: Always consider QC flags for scientific analysis
+
+        === OCEANOGRAPHIC QUERY EXAMPLES ===
+        -- Float temperature range (all data):
+        SELECT MIN(temperature), MAX(temperature), AVG(temperature)
+        FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id
+        WHERE p.float_id = '2900826' AND m.temperature IS NOT NULL
+
+        -- Thermocline analysis:
+        SELECT pressure, temperature FROM profiles p
+        JOIN measurements m ON p.profile_id = m.profile_id
+        WHERE pressure BETWEEN 0 AND 1000 ORDER BY pressure
+
+        -- Water mass properties:
+        SELECT temperature, salinity, pressure FROM measurements
+        WHERE temperature_qc IN (1,2) AND salinity_qc IN (1,2)
         """
         return schema_info
    
