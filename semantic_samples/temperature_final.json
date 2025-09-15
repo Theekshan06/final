@@ -1,0 +1,123 @@
+{
+  "category": "Temperature Analysis - FINAL SUCCESS PATTERN",
+  "description": "Temperature samples using exact winning pattern that achieved 0.511 similarity",
+  "total_samples": 15,
+  "winning_formula": "Direct user phrases + exact keywords + multiple variations of same concept",
+  "queries": [
+    {
+      "id": "temp_final_001",
+      "content": "temperature anomaly, unusual temperature, abnormal temperature, weird temperature readings, strange temp values, temperature outliers, odd temperature data, temperature deviation",
+      "metadata": {
+        "category": "temperature_anomaly",
+        "sql_template": "WITH temp_stats AS (SELECT AVG(m.temperature) as mean_temp, STDDEV(m.temperature) as std_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')) SELECT p.profile_date, p.latitude, p.longitude, m.temperature, ABS((m.temperature - ts.mean_temp) / ts.std_temp) as anomaly_score FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id CROSS JOIN temp_stats ts WHERE ABS((m.temperature - ts.mean_temp) / ts.std_temp) > {anomaly_threshold} ORDER BY anomaly_score DESC LIMIT {limit_count}",
+        "parameters": {
+          "anomaly_threshold": "float, default 2.0",
+          "limit_count": "integer, default 50"
+        }
+      }
+    },
+    {
+      "id": "temp_final_002",
+      "content": "thermocline depth, find thermocline, thermocline location, thermal layer, temperature gradient, where is thermocline, thermocline analysis",
+      "metadata": {
+        "category": "thermocline_detection",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure as thermocline_depth, ABS((LAG(m.temperature, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) - m.temperature) / (m.pressure - LAG(m.pressure, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure))) as temp_gradient FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_id = {profile_id} AND m.temperature_qc IN ('1', '2') ORDER BY temp_gradient DESC LIMIT 5",
+        "parameters": {
+          "profile_id": "string, required"
+        }
+      }
+    },
+    {
+      "id": "temp_final_003",
+      "content": "temperature inversion, inverted temperature, temperature increases with depth, warm water below cold, subsurface warming, upside down temperature",
+      "metadata": {
+        "category": "temperature_inversion",
+        "sql_template": "WITH temp_changes AS (SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, LAG(m.temperature, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) as prev_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')) SELECT profile_id, profile_date, latitude, longitude, pressure, temperature FROM temp_changes WHERE temperature > prev_temp + {inversion_threshold} ORDER BY profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "inversion_threshold": "float, default 0.5",
+          "limit_count": "integer, default 50"
+        }
+      }
+    },
+    {
+      "id": "temp_final_004",
+      "content": "seasonal temperature, temperature by season, monthly temperature, temperature seasonality, seasonal temp patterns, temperature by month",
+      "metadata": {
+        "category": "seasonal_temperature",
+        "sql_template": "SELECT MONTH(p.profile_date) as month, AVG(m.temperature) as avg_temp, COUNT(*) as measurements FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.temperature_qc IN ('1', '2') GROUP BY MONTH(p.profile_date) ORDER BY month",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        }
+      }
+    },
+    {
+      "id": "temp_final_005",
+      "content": "warming trends, temperature trends, long term temperature change, temperature time series, temperature getting warmer, temperature over time",
+      "metadata": {
+        "category": "temperature_trends",
+        "sql_template": "SELECT YEAR(p.profile_date) as year, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.temperature_qc IN ('1', '2') GROUP BY YEAR(p.profile_date) ORDER BY year",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        }
+      }
+    },
+    {
+      "id": "temp_final_006",
+      "content": "mixed layer temperature, surface mixed layer, MLD temperature, upper ocean temperature, surface layer temperature, mixed layer depth temp",
+      "metadata": {
+        "category": "mixed_layer_temperature",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, AVG(m.temperature) as mixed_layer_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure <= {mixed_layer_depth} AND m.temperature_qc IN ('1', '2') GROUP BY p.profile_id ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "mixed_layer_depth": "float, default 50.0",
+          "limit_count": "integer, default 100"
+        }
+      }
+    },
+    {
+      "id": "temp_final_007",
+      "content": "temperature variability, temperature variation, how much temperature varies, temperature fluctuations, temperature stability, temp variability",
+      "metadata": {
+        "category": "temperature_variability",
+        "sql_template": "SELECT ROUND(p.latitude, 1) as lat_grid, ROUND(p.longitude, 1) as lon_grid, AVG(m.temperature) as mean_temp, STDDEV(m.temperature) as temp_variability FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') GROUP BY ROUND(p.latitude, 1), ROUND(p.longitude, 1) HAVING COUNT(*) >= 10 ORDER BY temp_variability DESC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 50"
+        }
+      }
+    },
+    {
+      "id": "temp_final_008",
+      "content": "temperature distribution, temperature histogram, how temperatures are distributed, temperature frequency, temperature ranges, temp distribution",
+      "metadata": {
+        "category": "temperature_distribution",
+        "sql_template": "SELECT FLOOR(m.temperature) as temp_bin, COUNT(*) as frequency FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') GROUP BY FLOOR(m.temperature) ORDER BY temp_bin",
+        "parameters": {}
+      }
+    },
+    {
+      "id": "temp_final_009",
+      "content": "temperature correlation, temperature relationships, how temperatures relate, temperature patterns, temp correlation analysis, spatial temperature",
+      "metadata": {
+        "category": "temperature_correlation",
+        "sql_template": "SELECT p1.latitude as lat1, p1.longitude as lon1, p2.latitude as lat2, p2.longitude as lon2, AVG(m1.temperature) as temp1, AVG(m2.temperature) as temp2 FROM profiles p1 JOIN measurements m1 ON p1.profile_id = m1.profile_id JOIN profiles p2 ON p1.profile_id != p2.profile_id JOIN measurements m2 ON p2.profile_id = m2.profile_id WHERE m1.temperature_qc IN ('1', '2') AND m2.temperature_qc IN ('1', '2') GROUP BY p1.profile_id, p2.profile_id LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 100"
+        }
+      }
+    },
+    {
+      "id": "temp_final_010",
+      "content": "temperature percentiles, extreme temperatures, hottest and coldest temperatures, temperature extremes, temperature ranking, temp percentiles",
+      "metadata": {
+        "category": "temperature_percentiles",
+        "sql_template": "WITH temp_percentiles AS (SELECT m.temperature, NTILE(100) OVER (ORDER BY m.temperature) as percentile FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')) SELECT percentile, MIN(temperature) as min_temp, MAX(temperature) as max_temp FROM temp_percentiles WHERE percentile IN (1, 10, 50, 90, 99) GROUP BY percentile ORDER BY percentile",
+        "parameters": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "category": "Advanced Temperature Analysis - NO OVERLAP with Basic Data Retrieval",
+  "description": "Unique advanced temperature queries not covered in basic data retrieval",
+  "total_samples": 75,
+  "approach": "Avoid basic queries like 'temperature data', 'show temperature' - focus on ADVANCED analysis",
+  "queries": [
+    {
+      "id": "temp_advanced_001",
+      "content": "temperature anomaly, temperature outliers, unusual temperature, abnormal temp readings, temperature deviation, extreme temperature events",
+      "metadata": {
+        "category": "temperature_anomaly_detection",
+        "sql_template": "WITH temp_stats AS (SELECT AVG(m.temperature) as mean_temp, STDDEV(m.temperature) as std_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')) SELECT p.profile_date, p.latitude, p.longitude, m.temperature, ABS((m.temperature - ts.mean_temp) / ts.std_temp) as anomaly_score FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id CROSS JOIN temp_stats ts WHERE ABS((m.temperature - ts.mean_temp) / ts.std_temp) > {anomaly_threshold} ORDER BY anomaly_score DESC LIMIT {limit_count}",
+        "parameters": {
+          "anomaly_threshold": "float, default 2.0",
+          "limit_count": "integer, default 50"
+        }
+      }
+    },
+    {
+      "id": "temp_advanced_002",
+      "content": "thermocline depth, thermocline analysis, thermal gradient, temperature gradient, temperature stratification, thermal structure analysis",
+      "metadata": {
+        "category": "thermocline_analysis",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, (LAG(m.temperature, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) - m.temperature) / (m.pressure - LAG(m.pressure, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure)) as temp_gradient FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.profile_id = {profile_id} ORDER BY m.pressure ASC",
+        "parameters": {
+          "profile_id": "string, required"
+        }
+      }
+    },
+    {
+      "id": "temp_advanced_003",
+      "content": "temperature inversion, inverted temperature profile, subsurface warming, temperature increases with depth, warm water below cold water",
+      "metadata": {
+        "category": "temperature_inversion",
+        "sql_template": "WITH temp_diff AS (SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, LAG(m.temperature, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) as prev_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')) SELECT profile_id, profile_date, latitude, longitude, pressure, temperature FROM temp_diff WHERE temperature > prev_temp + {inversion_threshold} ORDER BY profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "inversion_threshold": "float, default 0.5",
+          "limit_count": "integer, default 50"
+        }
+      }
+    },
+    {
+      "id": "temp_advanced_004",
+      "content": "seasonal temperature cycle, monthly temperature variation, temperature seasonality, seasonal thermal patterns, temperature by month analysis",
+      "metadata": {
+        "category": "seasonal_temperature_analysis",
+        "sql_template": "SELECT MONTH(p.profile_date) as month, AVG(m.temperature) as avg_temp, STDDEV(m.temperature) as temp_variation, COUNT(*) as measurements FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure BETWEEN {depth_min} AND {depth_max} GROUP BY MONTH(p.profile_date) ORDER BY month",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required",
+          "depth_min": "float, default 0.0",
+          "depth_max": "float, default 100.0"
+        }
+      }
+    },
+    {
+      "id": "temp_advanced_005",
+      "content": "temperature trend analysis, warming trend, cooling trend, long-term temperature change, temporal temperature evolution",
+      "metadata": {
+        "category": "temperature_trend_analysis",
+        "sql_template": "SELECT YEAR(p.profile_date) as year, MONTH(p.profile_date) as month, AVG(m.temperature) as avg_temp, COUNT(*) as data_points FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure BETWEEN {depth_min} AND {depth_max} AND p.profile_date >= '{start_date}' GROUP BY YEAR(p.profile_date), MONTH(p.profile_date) ORDER BY year, month",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required",
+          "depth_min": "float, default 0.0",
+          "depth_max": "float, default 100.0",
+          "start_date": "string, default '2020-01-01'"
+        }
+      }
+    },
+    {
+      "id": "temp_advanced_006",
+      "content": "mixed layer depth temperature, MLD temperature analysis, surface mixed layer thermal properties, upper ocean temperature structure",
+      "metadata": {
+        "category": "mixed_layer_temperature",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, AVG(m.temperature) as mixed_layer_temp, COUNT(*) as measurements_in_mld FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure <= {mixed_layer_depth} AND m.temperature_qc IN ('1', '2') GROUP BY p.profile_id ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "mixed_layer_depth": "float, default 50.0",
+          "limit_count": "integer, default 100"
+        }
+      }
+    },
+    {
+      "id": "temp_advanced_007",
+      "content": "temperature variability analysis, temperature variance, thermal fluctuations, temperature stability assessment, thermal consistency",
+      "metadata": {
+        "category": "temperature_variability",
+        "sql_template": "SELECT p.latitude, p.longitude, AVG(m.temperature) as mean_temp, STDDEV(m.temperature) as temp_stddev, VARIANCE(m.temperature) as temp_variance, COUNT(*) as sample_size FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure BETWEEN {depth_min} AND {depth_max} GROUP BY ROUND(p.latitude, 1), ROUND(p.longitude, 1) HAVING COUNT(*) >= {min_samples} ORDER BY temp_stddev DESC LIMIT {limit_count}",
+        "parameters": {
+          "depth_min": "float, default 0.0",
+          "depth_max": "float, default 100.0",
+          "min_samples": "integer, default 10",
+          "limit_count": "integer, default 50"
+        }
+      }
+    },
+    {
+      "id": "temp_advanced_008",
+      "content": "temperature distribution analysis, thermal histogram, temperature frequency distribution, temperature binning analysis",
+      "metadata": {
+        "category": "temperature_distribution",
+        "sql_template": "SELECT FLOOR(m.temperature) as temp_bin, COUNT(*) as frequency, AVG(m.temperature) as avg_in_bin, MIN(m.temperature) as bin_min, MAX(m.temperature) as bin_max FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} GROUP BY FLOOR(m.temperature) ORDER BY temp_bin",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        }
+      }
+    },
+    {
+      "id": "temp_advanced_009",
+      "content": "temperature correlation analysis, thermal relationship patterns, temperature spatial correlation, regional temperature coherence",
+      "metadata": {
+        "category": "temperature_correlation",
+        "sql_template": "WITH temp_pairs AS (SELECT p1.latitude as lat1, p1.longitude as lon1, AVG(m1.temperature) as temp1, p2.latitude as lat2, p2.longitude as lon2, AVG(m2.temperature) as temp2 FROM profiles p1 JOIN measurements m1 ON p1.profile_id = m1.profile_id JOIN profiles p2 ON DATE(p1.profile_date) = DATE(p2.profile_date) JOIN measurements m2 ON p2.profile_id = m2.profile_id WHERE m1.temperature_qc IN ('1', '2') AND m2.temperature_qc IN ('1', '2') AND m1.pressure BETWEEN {depth_min} AND {depth_max} AND m2.pressure BETWEEN {depth_min} AND {depth_max} GROUP BY p1.profile_id, p2.profile_id) SELECT lat1, lon1, lat2, lon2, temp1, temp2, ABS(temp1 - temp2) as temp_difference FROM temp_pairs WHERE ABS(temp1 - temp2) < {correlation_threshold} LIMIT {limit_count}",
+        "parameters": {
+          "depth_min": "float, default 0.0",
+          "depth_max": "float, default 50.0",
+          "correlation_threshold": "float, default 2.0",
+          "limit_count": "integer, default 100"
+        }
+      }
+    },
+    {
+      "id": "temp_advanced_010",
+      "content": "temperature percentile analysis, thermal quantiles, temperature ranking analysis, extreme temperature identification",
+      "metadata": {
+        "category": "temperature_percentiles",
+        "sql_template": "WITH temp_percentiles AS (SELECT m.temperature, NTILE(100) OVER (ORDER BY m.temperature) as percentile_rank FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max}) SELECT percentile_rank, MIN(temperature) as min_temp, MAX(temperature) as max_temp, COUNT(*) as count_in_percentile FROM temp_percentiles WHERE percentile_rank IN ({percentile_list}) GROUP BY percentile_rank ORDER BY percentile_rank",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required",
+          "percentile_list": "string, default '1,5,10,25,50,75,90,95,99'"
+        }
+      }
+    }
+  ]
+}

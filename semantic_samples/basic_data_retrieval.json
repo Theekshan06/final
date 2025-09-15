@@ -1,0 +1,865 @@
+
+{
+  "collection_info": {
+    "name": "basic_data_retrieval_queries",
+    "description": "High-quality basic data retrieval patterns for FloatChat Indian Ocean ARGO system",
+    "total_documents": 50,
+    "semantic_approach": "Enhanced 10-dimensional context for conversational AI",
+    "data_source": "Indian Ocean ARGO floats (2000-2025)",
+    "regions_covered": ["Red Sea", "Persian Gulf", "Andaman Sea", "Western Australian Basin", "Mozambique Channel", "Northern Indian Ocean", "Arabian Sea", "Bay of Bengal"],
+    "user_focus": "Non-technical users, domain experts, decision makers",
+    "interface_type": "Conversational chatbot with visualization dashboard",
+    "last_updated": "2025-09-14",
+    "enhancement_version": "v3.0_floatchat_optimized",
+    "optimization_features": [
+      "Natural language conversation patterns",
+      "Indian Ocean regional expertise",
+      "Visualization guidance integration",
+      "Multi-user persona support",
+      "Dashboard component recommendations",
+      "Follow-up conversation flows",
+      "Error prevention and recovery",
+      "BGC parameter integration readiness"
+    ]
+  },
+  "queries": [
+    {
+      "id": "basic_profile_simple_001",
+      "content": "show me latest data from float 2901746, what's the newest data from this float, get current measurements from float ID, latest profile from float, most recent data from this specific float, newest profile available, current ocean conditions from float location",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, p.profile_id, m.pressure, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id = {float_id} AND p.profile_date = (SELECT MAX(profile_date) FROM profiles WHERE float_id = {float_id}) ORDER BY m.pressure ASC",
+        "parameters": {
+          "float_id": {
+            "type": "string",
+            "required": true,
+            "description": "ARGO float identifier (e.g., 2901746)",
+            "validation": "must_exist_in_floats_table"
+          }
+        },
+        "natural_language_patterns": [
+          "show me the latest profile from float {float_id}",
+          "what's the newest data from this float",
+          "get current measurements from float ID {float_id}",
+          "latest profile from float {float_id}",
+          "most recent data from this specific float"
+        ],
+        "visualization_config": {
+          "primary": "temperature_salinity_depth_profile",
+          "chart_settings": {
+            "x_axis": "temperature",
+            "y_axis": "pressure_depth_inverted",
+            "color_coding": "salinity",
+            "markers": ["mixed_layer_depth", "thermocline"]
+          }
+        },
+        "conversation_followups": [
+          "show trajectory map for this float",
+          "compare with previous profiles from same float",
+          "analyze seasonal changes at this location"
+        ],
+        "user_expertise": "beginner",
+        "indian_ocean_context": "applicable_to_all_regions",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "interactive_features": ["zoom_profile", "parameter_selection"],
+          "export_options": ["download_data", "save_image"]
+        }
+      }
+    },
+    {
+      "id": "basic_location_search_002",
+      "content": "what floats are near 15°N 65°E, find floats around latitude 15 longitude 65, active floats near coordinates, floats in this area, nearby floats to this location, show me floats around these coordinates, floats close to coordinates",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.last_latitude, f.last_longitude, f.current_status, f.last_update, (6371 * ACOS(COS(RADIANS({target_lat})) * COS(RADIANS(f.last_latitude)) * COS(RADIANS(f.last_longitude) - RADIANS({target_lon})) + SIN(RADIANS({target_lat})) * SIN(RADIANS(f.last_latitude)))) AS distance_km FROM floats f WHERE f.last_latitude IS NOT NULL AND f.last_longitude IS NOT NULL HAVING distance_km <= {search_radius} ORDER BY distance_km ASC",
+        "parameters": {
+          "target_lat": {"type": "float", "required": true, "description": "Target latitude in decimal degrees"},
+          "target_lon": {"type": "float", "required": true, "description": "Target longitude in decimal degrees"},
+          "search_radius": {"type": "float", "required": false, "default": 100, "description": "Search radius in kilometers"}
+        },
+        "natural_language_patterns": ["what floats are near {lat}°N {lon}°E", "find floats around latitude {lat} longitude {lon}", "active floats near coordinates {lat},{lon}"],
+        "visualization_config": {"primary": "interactive_map_with_floats"},
+        "conversation_followups": ["show recent profiles from nearest floats", "analyze regional patterns in the area"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["map_zoom", "float_selection"]}
+      }
+    },
+    {
+      "id": "basic_parameter_single_003",
+      "content": "get temperature data from Arabian Sea, show me only temperature measurements, temperature values for Bay of Bengal last year, extract temperature from this region, just the temperature data please, temperature only from region",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND DATE(p.profile_date) BETWEEN '{start_date}' AND '{end_date}' AND m.temperature IS NOT NULL ORDER BY p.profile_date DESC",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for region"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for region"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for region"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for region"},
+          "start_date": {"type": "date", "required": true, "description": "Start date for time period"},
+          "end_date": {"type": "date", "required": true, "description": "End date for time period"}
+        },
+        "natural_language_patterns": ["get temperature data from {region} in {year}", "show me only temperature measurements", "temperature values for {region} last year"],
+        "visualization_config": {"primary": "temperature_map"},
+        "conversation_followups": ["add salinity for T-S analysis", "examine temperature trends over time"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["data_export", "quick_visualization"]}
+      }
+    },
+    {
+      "id": "basic_time_specific_004",
+      "content": "data from March 15 2023, show me measurements on this specific date, ocean conditions during monsoon onset 2022, profiles from hurricane season, data during this time period, measurements from specific date",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude, p.cycle_number FROM profiles p WHERE DATE(p.profile_date) BETWEEN '{start_date}' AND '{end_date}' ORDER BY p.profile_date DESC",
+        "parameters": {
+          "start_date": {"type": "date", "required": true, "description": "Start date for data retrieval"},
+          "end_date": {"type": "date", "required": true, "description": "End date for data retrieval"}
+        },
+        "natural_language_patterns": ["data from {specific_date}", "show me measurements on {date}", "ocean conditions during {event} {year}", "profiles from {time_period}"],
+        "visualization_config": {"primary": "timeline_with_geographic_distribution"},
+        "conversation_followups": ["compare with climatological averages", "examine conditions before/after the event"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["calendar_interface", "temporal_navigation"]}
+      }
+    },
+    {
+      "id": "basic_float_identification_005",
+      "content": "tell me about float 2901746, float information for ID 2901746, details about this float, float metadata and history, what do you know about this float, float specifications and deployment info, information about float",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.wmo_number, f.deployment_date, f.deployment_latitude, f.deployment_longitude, f.last_latitude, f.last_longitude, f.current_status, f.total_profiles, f.last_update, f.platform_type, f.data_assembly_center FROM floats f WHERE f.float_id = {float_id}",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier", "validation": "must_exist_in_floats_table"}
+        },
+        "natural_language_patterns": ["tell me about float {float_id}", "float information for ID {float_id}", "details about this float", "what do you know about this float"],
+        "visualization_config": {"primary": "float_information_dashboard"},
+        "conversation_followups": ["show recent profiles from this float", "analyze float trajectory patterns", "compare performance with other floats"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["float_profiling", "metadata_display", "performance_metrics"]}
+      }
+    },
+    {
+      "id": "basic_profile_request_006",
+      "content": "complete ocean profile, show me a complete ocean profile, get vertical structure data, full depth profile from this location, complete water column measurements, vertical oceanographic profile, full profile data",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, m.salinity, m.temperature_qc, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_id = {profile_id} ORDER BY m.pressure ASC",
+        "parameters": {
+          "profile_id": {"type": "string", "required": true, "description": "ARGO profile identifier", "validation": "must_exist_in_profiles_table"}
+        },
+        "natural_language_patterns": ["show me a complete ocean profile", "get vertical structure data", "full depth profile from this location", "complete water column measurements"],
+        "visualization_config": {"primary": "multi_parameter_depth_profile"},
+        "conversation_followups": ["compare with nearby profiles", "analyze temporal changes at this location", "examine seasonal variations"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["profile_display", "parameter_selection", "depth_navigation"]}
+      }
+    },
+    {
+      "id": "basic_region_simple_007",
+      "content": "what data is available in Arabian Sea, show me ARGO coverage for Bay of Bengal, data availability in this region, what measurements do we have here, regional data summary, available data in region",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT COUNT(DISTINCT f.float_id) as float_count, COUNT(DISTINCT p.profile_id) as profile_count, COUNT(m.measurement_id) as measurement_count, MIN(p.profile_date) as earliest_date, MAX(p.profile_date) as latest_date FROM floats f JOIN profiles p ON f.float_id = p.float_id JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max}",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for region"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for region"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for region"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for region"}
+        },
+        "natural_language_patterns": ["what data is available in {region}", "show me ARGO coverage for {region}", "data availability in this region", "regional data summary"],
+        "visualization_config": {"primary": "regional_coverage_map"},
+        "conversation_followups": ["examine specific parameters in detail", "analyze temporal patterns", "compare with other regions"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["regional_overview", "coverage_assessment", "data_statistics"]}
+      }
+    },
+    {
+      "id": "basic_depth_simple_008",
+      "content": "data at 100 meters depth, measurements at the surface, temperature at 500m depth, values from specific depth level, horizontal slice at this depth, measurements at 100 meters depth, surface measurements",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature IS NOT NULL ORDER BY p.latitude, p.longitude",
+        "parameters": {
+          "depth_min": {"type": "float", "required": true, "description": "Minimum depth/pressure in dbar"},
+          "depth_max": {"type": "float", "required": true, "description": "Maximum depth/pressure in dbar"}
+        },
+        "natural_language_patterns": ["data at {depth} meters depth", "measurements at the surface", "temperature at {depth}m depth", "values from specific depth level"],
+        "visualization_config": {"primary": "horizontal_depth_slice_map"},
+        "conversation_followups": ["examine vertical gradients around this depth", "compare with different depth levels", "analyze temporal variations at this depth"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["depth_selection", "horizontal_mapping"]}
+      }
+    },
+    {
+      "id": "basic_recent_data_009",
+      "content": "latest ARGO data, most recent measurements, newest profiles available, current ocean data, what's the latest information, recent data from Indian Ocean, recent ARGO data, newest data available",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude FROM profiles p WHERE p.profile_date >= CURRENT_DATE - INTERVAL {days_back} DAY ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "days_back": {"type": "integer", "required": false, "default": 30, "description": "Number of days back to search"},
+          "limit_count": {"type": "integer", "required": false, "default": 100, "description": "Maximum number of recent profiles to return"}
+        },
+        "natural_language_patterns": ["latest ARGO data", "most recent measurements", "newest profiles available", "current ocean data", "what's the latest information"],
+        "visualization_config": {"primary": "recent_data_dashboard"},
+        "conversation_followups": ["examine trends in recent data", "compare current conditions with historical averages", "analyze spatial patterns"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["real_time_monitoring", "data_freshness", "automatic_updates"]}
+      }
+    },
+    {
+      "id": "basic_count_data_010",
+      "content": "how much data is available, total number of profiles, count of measurements, data volume summary, how many floats do we have, dataset statistics, how many floats are there, total floats count",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT COUNT(DISTINCT f.float_id) as total_floats, COUNT(DISTINCT p.profile_id) as total_profiles, COUNT(m.measurement_id) as total_measurements, MIN(p.profile_date) as earliest_date, MAX(p.profile_date) as latest_date FROM floats f LEFT JOIN profiles p ON f.float_id = p.float_id LEFT JOIN measurements m ON p.profile_id = m.profile_id",
+        "parameters": {},
+        "natural_language_patterns": ["how much data is available", "total number of profiles", "count of measurements", "data volume summary", "how many floats do we have"],
+        "visualization_config": {"primary": "data_statistics_dashboard"},
+        "conversation_followups": ["examine data distribution by region", "analyze temporal data density", "investigate parameter availability"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["data_statistics", "interactive_counting", "drill_down_analysis"]}
+      }
+    },
+    {
+      "id": "basic_float_status_011",
+      "content": "is this float still active, check float status, float operational status, is float working, active or inactive float, current float status, working floats only",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.current_status, f.last_update, f.last_latitude, f.last_longitude, DATEDIFF(CURRENT_DATE, f.last_update) as days_since_update FROM floats f WHERE f.float_id = {float_id}",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier"}
+        },
+        "natural_language_patterns": ["is this float still active", "check float status", "float operational status"],
+        "visualization_config": {"primary": "status_indicator_with_map"},
+        "conversation_followups": ["show recent profiles from active floats", "find nearby active floats"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["status_filtering", "map_overlay"]}
+      }
+    },
+    {
+      "id": "basic_surface_data_012",
+      "content": "surface temperature, sea surface temperature, temperature at surface, surface measurements, top layer temperature, surface ocean data, 0 meter depth data",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure BETWEEN 0 AND 10 AND m.temperature IS NOT NULL ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": ["surface temperature", "sea surface temperature", "temperature at surface"],
+        "visualization_config": {"primary": "surface_temperature_map"},
+        "conversation_followups": ["compare with subsurface temperatures", "show seasonal surface patterns"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["surface_mapping", "temporal_animation"]}
+      }
+    },
+    {
+      "id": "basic_salinity_only_013",
+      "content": "just salinity data, show me only salinity, salinity measurements only, extract salinity values, salinity data from region, get salinity readings",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.salinity IS NOT NULL ORDER BY p.profile_date DESC",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude"}
+        },
+        "natural_language_patterns": ["just salinity data", "show me only salinity", "salinity measurements only"],
+        "visualization_config": {"primary": "salinity_map_colorized"},
+        "conversation_followups": ["add temperature for T-S diagram", "analyze salinity gradients"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["parameter_isolation", "color_scaling"]}
+      }
+    },
+    {
+      "id": "basic_pressure_data_014",
+      "content": "pressure measurements, show pressure data, pressure values at depth, hydrostatic pressure, pressure readings, depth pressure data",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure BETWEEN {min_pressure} AND {max_pressure} ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {
+          "min_pressure": {"type": "float", "required": false, "default": 0, "description": "Minimum pressure in dbar"},
+          "max_pressure": {"type": "float", "required": false, "default": 2000, "description": "Maximum pressure in dbar"}
+        },
+        "natural_language_patterns": ["pressure measurements", "show pressure data", "pressure values at depth"],
+        "visualization_config": {"primary": "pressure_depth_profile"},
+        "conversation_followups": ["convert pressure to depth", "analyze pressure anomalies"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["pressure_range_selection", "depth_conversion"]}
+      }
+    },
+    {
+      "id": "basic_monthly_data_015",
+      "content": "data from January, monthly data, January 2023 data, specific month data, monthly measurements, data for this month, month specific profiles",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude FROM profiles p WHERE MONTH(p.profile_date) = {month} AND YEAR(p.profile_date) = {year} ORDER BY p.profile_date DESC",
+        "parameters": {
+          "month": {"type": "integer", "required": true, "description": "Month number (1-12)"},
+          "year": {"type": "integer", "required": true, "description": "Year (e.g., 2023)"}
+        },
+        "natural_language_patterns": ["data from January", "monthly data", "January 2023 data"],
+        "visualization_config": {"primary": "monthly_data_calendar"},
+        "conversation_followups": ["compare with other months", "analyze monthly patterns"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["month_selector", "year_navigator"]}
+      }
+    },
+    {
+      "id": "basic_quality_flags_016",
+      "content": "good quality data only, quality controlled data, QC passed data, reliable measurements, quality flag 1, best quality data, no bad data",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": ["good quality data only", "quality controlled data", "QC passed data"],
+        "visualization_config": {"primary": "quality_filtered_data_map"},
+        "conversation_followups": ["compare data quality by region", "examine quality flag distributions"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["quality_filtering", "qc_indicators"]}
+      }
+    },
+    {
+      "id": "basic_deep_measurements_017",
+      "content": "deep ocean data, measurements below 1000m, deep water measurements, data from deep ocean, below 1000 meters, deepest measurements",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure > {min_depth} ORDER BY m.pressure DESC",
+        "parameters": {
+          "min_depth": {"type": "float", "required": false, "default": 1000, "description": "Minimum depth in dbar"}
+        },
+        "natural_language_patterns": ["deep ocean data", "measurements below 1000m", "deep water measurements"],
+        "visualization_config": {"primary": "deep_ocean_profile"},
+        "conversation_followups": ["analyze deep water properties", "compare with surface measurements"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["depth_filtering", "deep_water_analysis"]}
+      }
+    },
+    {
+      "id": "basic_coordinates_search_018",
+      "content": "data at coordinates 10N 70E, measurements at specific location, data at lat lon coordinates, profiles at coordinates, specific coordinate data",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id FROM profiles p WHERE p.latitude BETWEEN {target_lat} - {tolerance} AND {target_lat} + {tolerance} AND p.longitude BETWEEN {target_lon} - {tolerance} AND {target_lon} + {tolerance} ORDER BY p.profile_date DESC",
+        "parameters": {
+          "target_lat": {"type": "float", "required": true, "description": "Target latitude"},
+          "target_lon": {"type": "float", "required": true, "description": "Target longitude"},
+          "tolerance": {"type": "float", "required": false, "default": 0.5, "description": "Search tolerance in degrees"}
+        },
+        "natural_language_patterns": ["data at coordinates 10N 70E", "measurements at specific location", "data at lat lon coordinates"],
+        "visualization_config": {"primary": "coordinate_search_map"},
+        "conversation_followups": ["expand search radius", "analyze nearby profiles"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["coordinate_input", "tolerance_adjustment"]}
+      }
+    },
+    {
+      "id": "basic_first_profile_019",
+      "content": "first profile from float, earliest data from float, initial profile, first measurement from this float, deployment profile, oldest profile from float",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, p.profile_id, m.pressure, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id = {float_id} AND p.profile_date = (SELECT MIN(profile_date) FROM profiles WHERE float_id = {float_id}) ORDER BY m.pressure ASC",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier"}
+        },
+        "natural_language_patterns": ["first profile from float", "earliest data from float", "initial profile"],
+        "visualization_config": {"primary": "first_profile_depth_chart"},
+        "conversation_followups": ["compare with latest profile", "show float trajectory from deployment"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["profile_comparison", "timeline_navigation"]}
+      }
+    },
+    {
+      "id": "basic_all_floats_region_020",
+      "content": "all floats in Arabian Sea, list floats in region, floats in Bay of Bengal, all available floats, complete float list for region, every float in area",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT DISTINCT f.float_id, f.deployment_date, f.deployment_latitude, f.deployment_longitude, f.current_status, f.last_update FROM floats f JOIN profiles p ON f.float_id = p.float_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max}",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude"}
+        },
+        "natural_language_patterns": ["all floats in Arabian Sea", "list floats in region", "floats in Bay of Bengal"],
+        "visualization_config": {"primary": "regional_float_map"},
+        "conversation_followups": ["show data from specific floats", "analyze float distribution"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["regional_selection", "float_listing"]}
+      }
+    },
+    {
+      "id": "basic_weekly_data_021",
+      "content": "data from this week, weekly data, last 7 days data, current week measurements, this week's profiles, 7 day data, recent week data",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude FROM profiles p WHERE p.profile_date >= CURRENT_DATE - INTERVAL 7 DAY ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": ["data from this week", "weekly data", "last 7 days data"],
+        "visualization_config": {"primary": "weekly_timeline"},
+        "conversation_followups": ["compare with previous weeks", "analyze weekly patterns"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["week_navigator", "daily_breakdown"]}
+      }
+    },
+    {
+      "id": "basic_yesterday_data_022",
+      "content": "data from yesterday, yesterday's measurements, profiles from yesterday, measurements from last day, yesterday ocean data",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude FROM profiles p WHERE DATE(p.profile_date) = CURRENT_DATE - INTERVAL 1 DAY ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": ["data from yesterday", "yesterday's measurements", "profiles from yesterday"],
+        "visualization_config": {"primary": "daily_data_map"},
+        "conversation_followups": ["compare with today's data", "show daily changes"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["day_navigation", "daily_comparison"]}
+      }
+    },
+    {
+      "id": "basic_specific_float_all_data_023",
+      "content": "all data from float 2901746, everything from this float, complete float dataset, all profiles from float, total float data, entire float record",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.cycle_number, COUNT(m.measurement_id) as measurement_count FROM profiles p LEFT JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id = {float_id} GROUP BY p.profile_id, p.profile_date, p.latitude, p.longitude, p.cycle_number ORDER BY p.profile_date ASC",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier"}
+        },
+        "natural_language_patterns": ["all data from float 2901746", "everything from this float", "complete float dataset"],
+        "visualization_config": {"primary": "complete_float_timeline"},
+        "conversation_followups": ["analyze float performance over time", "show trajectory evolution"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["complete_dataset_view", "performance_metrics"]}
+      }
+    },
+    {
+      "id": "basic_temperature_range_024",
+      "content": "temperature between 25 and 30 degrees, temp in range, temperature from 20 to 25C, specific temperature range, temps between values",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature BETWEEN {min_temp} AND {max_temp} ORDER BY p.profile_date DESC",
+        "parameters": {
+          "min_temp": {"type": "float", "required": true, "description": "Minimum temperature in Celsius"},
+          "max_temp": {"type": "float", "required": true, "description": "Maximum temperature in Celsius"}
+        },
+        "natural_language_patterns": ["temperature between 25 and 30 degrees", "temp in range", "temperature from 20 to 25C"],
+        "visualization_config": {"primary": "temperature_range_map"},
+        "conversation_followups": ["analyze temperature distribution", "find seasonal temperature patterns"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["temperature_slider", "range_filtering"]}
+      }
+    },
+    {
+      "id": "basic_salinity_range_025",
+      "content": "salinity between 34 and 36, salinity in range, salt content from 35 to 36, specific salinity values, salinity range search",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity BETWEEN {min_salinity} AND {max_salinity} ORDER BY p.profile_date DESC",
+        "parameters": {
+          "min_salinity": {"type": "float", "required": true, "description": "Minimum salinity in PSU"},
+          "max_salinity": {"type": "float", "required": true, "description": "Maximum salinity in PSU"}
+        },
+        "natural_language_patterns": ["salinity between 34 and 36", "salinity in range", "salt content from 35 to 36"],
+        "visualization_config": {"primary": "salinity_range_map"},
+        "conversation_followups": ["analyze salinity gradients", "find freshwater influence"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["salinity_slider", "range_selection"]}
+      }
+    },
+    {
+      "id": "basic_profile_count_026",
+      "content": "how many profiles from this float, profile count for float, number of profiles, total profiles from float, profile statistics for float",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.deployment_date, COUNT(p.profile_id) as total_profiles, MIN(p.profile_date) as first_profile, MAX(p.profile_date) as latest_profile FROM floats f LEFT JOIN profiles p ON f.float_id = p.float_id WHERE f.float_id = {float_id} GROUP BY f.float_id, f.deployment_date",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier"}
+        },
+        "natural_language_patterns": ["how many profiles from this float", "profile count for float", "number of profiles"],
+        "visualization_config": {"primary": "profile_count_chart"},
+        "conversation_followups": ["compare with other floats", "analyze profile frequency"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["count_visualization", "comparison_tools"]}
+      }
+    },
+    {
+      "id": "basic_missing_data_027",
+      "content": "data gaps, missing measurements, profiles with no data, incomplete profiles, gaps in data, missing data points",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, COUNT(m.measurement_id) as measurement_count FROM profiles p LEFT JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_date >= '{start_date}' AND p.profile_date <= '{end_date}' GROUP BY p.profile_id, p.float_id, p.profile_date HAVING measurement_count < {min_measurements}",
+        "parameters": {
+          "start_date": {"type": "date", "required": true, "description": "Start date for gap analysis"},
+          "end_date": {"type": "date", "required": true, "description": "End date for gap analysis"},
+          "min_measurements": {"type": "integer", "required": false, "default": 10, "description": "Minimum expected measurements"}
+        },
+        "natural_language_patterns": ["data gaps", "missing measurements", "profiles with no data"],
+        "visualization_config": {"primary": "data_gap_timeline"},
+        "conversation_followups": ["identify gap patterns", "analyze data quality issues"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["gap_analysis", "quality_assessment"]}
+      }
+    },
+    {
+      "id": "basic_deployment_info_028",
+      "content": "when was float deployed, deployment date, float launch date, when did float start, deployment information, float activation date",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.deployment_date, f.deployment_latitude, f.deployment_longitude, f.platform_type, f.data_assembly_center, MIN(p.profile_date) as first_profile_date FROM floats f LEFT JOIN profiles p ON f.float_id = p.float_id WHERE f.float_id = {float_id} GROUP BY f.float_id, f.deployment_date, f.deployment_latitude, f.deployment_longitude, f.platform_type, f.data_assembly_center",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier"}
+        },
+        "natural_language_patterns": ["when was float deployed", "deployment date", "float launch date"],
+        "visualization_config": {"primary": "deployment_info_card"},
+        "conversation_followups": ["show float trajectory from deployment", "compare deployment locations"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["deployment_details", "trajectory_viewer"]}
+      }
+    },
+    {
+      "id": "basic_active_floats_only_029",
+      "content": "show only active floats, active floats list, currently operating floats, working floats only, floats still transmitting, operational floats",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.last_latitude, f.last_longitude, f.last_update, f.total_profiles, DATEDIFF(CURRENT_DATE, f.last_update) as days_since_update FROM floats f WHERE f.current_status = 'ACTIVE' AND f.last_update >= CURRENT_DATE - INTERVAL {max_days_inactive} DAY ORDER BY f.last_update DESC",
+        "parameters": {
+          "max_days_inactive": {"type": "integer", "required": false, "default": 30, "description": "Maximum days since last update"}
+        },
+        "natural_language_patterns": ["show only active floats", "active floats list", "currently operating floats"],
+        "visualization_config": {"primary": "active_floats_map"},
+        "conversation_followups": ["show data from active floats", "compare active vs inactive floats"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["activity_filtering", "status_indicators"]}
+      }
+    },
+    {
+      "id": "basic_inactive_floats_030",
+      "content": "inactive floats, stopped floats, floats no longer transmitting, dead floats, non-operational floats, floats that stopped working",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.last_latitude, f.last_longitude, f.last_update, f.total_profiles, DATEDIFF(CURRENT_DATE, f.last_update) as days_since_update FROM floats f WHERE f.current_status IN ('INACTIVE', 'DEAD') OR f.last_update < CURRENT_DATE - INTERVAL {inactive_threshold_days} DAY ORDER BY f.last_update DESC",
+        "parameters": {
+          "inactive_threshold_days": {"type": "integer", "required": false, "default": 90, "description": "Days threshold for considering float inactive"}
+        },
+        "natural_language_patterns": ["inactive floats", "stopped floats", "floats no longer transmitting"],
+        "visualization_config": {"primary": "inactive_floats_map"},
+        "conversation_followups": ["analyze why floats became inactive", "show final profiles from inactive floats"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["inactivity_analysis", "final_data_review"]}
+      }
+    },
+    {
+      "id": "basic_float_trajectory_031",
+      "content": "float path, show float trajectory, float movement, where did float go, float track, path of float, route taken by float",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, p.cycle_number FROM profiles p WHERE p.float_id = {float_id} ORDER BY p.profile_date ASC",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier"}
+        },
+        "natural_language_patterns": ["float path", "show float trajectory", "float movement"],
+        "visualization_config": {"primary": "trajectory_map_with_timeline"},
+        "conversation_followups": ["analyze drift patterns", "show deployment to current location"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["trajectory_animation", "path_visualization"]}
+      }
+    },
+    {
+      "id": "basic_cycle_number_032",
+      "content": "cycle 150 data, profile cycle 200, data from cycle number, specific cycle measurements, cycle 100 profile, measurements from cycle",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, p.cycle_number, m.pressure, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id = {float_id} AND p.cycle_number = {cycle_number} ORDER BY m.pressure ASC",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier"},
+          "cycle_number": {"type": "integer", "required": true, "description": "Profile cycle number"}
+        },
+        "natural_language_patterns": ["cycle 150 data", "profile cycle 200", "data from cycle number"],
+        "visualization_config": {"primary": "cycle_profile_chart"},
+        "conversation_followups": ["compare with other cycles", "show cycle progression"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["cycle_selection", "profile_comparison"]}
+      }
+    },
+    {
+      "id": "basic_platform_type_033",
+      "content": "APEX floats only, specific platform type, NOVA floats, SOLO floats, platform model data, float type filter, certain float models",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.platform_type, f.deployment_date, f.last_update, f.current_status FROM floats f WHERE f.platform_type LIKE '%{platform_type}%' ORDER BY f.deployment_date DESC",
+        "parameters": {
+          "platform_type": {"type": "string", "required": true, "description": "Platform type (e.g., APEX, NOVA, SOLO)"}
+        },
+        "natural_language_patterns": ["APEX floats only", "specific platform type", "NOVA floats"],
+        "visualization_config": {"primary": "platform_type_distribution"},
+        "conversation_followups": ["compare platform performance", "show deployment locations by type"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["platform_filtering", "type_comparison"]}
+      }
+    },
+    {
+      "id": "basic_wmo_number_034",
+      "content": "WMO 5906468, float with WMO number, WMO identifier search, find by WMO, specific WMO number, WMO ID lookup",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.wmo_number, f.deployment_date, f.deployment_latitude, f.deployment_longitude, f.current_status FROM floats f WHERE f.wmo_number = {wmo_number}",
+        "parameters": {
+          "wmo_number": {"type": "string", "required": true, "description": "WMO number identifier"}
+        },
+        "natural_language_patterns": ["WMO 5906468", "float with WMO number", "WMO identifier search"],
+        "visualization_config": {"primary": "wmo_float_info"},
+        "conversation_followups": ["show data from this WMO float", "get float details"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["wmo_lookup", "identifier_search"]}
+      }
+    },
+    {
+      "id": "basic_dac_center_035",
+      "content": "floats from CORIOLIS, DAC AOML floats, data assembly center, CSIRO floats, BODC data, specific DAC floats",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.data_assembly_center, f.deployment_date, f.deployment_latitude, f.deployment_longitude FROM floats f WHERE f.data_assembly_center = '{dac_name}' ORDER BY f.deployment_date DESC",
+        "parameters": {
+          "dac_name": {"type": "string", "required": true, "description": "Data Assembly Center name"}
+        },
+        "natural_language_patterns": ["floats from CORIOLIS", "DAC AOML floats", "data assembly center"],
+        "visualization_config": {"primary": "dac_distribution_map"},
+        "conversation_followups": ["compare DAC performance", "show DAC coverage areas"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["dac_filtering", "center_comparison"]}
+      }
+    },
+    {
+      "id": "basic_high_temperature_036",
+      "content": "hottest temperatures, highest temperature values, maximum temp readings, warmest water found, peak temperatures, extreme high temps",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL ORDER BY m.temperature DESC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": {"type": "integer", "required": false, "default": 100, "description": "Number of highest temperatures to return"}
+        },
+        "natural_language_patterns": ["hottest temperatures", "highest temperature values", "maximum temp readings"],
+        "visualization_config": {"primary": "high_temperature_map"},
+        "conversation_followups": ["analyze seasonal temperature peaks", "find temperature extremes by region"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["temperature_extremes", "heat_mapping"]}
+      }
+    },
+    {
+      "id": "basic_low_temperature_037",
+      "content": "coldest temperatures, lowest temp values, minimum temperature readings, coldest water, freezing temperatures, extreme cold temps",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL ORDER BY m.temperature ASC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": {"type": "integer", "required": false, "default": 100, "description": "Number of lowest temperatures to return"}
+        },
+        "natural_language_patterns": ["coldest temperatures", "lowest temp values", "minimum temperature readings"],
+        "visualization_config": {"primary": "low_temperature_map"},
+        "conversation_followups": ["find deep water temperatures", "analyze winter cooling patterns"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["cold_extremes", "temperature_minima"]}
+      }
+    },
+    {
+      "id": "basic_high_salinity_038",
+      "content": "saltiest water, highest salinity values, maximum salt content, most saline measurements, peak salinity readings, extreme high salinity",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NOT NULL ORDER BY m.salinity DESC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": {"type": "integer", "required": false, "default": 100, "description": "Number of highest salinity values to return"}
+        },
+        "natural_language_patterns": ["saltiest water", "highest salinity values", "maximum salt content"],
+        "visualization_config": {"primary": "high_salinity_map"},
+        "conversation_followups": ["analyze evaporation zones", "find hypersaline regions"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["salinity_extremes", "salt_mapping"]}
+      }
+    },
+    {
+      "id": "basic_low_salinity_039",
+      "content": "freshest water, lowest salinity values, minimum salt content, least saline water, fresh water influence, low salinity zones",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NOT NULL ORDER BY m.salinity ASC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": {"type": "integer", "required": false, "default": 100, "description": "Number of lowest salinity values to return"}
+        },
+        "natural_language_patterns": ["freshest water", "lowest salinity values", "minimum salt content"],
+        "visualization_config": {"primary": "low_salinity_map"},
+        "conversation_followups": ["find river discharge influence", "analyze precipitation effects"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["freshwater_zones", "salinity_minima"]}
+      }
+    },
+    {
+      "id": "basic_deepest_profiles_040",
+      "content": "deepest profiles, maximum depth measurements, profiles reaching deepest, deepest diving floats, maximum pressure readings, deepest ocean data",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude, p.max_pressure FROM profiles p WHERE p.max_pressure IS NOT NULL ORDER BY p.max_pressure DESC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": {"type": "integer", "required": false, "default": 50, "description": "Number of deepest profiles to return"}
+        },
+        "natural_language_patterns": ["deepest profiles", "maximum depth measurements", "profiles reaching deepest"],
+        "visualization_config": {"primary": "deepest_profiles_map"},
+        "conversation_followups": ["analyze deep ocean coverage", "show bathymetry correlation"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["depth_records", "deep_ocean_mapping"]}
+      }
+    },
+    {
+      "id": "basic_shallowest_profiles_041",
+      "content": "shallowest profiles, minimum depth data, surface only profiles, shallow water measurements, profiles not going deep, minimal depth profiles",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude, p.max_pressure FROM profiles p WHERE p.max_pressure IS NOT NULL ORDER BY p.max_pressure ASC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": {"type": "integer", "required": false, "default": 50, "description": "Number of shallowest profiles to return"}
+        },
+        "natural_language_patterns": ["shallowest profiles", "minimum depth data", "surface only profiles"],
+        "visualization_config": {"primary": "shallow_profiles_map"},
+        "conversation_followups": ["investigate shallow diving causes", "analyze float malfunction patterns"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["shallow_analysis", "depth_issues"]}
+      }
+    },
+    {
+      "id": "basic_last_week_data_042",
+      "content": "data from last week, previous week data, week before data, last 7-14 days, past week measurements, previous week profiles",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude FROM profiles p WHERE p.profile_date BETWEEN CURRENT_DATE - INTERVAL 14 DAY AND CURRENT_DATE - INTERVAL 7 DAY ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": ["data from last week", "previous week data", "week before data"],
+        "visualization_config": {"primary": "last_week_timeline"},
+        "conversation_followups": ["compare with current week", "analyze weekly trends"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["weekly_comparison", "trend_analysis"]}
+      }
+    },
+    {
+      "id": "basic_last_month_data_043",
+      "content": "data from last month, previous month data, month before data, past month measurements, last 30 days, previous month profiles",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude FROM profiles p WHERE p.profile_date >= CURRENT_DATE - INTERVAL 30 DAY AND p.profile_date < CURRENT_DATE ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": ["data from last month", "previous month data", "month before data"],
+        "visualization_config": {"primary": "monthly_data_overview"},
+        "conversation_followups": ["compare monthly patterns", "analyze seasonal progression"],
+        "user_expertise": "beginner",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["monthly_navigation", "pattern_analysis"]}
+      }
+    },
+    {
+      "id": "basic_no_temperature_044",
+      "content": "profiles without temperature, missing temperature data, no temp measurements, temperature data gaps, profiles missing temp",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude FROM profiles p LEFT JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NULL OR m.temperature = '' GROUP BY p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": ["profiles without temperature", "missing temperature data", "no temp measurements"],
+        "visualization_config": {"primary": "missing_temp_analysis"},
+        "conversation_followups": ["analyze sensor failures", "identify data quality issues"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["data_quality_analysis", "sensor_diagnostics"]}
+      }
+    },
+    {
+      "id": "basic_no_salinity_045",
+      "content": "profiles without salinity, missing salinity data, no salinity measurements, salinity data gaps, profiles missing salinity",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude FROM profiles p LEFT JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NULL OR m.salinity = '' GROUP BY p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": ["profiles without salinity", "missing salinity data", "no salinity measurements"],
+        "visualization_config": {"primary": "missing_salinity_analysis"},
+        "conversation_followups": ["investigate conductivity sensor issues", "analyze data transmission problems"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["salinity_diagnostics", "sensor_health"]}
+      }
+    },
+    {
+      "id": "basic_recent_deployments_046",
+      "content": "recently deployed floats, new floats, latest deployments, newest float launches, recently activated floats, fresh deployments",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.deployment_date, f.deployment_latitude, f.deployment_longitude, f.platform_type, f.data_assembly_center FROM floats f WHERE f.deployment_date >= CURRENT_DATE - INTERVAL {days_back} DAY ORDER BY f.deployment_date DESC",
+        "parameters": {
+          "days_back": {"type": "integer", "required": false, "default": 90, "description": "Days back to search for recent deployments"}
+        },
+        "natural_language_patterns": ["recently deployed floats", "new floats", "latest deployments"],
+        "visualization_config": {"primary": "recent_deployments_map"},
+        "conversation_followups": ["track new float performance", "monitor initial profiles"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "primary", "interactive_features": ["deployment_tracking", "new_float_monitoring"]}
+      }
+    },
+    {
+      "id": "basic_oldest_floats_047",
+      "content": "oldest active floats, longest running floats, floats deployed earliest, veteran floats, oldest operational floats, longest serving floats",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.deployment_date, f.deployment_latitude, f.deployment_longitude, f.current_status, f.total_profiles, DATEDIFF(CURRENT_DATE, f.deployment_date) as days_operational FROM floats f WHERE f.current_status = 'ACTIVE' ORDER BY f.deployment_date ASC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": {"type": "integer", "required": false, "default": 20, "description": "Number of oldest floats to return"}
+        },
+        "natural_language_patterns": ["oldest active floats", "longest running floats", "floats deployed earliest"],
+        "visualization_config": {"primary": "veteran_floats_timeline"},
+        "conversation_followups": ["analyze long-term performance", "study float longevity patterns"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["longevity_analysis", "veteran_tracking"]}
+      }
+    },
+    {
+      "id": "basic_data_transmission_048",
+      "content": "last data transmission, when did float last send data, most recent communication, latest data upload, last contact with float",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.last_update, MAX(p.profile_date) as latest_profile_date, f.current_status, DATEDIFF(CURRENT_DATE, f.last_update) as days_since_contact FROM floats f LEFT JOIN profiles p ON f.float_id = p.float_id WHERE f.float_id = {float_id} GROUP BY f.float_id, f.last_update, f.current_status",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier"}
+        },
+        "natural_language_patterns": ["last data transmission", "when did float last send data", "most recent communication"],
+        "visualization_config": {"primary": "transmission_status_timeline"},
+        "conversation_followups": ["analyze communication patterns", "check for transmission issues"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["communication_tracking", "transmission_analysis"]}
+      }
+    },
+    {
+      "id": "basic_float_age_049",
+      "content": "how old is this float, float age in days, time since deployment, operational duration, float lifetime, days since launch",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, f.deployment_date, f.last_update, DATEDIFF(CURRENT_DATE, f.deployment_date) as age_days, DATEDIFF(f.last_update, f.deployment_date) as operational_days, f.total_profiles FROM floats f WHERE f.float_id = {float_id}",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier"}
+        },
+        "natural_language_patterns": ["how old is this float", "float age in days", "time since deployment"],
+        "visualization_config": {"primary": "float_age_timeline"},
+        "conversation_followups": ["compare with typical float lifespan", "analyze age vs performance"],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["age_calculator", "lifetime_analysis"]}
+      }
+    },
+    {
+      "id": "basic_profiles_per_day_050",
+      "content": "profiles per day rate, daily profile frequency, how often does float profile, profile collection rate, daily measurement frequency",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT f.float_id, COUNT(p.profile_id) as total_profiles, DATEDIFF(MAX(p.profile_date), MIN(p.profile_date)) as operational_days, COUNT(p.profile_id) / DATEDIFF(MAX(p.profile_date), MIN(p.profile_date)) as profiles_per_day FROM floats f JOIN profiles p ON f.float_id = p.float_id WHERE f.float_id = {float_id} GROUP BY f.float_id",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier"}
+        },
+        "natural_language_patterns": ["profiles per day rate", "daily profile frequency", "how often does float profile"],
+        "visualization_config": {"primary": "profile_frequency_chart"},
+        "conversation_followups": ["compare with standard float cycles", "analyze sampling efficiency"],
+        "user_expertise": "expert",
+        "floatchat_integration": {"dashboard_component": "secondary", "interactive_features": ["frequency_analysis", "sampling_metrics"]}
+      }
+    }
+  ]
+}

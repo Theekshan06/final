@@ -1,0 +1,2766 @@
+{
+  "collection_info": {
+    "name": "visualization_oriented_queries",
+    "description": "High-quality visualization-focused patterns for FloatChat Indian Ocean ARGO system",
+    "total_documents": 20,
+    "semantic_approach": "Enhanced 10-dimensional context for conversational AI with visualization focus",
+    "data_source": "Indian Ocean ARGO floats (2015-2025)",
+    "regions_covered": ["Red Sea", "Persian Gulf", "Andaman Sea", "Western Australian Basin", "Mozambique Channel", "Northern Indian Ocean", "Arabian Sea", "Bay of Bengal"],
+    "user_focus": "Visualization-oriented users, data analysts, researchers needing plots and charts",
+    "interface_type": "Conversational chatbot with advanced visualization dashboard",
+    "last_updated": "2025-09-14",
+    "enhancement_version": "v1.0_visualization_optimized",
+    "optimization_features": [
+      "Geographic mapping and spatial visualization",
+      "Time series and temporal animation support",
+      "Depth profile and vertical structure plots",
+      "Statistical charts and distribution analysis",
+      "Interactive dashboards and real-time monitoring",
+      "Float trajectory and path visualization",
+      "3D plotting and multi-dimensional views",
+      "Export-ready publication figures",
+      "Parameter correlation and comparison plots",
+      "Quality-controlled visualization filtering"
+    ]
+  },
+  "queries": [
+    {
+      "id": "viz_temperature_map_001",
+      "content": "create temperature map, show me temperature distribution on map, plot sea surface temperature, temperature spatial map, map temperature data across region, geographic temperature visualization, temperature heat map",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, AVG(m.temperature) as avg_temperature, COUNT(m.measurement_id) as data_points FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') GROUP BY p.latitude, p.longitude, p.profile_date ORDER BY p.profile_date DESC",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for mapping region"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for mapping region"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for mapping region"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for mapping region"},
+          "start_date": {"type": "date", "required": false, "default": "2023-01-01", "description": "Start date for temperature mapping"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for temperature mapping"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for temperature averaging"},
+          "depth_max": {"type": "float", "required": false, "default": 50, "description": "Maximum depth for temperature averaging"}
+        },
+        "natural_language_patterns": [
+          "create temperature map of {region}",
+          "show me temperature distribution on map",
+          "plot sea surface temperature for {region}",
+          "temperature spatial map from {start_date} to {end_date}",
+          "map temperature data across region"
+        ],
+        "visualization_config": {
+          "primary": "geographic_temperature_heatmap",
+          "chart_settings": {
+            "map_type": "filled_contour",
+            "color_scale": "thermal",
+            "interpolation": "kriging",
+            "contour_levels": 20,
+            "basemap": "world_coastlines"
+          },
+          "interactive_features": ["zoom", "pan", "hover_data", "color_scale_adjustment"]
+        },
+        "conversation_followups": [
+          "add salinity overlay to the map",
+          "create temperature time series animation",
+          "compare with historical temperature maps"
+        ],
+        "user_expertise": "intermediate",
+        "indian_ocean_context": "applicable_to_all_regions",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "export_options": ["png", "svg", "pdf", "interactive_html"],
+          "real_time_update": true
+        }
+      }
+    },
+    {
+      "id": "viz_depth_profile_002",
+      "content": "plot depth profile, show vertical structure, create T-S profile, depth temperature profile, vertical ocean profile plot, water column visualization, profile chart for depth",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, p.profile_id, m.pressure, m.depth, m.temperature, m.salinity, m.temperature_qc, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_id = {profile_id} AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL ORDER BY m.pressure ASC",
+        "parameters": {
+          "profile_id": {"type": "string", "required": true, "description": "ARGO profile identifier for depth plotting"}
+        },
+        "natural_language_patterns": [
+          "plot depth profile for profile {profile_id}",
+          "show vertical structure of profile {profile_id}",
+          "create T-S profile visualization",
+          "depth temperature profile chart",
+          "vertical ocean profile plot"
+        ],
+        "visualization_config": {
+          "primary": "dual_axis_depth_profile",
+          "chart_settings": {
+            "y_axis": "depth_inverted",
+            "x_axis_left": "temperature",
+            "x_axis_right": "salinity",
+            "line_style": "connected_scatter",
+            "quality_markers": true
+          },
+          "secondary_plots": ["ts_diagram", "density_profile"]
+        },
+        "conversation_followups": [
+          "compare with nearby profiles",
+          "show seasonal profile changes",
+          "analyze mixed layer depth"
+        ],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "interactive_features": ["depth_zoom", "parameter_toggle", "quality_filtering"],
+          "export_options": ["png", "svg", "data_csv"]
+        }
+      }
+    },
+    {
+      "id": "viz_time_series_003",
+      "content": "create time series plot, show temperature over time, temporal evolution chart, time series analysis, monthly temperature trends, seasonal pattern visualization, plot parameter changes over time",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT DATE_FORMAT(p.profile_date, '%Y-%m') as month_year, p.profile_date, AVG(m.temperature) as avg_temperature, AVG(m.salinity) as avg_salinity, COUNT(m.measurement_id) as data_points, STDDEV(m.temperature) as temp_std FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure BETWEEN {depth_min} AND {depth_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.temperature IS NOT NULL GROUP BY DATE_FORMAT(p.profile_date, '%Y-%m'), p.profile_date ORDER BY p.profile_date ASC",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for time series region"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for time series region"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for time series region"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for time series region"},
+          "start_date": {"type": "date", "required": true, "description": "Start date for time series"},
+          "end_date": {"type": "date", "required": true, "description": "End date for time series"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for averaging"},
+          "depth_max": {"type": "float", "required": false, "default": 100, "description": "Maximum depth for averaging"}
+        },
+        "natural_language_patterns": [
+          "create time series plot for {region} from {start_date}",
+          "show temperature over time in {region}",
+          "temporal evolution chart for {parameter}",
+          "monthly temperature trends visualization",
+          "plot parameter changes over time"
+        ],
+        "visualization_config": {
+          "primary": "multi_parameter_timeseries",
+          "chart_settings": {
+            "x_axis": "datetime",
+            "y_axis_left": "temperature",
+            "y_axis_right": "salinity",
+            "trend_lines": true,
+            "error_bars": "standard_deviation",
+            "seasonal_decomposition": true
+          }
+        },
+        "conversation_followups": [
+          "add seasonal trend analysis",
+          "create animation of temporal changes",
+          "compare with climatological averages"
+        ],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "interactive_features": ["time_zoom", "parameter_selection", "trend_analysis"],
+          "animation_support": true
+        }
+      }
+    },
+    {
+      "id": "viz_float_trajectory_004",
+      "content": "plot float trajectory, show float path on map, visualize float movement, trajectory animation, drift pattern visualization, float track chart, path visualization over time",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, p.cycle_number, f.float_id, f.deployment_latitude, f.deployment_longitude, f.deployment_date FROM profiles p JOIN floats f ON p.float_id = f.float_id WHERE p.float_id = {float_id} ORDER BY p.profile_date ASC",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float identifier for trajectory plotting"}
+        },
+        "natural_language_patterns": [
+          "plot float trajectory for {float_id}",
+          "show float path on map for {float_id}",
+          "visualize float movement over time",
+          "trajectory animation of float {float_id}",
+          "drift pattern visualization"
+        ],
+        "visualization_config": {
+          "primary": "animated_trajectory_map",
+          "chart_settings": {
+            "map_projection": "mercator",
+            "trajectory_line": "gradient_colored_by_time",
+            "markers": "profile_locations",
+            "deployment_marker": "start_icon",
+            "current_position": "end_icon"
+          },
+          "animation_features": ["temporal_progression", "speed_control", "pause_resume"]
+        },
+        "conversation_followups": [
+          "analyze drift velocity patterns",
+          "compare with ocean current data",
+          "show temperature along trajectory"
+        ],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "interactive_features": ["trajectory_animation", "time_slider", "profile_selection"],
+          "export_options": ["gif_animation", "mp4_video", "static_png"]
+        }
+      }
+    },
+    {
+      "id": "viz_parameter_correlation_005",
+      "content": "plot temperature vs salinity, T-S diagram, parameter correlation plot, scatter plot analysis, relationship visualization, correlation matrix, compare parameters graphically",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT m.temperature, m.salinity, m.pressure, p.latitude, p.longitude, p.profile_date, p.float_id FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_date DESC",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for correlation analysis"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for correlation analysis"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for correlation analysis"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for correlation analysis"},
+          "start_date": {"type": "date", "required": false, "default": "2020-01-01", "description": "Start date for correlation"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for correlation"}
+        },
+        "natural_language_patterns": [
+          "plot temperature vs salinity for {region}",
+          "T-S diagram for {region}",
+          "parameter correlation plot",
+          "scatter plot analysis of T-S relationship",
+          "relationship visualization between parameters"
+        ],
+        "visualization_config": {
+          "primary": "scatter_plot_with_density",
+          "chart_settings": {
+            "x_axis": "salinity",
+            "y_axis": "temperature",
+            "color_coding": "depth_pressure",
+            "density_contours": true,
+            "regression_line": true,
+            "correlation_coefficient": true
+          },
+          "secondary_plots": ["marginal_histograms", "correlation_matrix"]
+        },
+        "conversation_followups": [
+          "analyze water mass characteristics",
+          "identify mixing patterns",
+          "compare seasonal T-S relationships"
+        ],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "interactive_features": ["brush_selection", "zoom_correlation", "outlier_detection"],
+          "statistical_tools": ["regression_analysis", "clustering"]
+        }
+      }
+    },
+    {
+      "id": "viz_statistical_distribution_006",
+      "content": "show temperature distribution, histogram of salinity, box plot by region, statistical summary visualization, distribution analysis, parameter statistics chart, data distribution plot",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT m.temperature, m.salinity, m.pressure, p.latitude, p.longitude, p.profile_date, CASE WHEN p.latitude BETWEEN {lat1_min} AND {lat1_max} AND p.longitude BETWEEN {lon1_min} AND {lon1_max} THEN 'Region_1' WHEN p.latitude BETWEEN {lat2_min} AND {lat2_max} AND p.longitude BETWEEN {lon2_min} AND {lon2_max} THEN 'Region_2' ELSE 'Other' END as region FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2')",
+        "parameters": {
+          "lat1_min": {"type": "float", "required": true, "description": "Region 1 minimum latitude"},
+          "lat1_max": {"type": "float", "required": true, "description": "Region 1 maximum latitude"},
+          "lon1_min": {"type": "float", "required": true, "description": "Region 1 minimum longitude"},
+          "lon1_max": {"type": "float", "required": true, "description": "Region 1 maximum longitude"},
+          "lat2_min": {"type": "float", "required": false, "description": "Region 2 minimum latitude"},
+          "lat2_max": {"type": "float", "required": false, "description": "Region 2 maximum latitude"},
+          "lon2_min": {"type": "float", "required": false, "description": "Region 2 minimum longitude"},
+          "lon2_max": {"type": "float", "required": false, "description": "Region 2 maximum longitude"},
+          "start_date": {"type": "date", "required": false, "default": "2020-01-01", "description": "Start date for statistics"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for statistics"}
+        },
+        "natural_language_patterns": [
+          "show temperature distribution in {region}",
+          "histogram of salinity values",
+          "box plot by region comparison",
+          "statistical summary visualization",
+          "distribution analysis of {parameter}"
+        ],
+        "visualization_config": {
+          "primary": "multi_panel_statistics",
+          "chart_settings": {
+            "histogram_bins": 50,
+            "box_plot_grouping": "region",
+            "violin_plot": true,
+            "statistical_annotations": ["mean", "median", "std", "quartiles"]
+          },
+          "panel_layout": ["histogram", "box_plot", "violin_plot", "summary_table"]
+        },
+        "conversation_followups": [
+          "perform statistical significance tests",
+          "analyze seasonal distribution changes",
+          "identify outliers and extremes"
+        ],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "interactive_features": ["bin_adjustment", "grouping_selection", "outlier_highlighting"],
+          "statistical_exports": ["summary_statistics", "distribution_parameters"]
+        }
+      }
+    },
+    {
+      "id": "viz_3d_visualization_007",
+      "content": "create 3D temperature plot, 3D visualization of ocean data, depth temperature 3D chart, three dimensional ocean structure, 3D parameter visualization, volumetric data plot",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, p.profile_date, m.depth, m.temperature, m.salinity, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.temperature IS NOT NULL AND m.depth BETWEEN {depth_min} AND {depth_max} ORDER BY p.latitude, p.longitude, m.depth",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for 3D region"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for 3D region"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for 3D region"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for 3D region"},
+          "start_date": {"type": "date", "required": false, "default": "2023-01-01", "description": "Start date for 3D data"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for 3D data"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for 3D plot"},
+          "depth_max": {"type": "float", "required": false, "default": 1000, "description": "Maximum depth for 3D plot"}
+        },
+        "natural_language_patterns": [
+          "create 3D temperature plot for {region}",
+          "3D visualization of ocean data",
+          "depth temperature 3D chart",
+          "three dimensional ocean structure",
+          "volumetric temperature visualization"
+        ],
+        "visualization_config": {
+          "primary": "interactive_3d_volume",
+          "chart_settings": {
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "z_axis": "depth_inverted",
+            "color_parameter": "temperature",
+            "interpolation": "3d_kriging",
+            "transparency": "gradient_based",
+            "isosurfaces": true
+          },
+          "interactive_features": ["3d_rotation", "zoom", "slice_planes", "isosurface_control"]
+        },
+        "conversation_followups": [
+          "add current vectors to 3D plot",
+          "create time animation of 3D structure",
+          "compare 3D seasonal differences"
+        ],
+        "user_expertise": "advanced",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "rendering_engine": "webgl",
+          "export_options": ["3d_model", "slice_images", "rotating_gif"],
+          "performance_optimization": "level_of_detail"
+        }
+      }
+    },
+    {
+      "id": "viz_dashboard_monitoring_008",
+      "content": "create monitoring dashboard, real-time ocean dashboard, multi-panel visualization, comprehensive data overview, live monitoring interface, operational dashboard for floats",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT f.float_id, f.current_status, f.last_latitude, f.last_longitude, f.last_update, COUNT(DISTINCT p.profile_id) as recent_profiles, AVG(m.temperature) as avg_temp, AVG(m.salinity) as avg_sal, MAX(p.profile_date) as latest_profile FROM floats f LEFT JOIN profiles p ON f.float_id = p.float_id AND p.profile_date >= CURRENT_DATE - INTERVAL {days_back} DAY LEFT JOIN measurements m ON p.profile_id = m.profile_id WHERE f.current_status IN ('ACTIVE', 'INACTIVE') GROUP BY f.float_id, f.current_status, f.last_latitude, f.last_longitude, f.last_update ORDER BY f.last_update DESC",
+        "parameters": {
+          "days_back": {"type": "integer", "required": false, "default": 30, "description": "Days back for recent activity"}
+        },
+        "natural_language_patterns": [
+          "create monitoring dashboard",
+          "real-time ocean dashboard",
+          "multi-panel visualization interface",
+          "comprehensive data overview",
+          "operational dashboard for float monitoring"
+        ],
+        "visualization_config": {
+          "primary": "multi_panel_dashboard",
+          "panel_layout": {
+            "top_left": "active_floats_map",
+            "top_right": "recent_profiles_timeline",
+            "middle_left": "temperature_distribution_current",
+            "middle_right": "float_status_summary",
+            "bottom_full": "real_time_data_table"
+          },
+          "refresh_rate": "auto_5min",
+          "alert_system": "float_communication_status"
+        },
+        "conversation_followups": [
+          "add alert notifications for inactive floats",
+          "customize dashboard layout",
+          "export dashboard as report"
+        ],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "real_time_updates": true,
+          "customizable_panels": true,
+          "alert_integration": ["email", "dashboard_notifications"],
+          "user_preferences": "saveable_layouts"
+        }
+      }
+    },
+    {
+      "id": "viz_seasonal_animation_009",
+      "content": "animate seasonal changes, create time-lapse visualization, seasonal temperature evolution, monthly progression animation, temporal changes animation, show ocean changes over time",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT DATE_FORMAT(p.profile_date, '%Y-%m') as year_month, MONTH(p.profile_date) as month, p.latitude, p.longitude, AVG(m.temperature) as avg_temperature, AVG(m.salinity) as avg_salinity, COUNT(m.measurement_id) as data_points FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure BETWEEN {depth_min} AND {depth_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.temperature IS NOT NULL GROUP BY DATE_FORMAT(p.profile_date, '%Y-%m'), MONTH(p.profile_date), p.latitude, p.longitude ORDER BY p.profile_date ASC",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for animation"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for animation"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for animation"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for animation"},
+          "start_date": {"type": "date", "required": true, "description": "Animation start date"},
+          "end_date": {"type": "date", "required": true, "description": "Animation end date"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for averaging"},
+          "depth_max": {"type": "float", "required": false, "default": 100, "description": "Maximum depth for averaging"}
+        },
+        "natural_language_patterns": [
+          "animate seasonal changes in {region}",
+          "create time-lapse visualization from {start_date}",
+          "seasonal temperature evolution animation",
+          "monthly progression of {parameter}",
+          "show ocean changes over time"
+        ],
+        "visualization_config": {
+          "primary": "animated_geographic_heatmap",
+          "animation_settings": {
+            "frame_rate": "1_frame_per_month",
+            "interpolation": "temporal_smoothing",
+            "color_scale": "consistent_across_frames",
+            "progress_bar": true,
+            "play_controls": ["play", "pause", "step", "speed_control"]
+          },
+          "export_formats": ["gif", "mp4", "webm", "frame_sequence"]
+        },
+        "conversation_followups": [
+          "analyze monsoon impact in animation",
+          "create annual cycle comparison",
+          "add float trajectory overlay to animation"
+        ],
+        "user_expertise": "intermediate",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "animation_engine": "d3_transitions",
+          "performance_optimization": "frame_caching",
+          "sharing_options": ["embed_code", "social_media_formats"]
+        }
+      }
+    },
+    {
+      "id": "viz_publication_quality_010",
+      "content": "create publication figure, high-quality plot for paper, journal-ready visualization, publication-standard chart, scientific publication plot, paper figure with annotations",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity, m.temperature_qc, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_id IN ({profile_ids}) AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_id, m.pressure ASC",
+        "parameters": {
+          "profile_ids": {"type": "string", "required": true, "description": "Comma-separated list of profile IDs for publication figure"}
+        },
+        "natural_language_patterns": [
+          "create publication figure for profiles {profile_ids}",
+          "high-quality plot for research paper",
+          "journal-ready visualization",
+          "publication-standard chart",
+          "scientific figure with proper formatting"
+        ],
+        "visualization_config": {
+          "primary": "publication_multi_panel",
+          "formatting": {
+            "dpi": 300,
+            "font_family": "Arial",
+            "font_sizes": {"title": 14, "labels": 12, "ticks": 10},
+            "line_width": 1.5,
+            "marker_size": 4,
+            "color_palette": "colorblind_friendly"
+          },
+          "layout": {
+            "panels": ["depth_profile", "ts_diagram", "location_map"],
+            "panel_labels": ["(a)", "(b)", "(c)"],
+            "spacing": "journal_standard",
+            "legend_position": "optimized"
+          },
+          "annotations": {
+            "scale_bars": true,
+            "north_arrow": true,
+            "statistical_info": "r2_values",
+            "data_source_citation": true
+          }
+        },
+        "conversation_followups": [
+          "adjust figure dimensions for journal requirements",
+          "modify color scheme for accessibility",
+          "add statistical significance indicators"
+        ],
+        "user_expertise": "advanced",
+        "floatchat_integration": {
+          "dashboard_component": "secondary",
+          "export_options": {
+            "formats": ["eps", "pdf", "svg", "tiff", "png"],
+            "resolutions": ["300dpi", "600dpi", "vector"],
+            "color_modes": ["rgb", "cmyk", "grayscale"]
+          },
+          "citation_generator": "automatic_data_citation",
+          "template_library": "journal_specific_formats"
+        }
+      }
+    },
+    {
+      "id": "viz_contour_plot_011",
+      "content": "create contour plot, show contour visualization, plot data contours, contour chart, create contour lines, contour map visualization, plot contour levels, show iso-lines, contour analysis plot",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, AVG(m.temperature) as avg_temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature IS NOT NULL GROUP BY p.latitude, p.longitude ORDER BY p.latitude, p.longitude",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth"},
+          "depth_max": {"type": "float", "required": false, "default": 100, "description": "Maximum depth"}
+        },
+        "visualization_config": {
+          "primary": "contour_plot_filled",
+          "chart_settings": {
+            "contour_levels": 20,
+            "color_fill": true,
+            "contour_labels": true
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_heatmap_display_012",
+      "content": "show heatmap, create heat map visualization, heatmap display, color heat map, density heatmap, create data heatmap, show color coded data, heatmap chart",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, AVG(m.salinity) as avg_salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.salinity IS NOT NULL GROUP BY p.latitude, p.longitude",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude"}
+        },
+        "visualization_config": {
+          "primary": "density_heatmap",
+          "chart_settings": {
+            "color_scale": "viridis",
+            "interpolation": "bilinear"
+          }
+        },
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "viz_line_chart_013",
+      "content": "create line chart, plot line graph, line plot visualization, show line chart, create trend line, line graph display, plot connected points",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_date, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id = {float_id} AND m.pressure BETWEEN 0 AND 50 GROUP BY p.profile_date ORDER BY p.profile_date",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "Float identifier"}
+        },
+        "visualization_config": {
+          "primary": "line_chart_temporal",
+          "chart_settings": {
+            "line_style": "solid",
+            "marker_style": "circle"
+          }
+        },
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "viz_bar_chart_014",
+      "content": "create bar chart, show bar plot, bar graph visualization, plot bars, bar chart display, create column chart, show data bars",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT f.float_id, COUNT(p.profile_id) as profile_count FROM floats f JOIN profiles p ON f.float_id = p.float_id GROUP BY f.float_id ORDER BY profile_count DESC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": {"type": "integer", "required": false, "default": 10, "description": "Number of floats to show"}
+        },
+        "visualization_config": {
+          "primary": "vertical_bar_chart",
+          "chart_settings": {
+            "bar_color": "steelblue",
+            "orientation": "vertical"
+          }
+        },
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "viz_scatter_diagram_015",
+      "content": "create scatter plot, scatter diagram, plot scatter points, scatter chart visualization, scatter graph, show point cloud, scatter analysis",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT m.temperature, m.salinity, p.profile_date FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.salinity IS NOT NULL LIMIT {point_limit}",
+        "parameters": {
+          "point_limit": {"type": "integer", "required": false, "default": 1000, "description": "Maximum points to plot"}
+        },
+        "visualization_config": {
+          "primary": "scatter_plot_2d",
+          "chart_settings": {
+            "point_size": 3,
+            "transparency": 0.6
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_violin_plot_016",
+      "content": "create violin plot, violin chart, show violin distribution, violin plot visualization, density violin plot, violin diagram",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT m.temperature, CASE WHEN p.latitude > 0 THEN 'North' ELSE 'South' END as hemisphere FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL",
+        "parameters": {},
+        "visualization_config": {
+          "primary": "violin_plot_grouped",
+          "chart_settings": {
+            "show_median": true,
+            "show_quartiles": true
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_polar_plot_017",
+      "content": "create polar plot, polar chart, polar coordinates plot, circular plot, polar visualization, radial plot, polar diagram",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT MONTH(p.profile_date) as month, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL GROUP BY MONTH(p.profile_date)",
+        "parameters": {},
+        "visualization_config": {
+          "primary": "polar_coordinate_plot",
+          "chart_settings": {
+            "angular_grid": true,
+            "radial_grid": true
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_surface_plot_018",
+      "content": "create surface plot, 3D surface visualization, surface chart, show surface data, 3D surface graph, surface mesh plot",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, AVG(m.temperature) as avg_temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL GROUP BY p.latitude, p.longitude",
+        "parameters": {},
+        "visualization_config": {
+          "primary": "3d_surface_plot",
+          "chart_settings": {
+            "surface_style": "mesh",
+            "lighting": "directional"
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_streamline_plot_019",
+      "content": "create streamline plot, flow visualization, streamline chart, show flow patterns, vector flow plot, streamline diagram",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, p.profile_date FROM profiles p WHERE p.float_id = {float_id} ORDER BY p.profile_date",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "Float identifier for trajectory"}
+        },
+        "visualization_config": {
+          "primary": "streamline_flow_plot",
+          "chart_settings": {
+            "arrow_density": "medium",
+            "stream_color": "velocity"
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_matrix_plot_020",
+      "content": "create matrix plot, matrix visualization, correlation matrix, matrix heatmap, data matrix plot, matrix chart display",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT m.temperature, m.salinity, m.pressure FROM measurements m WHERE m.temperature IS NOT NULL AND m.salinity IS NOT NULL LIMIT {sample_limit}",
+        "parameters": {
+          "sample_limit": {"type": "integer", "required": false, "default": 5000, "description": "Sample limit for matrix"}
+        },
+        "visualization_config": {
+          "primary": "correlation_matrix_plot",
+          "chart_settings": {
+            "show_correlation_values": true,
+            "color_scale": "diverging"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_quality_assessment_021",
+      "content": "check data quality, show me quality control, how good is the data, data quality dashboard, check measurement reliability, show quality flags, validate the data, data quality report, check for bad data, quality assessment, show quality statistics, data reliability check, measurement accuracy, check QC flags, quality control chart, show data validation, data quality metrics, check measurement quality, quality assurance, data integrity check, show quality trends, measurement validation, quality monitoring, data screening, check data errors, quality analysis, data quality visualization, QC dashboard, quality control analysis, measurement precision",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, COUNT(CASE WHEN m.temperature_qc = 1 THEN 1 END) as good_temp_count, COUNT(CASE WHEN m.temperature_qc = 2 THEN 1 END) as probably_good_temp_count, COUNT(CASE WHEN m.temperature_qc >= 3 THEN 1 END) as bad_temp_count, COUNT(CASE WHEN m.salinity_qc = 1 THEN 1 END) as good_sal_count, COUNT(CASE WHEN m.salinity_qc = 2 THEN 1 END) as probably_good_sal_count, COUNT(CASE WHEN m.salinity_qc >= 3 THEN 1 END) as bad_sal_count, COUNT(CASE WHEN m.spike_test_flag = 1 THEN 1 END) as spike_pass_count, COUNT(CASE WHEN m.gradient_test_flag = 1 THEN 1 END) as gradient_pass_count, COUNT(m.measurement_id) as total_measurements, (COUNT(CASE WHEN m.temperature_qc = 1 THEN 1 END) * 100.0 / COUNT(m.measurement_id)) as temp_quality_percentage, (COUNT(CASE WHEN m.salinity_qc = 1 THEN 1 END) * 100.0 / COUNT(m.measurement_id)) as sal_quality_percentage FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} GROUP BY p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id ORDER BY p.profile_date DESC",
+        "parameters": {
+          "start_date": {"type": "date", "required": true, "description": "Start date for quality assessment analysis"},
+          "end_date": {"type": "date", "required": true, "description": "End date for quality assessment analysis"},
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for quality assessment region"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for quality assessment region"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for quality assessment region"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for quality assessment region"}
+        },
+        "natural_language_patterns": [
+          "show quality control visualization for {region}",
+          "create QC flag analysis dashboard",
+          "analyze data quality assessment for profiles",
+          "visualize measurement reliability in {region}",
+          "QC statistics plot for {date_range}",
+          "data validation chart for ARGO profiles",
+          "quality control metrics visualization",
+          "measurement accuracy assessment plot",
+          "QC flag distribution analysis",
+          "data reliability dashboard for {float_id}"
+        ],
+        "visualization_config": {
+          "primary": "multi_panel_quality_dashboard",
+          "chart_settings": {
+            "panel_layout": {
+              "top_left": "qc_flag_pie_charts",
+              "top_right": "quality_percentage_bar_chart",
+              "middle_left": "temporal_quality_trends",
+              "middle_right": "spatial_quality_map",
+              "bottom_left": "test_failure_statistics",
+              "bottom_right": "float_quality_comparison"
+            },
+            "color_coding": {
+              "good_quality": "#2E8B57",
+              "probably_good": "#FFD700",
+              "questionable": "#FF6347",
+              "bad_quality": "#DC143C"
+            },
+            "interactive_features": ["drill_down_profiles", "quality_filtering", "temporal_zoom"],
+            "threshold_lines": "quality_standards",
+            "statistical_overlays": ["mean_quality", "quality_trends"]
+          },
+          "secondary_plots": ["quality_histogram", "error_distribution", "validation_metrics"]
+        },
+        "conversation_followups": [
+          "identify profiles with poor quality measurements",
+          "analyze seasonal quality variations",
+          "compare quality between different floats",
+          "show quality improvement over time",
+          "create quality control alert system"
+        ],
+        "user_expertise": "advanced",
+        "indian_ocean_context": "applicable_to_all_regions_with_monsoon_quality_impacts",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "alert_system": {
+            "quality_thresholds": {"temperature": 95, "salinity": 90},
+            "notification_triggers": ["below_threshold", "sudden_quality_drop"],
+            "alert_visualization": "quality_status_indicators"
+          },
+          "export_options": ["quality_report_pdf", "qc_summary_csv", "quality_dashboard_png"],
+          "real_time_monitoring": true,
+          "quality_metrics_api": "automated_quality_scoring"
+        }
+      }
+    },
+    {
+      "id": "viz_multi_float_comparison_022",
+      "content": "compare floats, compare multiple floats, show float comparison, compare different floats, float comparison chart, side by side floats, compare float data, multiple float analysis, compare float trajectories, show differences between floats, float comparison dashboard, compare float performance, which float is better, compare float measurements, show float statistics, float vs float comparison, multi-float visualization, compare several floats, float comparison plot, analyze multiple floats, compare float quality, float performance comparison, show float differences, compare float paths, multiple float study",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT f.float_id, f.deployment_date, f.deployment_latitude, f.deployment_longitude, f.current_status, f.last_update, COUNT(DISTINCT p.profile_id) as total_profiles, AVG(m.temperature) as avg_temperature, AVG(m.salinity) as avg_salinity, STDDEV(m.temperature) as temp_variability, STDDEV(m.salinity) as sal_variability, MIN(p.profile_date) as first_profile, MAX(p.profile_date) as last_profile, COUNT(DISTINCT DATE_FORMAT(p.profile_date, '%Y-%m')) as active_months, AVG(CASE WHEN m.pressure BETWEEN 0 AND 100 THEN m.temperature END) as surface_temp_avg, AVG(CASE WHEN m.pressure BETWEEN 500 AND 1000 THEN m.temperature END) as mid_depth_temp_avg, AVG(CASE WHEN m.pressure > 1500 THEN m.temperature END) as deep_temp_avg, (COUNT(CASE WHEN m.temperature_qc = 1 THEN 1 END) * 100.0 / COUNT(m.measurement_id)) as quality_score FROM floats f LEFT JOIN profiles p ON f.float_id = p.float_id LEFT JOIN measurements m ON p.profile_id = m.profile_id WHERE f.float_id IN ({float_ids}) AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' GROUP BY f.float_id, f.deployment_date, f.deployment_latitude, f.deployment_longitude, f.current_status, f.last_update ORDER BY f.deployment_date ASC",
+        "parameters": {
+          "float_ids": {"type": "string", "required": true, "description": "Comma-separated list of float IDs for comparison"},
+          "start_date": {"type": "date", "required": false, "default": "2020-01-01", "description": "Start date for comparison period"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for comparison period"}
+        },
+        "natural_language_patterns": [
+          "compare floats {float_ids}",
+          "multi-float visualization dashboard",
+          "side-by-side analysis of floats {float_ids}",
+          "comparative study of multiple floats",
+          "float comparison matrix for {float_ids}",
+          "multiple float trajectory comparison",
+          "comparative float performance analysis",
+          "multi-float parameter comparison",
+          "show differences between floats {float_ids}",
+          "comparative oceanographic analysis of floats"
+        ],
+        "visualization_config": {
+          "primary": "multi_float_comparison_grid",
+          "chart_settings": {
+            "layout_style": "comparative_grid",
+            "comparison_panels": {
+              "trajectories_map": "overlay_all_floats_with_different_colors",
+              "time_series_comparison": "synchronized_x_axis_multiple_y_series",
+              "statistical_comparison": "radar_chart_normalized_metrics",
+              "profile_comparison": "side_by_side_depth_profiles",
+              "quality_comparison": "comparative_quality_scores",
+              "deployment_analysis": "deployment_timeline_and_locations"
+            },
+            "color_palette": "distinct_float_colors",
+            "synchronization": "linked_brushing_across_panels",
+            "normalization": "optional_parameter_normalization"
+          },
+          "interactive_features": [
+            "float_selection_toggle",
+            "parameter_selection_dropdown",
+            "time_period_synchronization",
+            "spatial_region_filtering",
+            "quality_threshold_adjustment"
+          ],
+          "statistical_analysis": [
+            "correlation_matrix_between_floats",
+            "similarity_scoring",
+            "cluster_analysis",
+            "anomaly_detection_across_floats"
+          ]
+        },
+        "conversation_followups": [
+          "identify the best performing float",
+          "analyze deployment strategy effectiveness",
+          "find floats with similar behavior patterns",
+          "compare float longevity and data quality",
+          "analyze regional differences between float locations"
+        ],
+        "user_expertise": "intermediate",
+        "indian_ocean_context": "multi_float_monsoon_response_comparison",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "comparison_tools": {
+            "float_selector": "multi_select_with_metadata_preview",
+            "metric_calculator": "automated_comparison_statistics",
+            "ranking_system": "performance_based_float_ranking"
+          },
+          "export_options": [
+            "comparison_report_pdf",
+            "comparative_statistics_csv",
+            "multi_float_dashboard_html",
+            "comparison_presentation_slides"
+          ],
+          "sharing_features": "collaborative_float_comparison_sessions"
+        }
+      }
+    },
+    {
+      "id": "viz_depth_slice_023",
+      "content": "show depth slice, horizontal slice at depth, depth level map, show at specific depth, temperature at depth, horizontal cross section, depth layer visualization, show horizontal slice, plot at constant depth, depth slice map, horizontal temperature map, show depth level, plot depth slice, depth layer plot, horizontal ocean slice, temperature slice at depth, show water properties at depth, depth specific analysis, horizontal depth map, constant depth visualization, depth layer analysis, show ocean at depth, horizontal depth section, depth slice chart",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, p.profile_date, p.float_id, p.profile_id, m.pressure, m.depth, m.temperature, m.salinity, ABS(m.pressure - {target_depth}) as depth_difference FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.pressure BETWEEN {target_depth} - {depth_tolerance} AND {target_depth} + {depth_tolerance} AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') ORDER BY p.latitude, p.longitude, depth_difference ASC",
+        "parameters": {
+          "target_depth": {"type": "float", "required": true, "description": "Target depth/pressure level for horizontal slice (dbar)"},
+          "depth_tolerance": {"type": "float", "required": false, "default": 25, "description": "Acceptable depth range around target depth (dbar)"},
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for depth slice"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for depth slice"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for depth slice"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for depth slice"},
+          "start_date": {"type": "date", "required": false, "default": "2023-01-01", "description": "Start date for depth slice analysis"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for depth slice analysis"}
+        },
+        "natural_language_patterns": [
+          "show horizontal depth slice at {target_depth} meters",
+          "create depth level analysis at {target_depth} dbar",
+          "horizontal ocean section at depth {target_depth}",
+          "depth slice temperature map for {target_depth} meters",
+          "constant depth mapping at {target_depth} dbar",
+          "isobaric surface visualization at {target_depth}",
+          "horizontal water property distribution at depth {target_depth}",
+          "depth level contour plot at {target_depth} meters",
+          "constant pressure surface analysis at {target_depth} dbar",
+          "horizontal slice through ocean data at {target_depth}"
+        ],
+        "visualization_config": {
+          "primary": "horizontal_slice_interpolated_map",
+          "chart_settings": {
+            "interpolation_method": "objective_analysis_barnes",
+            "contour_levels": {
+              "temperature": "auto_20_levels",
+              "salinity": "auto_15_levels"
+            },
+            "color_schemes": {
+              "temperature": "thermal_colormap",
+              "salinity": "haline_colormap"
+            },
+            "basemap_style": "bathymetry_contours",
+            "data_points_overlay": "measurement_locations",
+            "interpolation_grid": "0.25_degree_resolution"
+          },
+          "dual_parameter_display": {
+            "primary_parameter": "temperature",
+            "secondary_parameter": "salinity_contours",
+            "overlay_style": "contour_lines_on_filled_temperature"
+          },
+          "statistical_analysis": {
+            "spatial_statistics": "kriging_variance_estimation",
+            "gradient_analysis": "horizontal_gradients",
+            "feature_detection": "fronts_and_eddies"
+          }
+        },
+        "conversation_followups": [
+          "compare with different depth levels",
+          "create depth slice animation through water column",
+          "analyze horizontal gradients at this depth",
+          "identify water mass boundaries",
+          "compare seasonal variations at this depth level"
+        ],
+        "user_expertise": "advanced",
+        "indian_ocean_context": "monsoon_thermocline_analysis",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "depth_selector": {
+            "interface": "interactive_depth_slider",
+            "preset_levels": ["surface", "thermocline", "intermediate", "deep"],
+            "custom_depth_input": true
+          },
+          "interpolation_controls": {
+            "method_selection": ["barnes", "kriging", "inverse_distance"],
+            "grid_resolution_adjustment": true,
+            "quality_threshold_filtering": true
+          },
+          "export_options": [
+            "depth_slice_netcdf",
+            "interpolated_grid_csv",
+            "high_resolution_image",
+            "3d_visualization_data"
+          ]
+        }
+      }
+    },
+    {
+      "id": "viz_water_mass_analysis_024",
+      "content": "water mass analysis, identify water masses, T-S diagram, water mass classification, show water masses, water mass types, classify ocean water, water mass properties, temperature salinity plot, water mass identification, different water types, water mass boundaries, ocean water classification, T-S scatter plot, water mass mixing, identify different waters, water mass distribution, water types in ocean, classify by temperature salinity, water mass mapping, show water types, water mass analysis plot, ocean water types",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity, m.temperature_qc, m.salinity_qc, CASE WHEN m.temperature > 28 AND m.salinity < 34.5 THEN 'Indian_Ocean_Surface_Water' WHEN m.temperature BETWEEN 15 AND 28 AND m.salinity BETWEEN 34.5 AND 35.5 THEN 'Indian_Ocean_Thermocline_Water' WHEN m.temperature BETWEEN 8 AND 15 AND m.salinity BETWEEN 34.4 AND 34.8 THEN 'Indian_Ocean_Intermediate_Water' WHEN m.temperature BETWEEN 2 AND 8 AND m.salinity BETWEEN 34.6 AND 34.9 THEN 'Circumpolar_Deep_Water' WHEN m.temperature < 2 AND m.salinity > 34.6 THEN 'Antarctic_Bottom_Water' ELSE 'Mixed_or_Transitional_Water' END as water_mass_type, SQRT(POW(m.temperature - 20, 2) + POW((m.salinity - 35) * 5, 2)) as distance_from_reference FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') AND m.pressure BETWEEN {depth_min} AND {depth_max} ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for water mass analysis"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for water mass analysis"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for water mass analysis"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for water mass analysis"},
+          "start_date": {"type": "date", "required": false, "default": "2020-01-01", "description": "Start date for water mass analysis"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for water mass analysis"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for water mass analysis"},
+          "depth_max": {"type": "float", "required": false, "default": 2000, "description": "Maximum depth for water mass analysis"}
+        },
+        "natural_language_patterns": [
+          "analyze water masses in {region}",
+          "water mass identification plot for {region}",
+          "T-S diagram with water mass classification",
+          "water mass boundary mapping in {region}",
+          "identify different water masses",
+          "water mass property visualization",
+          "water mass distribution analysis",
+          "water mass mixing diagram",
+          "classify water masses using T-S properties",
+          "water mass characteristic analysis for {region}"
+        ],
+        "visualization_config": {
+          "primary": "multi_panel_water_mass_analysis",
+          "chart_settings": {
+            "ts_diagram": {
+              "color_coding": "water_mass_type",
+              "density_contours": true,
+              "water_mass_boundaries": "theoretical_curves",
+              "clustering_overlay": "kmeans_classification"
+            },
+            "spatial_distribution": {
+              "water_mass_mapping": "dominant_type_per_location",
+              "mixing_regions": "transitional_zones",
+              "seasonal_variations": "temporal_water_mass_changes"
+            },
+            "depth_distribution": {
+              "water_mass_by_depth": "stacked_area_chart",
+              "vertical_structure": "water_mass_profile_analysis"
+            },
+            "water_mass_statistics": {
+              "volume_estimates": "water_mass_volume_calculation",
+              "property_statistics": "mean_std_by_water_mass",
+              "mixing_ratios": "end_member_mixing_analysis"
+            }
+          },
+          "classification_methods": [
+            "temperature_salinity_thresholds",
+            "machine_learning_clustering",
+            "principal_component_analysis",
+            "gaussian_mixture_models"
+          ]
+        },
+        "conversation_followups": [
+          "analyze water mass mixing processes",
+          "identify water mass formation regions",
+          "track water mass transformation over time",
+          "compare water masses between seasons",
+          "analyze water mass transport pathways"
+        ],
+        "user_expertise": "advanced",
+        "indian_ocean_context": "indian_ocean_water_mass_classification_system",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "water_mass_database": {
+            "reference_properties": "indian_ocean_water_mass_definitions",
+            "classification_algorithms": "automatic_water_mass_identification",
+            "mixing_analysis": "end_member_mixing_calculations"
+          },
+          "interactive_features": [
+            "water_mass_selection_filtering",
+            "property_threshold_adjustment",
+            "temporal_water_mass_tracking",
+            "spatial_water_mass_boundaries"
+          ],
+          "export_options": [
+            "water_mass_classification_csv",
+            "ts_diagram_publication_quality",
+            "water_mass_distribution_maps",
+            "water_mass_analysis_report"
+          ]
+        }
+      }
+    },
+    {
+      "id": "viz_gradient_analysis_025",
+      "content": "temperature gradient, salinity gradient, show gradients, ocean gradients, gradient analysis, vertical gradients, gradient plot, temperature change with depth, gradient visualization, stratification analysis, gradient strength, ocean stratification, gradient mapping, temperature variation, gradient field, show ocean layers, stratification plot, gradient patterns, mixing analysis, stability analysis, ocean mixing, gradient magnitude, vertical structure, temperature profile gradients, ocean layering",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "WITH gradient_calc AS (SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity, LAG(m.temperature) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) as prev_temp, LAG(m.salinity) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) as prev_sal, LAG(m.pressure) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) as prev_pressure, LEAD(m.temperature) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) as next_temp, LEAD(m.salinity) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) as next_sal, LEAD(m.pressure) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) as next_pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL ORDER BY p.profile_id, m.pressure) SELECT profile_id, profile_date, latitude, longitude, float_id, pressure, depth, temperature, salinity, CASE WHEN prev_pressure IS NOT NULL THEN (temperature - prev_temp) / (pressure - prev_pressure) END as temp_gradient, CASE WHEN prev_pressure IS NOT NULL THEN (salinity - prev_sal) / (pressure - prev_pressure) END as sal_gradient, CASE WHEN prev_pressure IS NOT NULL AND next_pressure IS NOT NULL THEN ((next_temp - prev_temp) / (next_pressure - prev_pressure)) END as temp_gradient_centered, CASE WHEN prev_pressure IS NOT NULL AND next_pressure IS NOT NULL THEN ((next_sal - prev_sal) / (next_pressure - prev_pressure)) END as sal_gradient_centered, SQRT(POW(CASE WHEN prev_pressure IS NOT NULL THEN (temperature - prev_temp) / (pressure - prev_pressure) END, 2) + POW(CASE WHEN prev_pressure IS NOT NULL THEN (salinity - prev_sal) / (pressure - prev_pressure) END, 2)) as gradient_magnitude FROM gradient_calc WHERE pressure BETWEEN {depth_min} AND {depth_max} ORDER BY profile_date DESC, pressure ASC",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for gradient analysis"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for gradient analysis"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for gradient analysis"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for gradient analysis"},
+          "start_date": {"type": "date", "required": false, "default": "2023-01-01", "description": "Start date for gradient analysis"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for gradient analysis"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for gradient calculation"},
+          "depth_max": {"type": "float", "required": false, "default": 1000, "description": "Maximum depth for gradient calculation"}
+        },
+        "natural_language_patterns": [
+          "show temperature gradient visualization for {region}",
+          "analyze salinity gradients in {region}",
+          "create gradient field visualization",
+          "plot vertical gradient analysis",
+          "ocean stratification visualization",
+          "gradient magnitude plotting for {region}",
+          "temperature stratification analysis",
+          "vertical stability analysis plot",
+          "gradient strength visualization",
+          "ocean mixing analysis through gradients"
+        ],
+        "visualization_config": {
+          "primary": "multi_panel_gradient_analysis",
+          "chart_settings": {
+            "vertical_gradient_profile": {
+              "x_axis": "gradient_magnitude",
+              "y_axis": "depth_inverted",
+              "color_coding": "gradient_strength",
+              "smoothing": "running_average_filter",
+              "threshold_lines": "stratification_indices"
+            },
+            "spatial_gradient_map": {
+              "vector_field": "gradient_vectors",
+              "magnitude_background": "gradient_strength_heatmap",
+              "convergence_divergence": "gradient_flow_analysis"
+            },
+            "gradient_statistics": {
+              "histogram": "gradient_magnitude_distribution",
+              "percentiles": "gradient_strength_percentiles",
+              "temporal_trends": "gradient_evolution_timeseries"
+            },
+            "stratification_analysis": {
+              "buoyancy_frequency": "brunt_vaisala_frequency",
+              "richardson_number": "shear_stratification_ratio",
+              "mixed_layer_depth": "gradient_based_mld_detection"
+            }
+          },
+          "calculation_methods": {
+            "gradient_computation": "centered_difference_method",
+            "smoothing_filters": "gaussian_kernel_smoothing",
+            "outlier_handling": "robust_gradient_estimation"
+          }
+        },
+        "conversation_followups": [
+          "identify strong stratification regions",
+          "analyze seasonal gradient variations",
+          "detect mixing events from gradient changes",
+          "compare gradient patterns between regions",
+          "calculate mixing layer depth from gradients"
+        ],
+        "user_expertise": "advanced",
+        "indian_ocean_context": "monsoon_driven_stratification_changes",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "gradient_calculator": {
+            "real_time_computation": "dynamic_gradient_calculation",
+            "smoothing_controls": "adjustable_filter_parameters",
+            "threshold_settings": "user_defined_gradient_thresholds"
+          },
+          "visualization_tools": {
+            "vector_field_plotting": "arrow_based_gradient_visualization",
+            "magnitude_mapping": "color_coded_gradient_strength",
+            "profile_analysis": "depth_resolved_gradient_plots"
+          },
+          "export_options": [
+            "gradient_field_netcdf",
+            "stratification_metrics_csv",
+            "gradient_analysis_plots",
+            "mixing_analysis_report"
+          ]
+        }
+      }
+    },
+    {
+      "id": "viz_anomaly_detection_026",
+      "content": "find anomalies, detect outliers, unusual data, anomaly detection, outlier analysis, find unusual values, detect bad data, anomaly plot, outlier detection, unusual measurements, find strange data, anomaly analysis, detect abnormal data, outlier visualization, unusual patterns, anomaly identification, find weird data, detect anomalies in ocean data, outliers in temperature, unusual ocean data, anomaly dashboard, strange measurements, detect data problems, find data issues",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "WITH statistics AS (SELECT AVG(m.temperature) as mean_temp, STDDEV(m.temperature) as std_temp, AVG(m.salinity) as mean_sal, STDDEV(m.salinity) as std_sal FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL), anomaly_calc AS (SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity, s.mean_temp, s.std_temp, s.mean_sal, s.std_sal, ABS(m.temperature - s.mean_temp) / s.std_temp as temp_z_score, ABS(m.salinity - s.mean_sal) / s.std_sal as sal_z_score, CASE WHEN ABS(m.temperature - s.mean_temp) / s.std_temp > {anomaly_threshold} THEN 1 ELSE 0 END as temp_anomaly, CASE WHEN ABS(m.salinity - s.mean_sal) / s.std_sal > {anomaly_threshold} THEN 1 ELSE 0 END as sal_anomaly FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id CROSS JOIN statistics s WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL) SELECT *, CASE WHEN temp_anomaly = 1 OR sal_anomaly = 1 THEN 1 ELSE 0 END as is_anomaly, CASE WHEN temp_anomaly = 1 AND sal_anomaly = 1 THEN 'Both_Parameters' WHEN temp_anomaly = 1 THEN 'Temperature_Only' WHEN sal_anomaly = 1 THEN 'Salinity_Only' ELSE 'Normal' END as anomaly_type FROM anomaly_calc ORDER BY temp_z_score DESC, sal_z_score DESC",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for anomaly detection"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for anomaly detection"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for anomaly detection"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for anomaly detection"},
+          "start_date": {"type": "date", "required": false, "default": "2023-01-01", "description": "Start date for anomaly analysis"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for anomaly analysis"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for anomaly detection"},
+          "depth_max": {"type": "float", "required": false, "default": 1000, "description": "Maximum depth for anomaly detection"},
+          "anomaly_threshold": {"type": "float", "required": false, "default": 2.5, "description": "Z-score threshold for anomaly detection"}
+        },
+        "natural_language_patterns": [
+          "detect anomalies in ocean data for {region}",
+          "find unusual measurements in {region}",
+          "identify outliers in temperature and salinity",
+          "anomaly detection visualization for {region}",
+          "show abnormal data patterns",
+          "detect unusual oceanographic measurements",
+          "identify statistical outliers in data",
+          "anomaly analysis dashboard for {region}",
+          "find data quality issues through anomaly detection",
+          "visualize unusual measurement patterns"
+        ],
+        "visualization_config": {
+          "primary": "multi_panel_anomaly_dashboard",
+          "chart_settings": {
+            "spatial_anomaly_map": {
+              "anomaly_markers": "color_coded_by_anomaly_type",
+              "base_map": "regional_bathymetry",
+              "clustering": "anomaly_spatial_clustering",
+              "severity_scaling": "marker_size_by_z_score"
+            },
+            "temporal_anomaly_trends": {
+              "time_series": "anomaly_count_over_time",
+              "seasonal_patterns": "anomaly_seasonal_analysis",
+              "detection_timeline": "anomaly_occurrence_timeline"
+            },
+            "statistical_analysis": {
+              "z_score_distribution": "anomaly_score_histogram",
+              "parameter_comparison": "temperature_vs_salinity_anomalies",
+              "threshold_analysis": "anomaly_sensitivity_analysis"
+            },
+            "anomaly_characterization": {
+              "magnitude_analysis": "anomaly_strength_distribution",
+              "type_breakdown": "anomaly_category_pie_chart",
+              "depth_distribution": "anomalies_by_depth_level"
+            }
+          },
+          "detection_algorithms": {
+            "statistical_methods": ["z_score", "iqr_method", "isolation_forest"],
+            "machine_learning": ["one_class_svm", "local_outlier_factor"],
+            "domain_specific": ["oceanographic_range_checks", "climatological_comparison"]
+          }
+        },
+        "conversation_followups": [
+          "investigate specific anomalous measurements",
+          "adjust anomaly detection sensitivity",
+          "analyze causes of detected anomalies",
+          "compare anomaly patterns between regions",
+          "create anomaly alert system"
+        ],
+        "user_expertise": "intermediate",
+        "indian_ocean_context": "monsoon_extreme_event_detection",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "anomaly_engine": {
+            "real_time_detection": "continuous_anomaly_monitoring",
+            "threshold_adjustment": "dynamic_threshold_optimization",
+            "false_positive_reduction": "contextual_anomaly_filtering"
+          },
+          "alert_system": {
+            "notification_triggers": "configurable_anomaly_alerts",
+            "severity_levels": "anomaly_severity_classification",
+            "investigation_tools": "anomaly_drill_down_analysis"
+          },
+          "export_options": [
+            "anomaly_report_pdf",
+            "detected_outliers_csv",
+            "anomaly_investigation_dashboard",
+            "quality_control_recommendations"
+          ]
+        }
+      }
+    },
+    {
+      "id": "viz_cross_section_027",
+      "content": "ocean cross section, vertical section, transect plot, cross section analysis, vertical slice, ocean section, transect visualization, cross sectional plot, vertical transect, ocean transect, section through ocean, cross section temperature, vertical ocean section, transect analysis, cross section chart, section plot, vertical slice plot, ocean vertical section, transect data, cross section mapping",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "WITH transect_points AS (SELECT {start_lat} + (({end_lat} - {start_lat}) * (ROW_NUMBER() OVER (ORDER BY 1) - 1) / 99) as transect_lat, {start_lon} + (({end_lon} - {start_lon}) * (ROW_NUMBER() OVER (ORDER BY 1) - 1) / 99) as transect_lon, (ROW_NUMBER() OVER (ORDER BY 1) - 1) as point_index FROM (SELECT 1 as dummy UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10) t1, (SELECT 1 as dummy UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10) t2 LIMIT 100), nearest_profiles AS (SELECT tp.point_index, tp.transect_lat, tp.transect_lon, p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, SQRT(POW(p.latitude - tp.transect_lat, 2) + POW(p.longitude - tp.transect_lon, 2)) as distance, ROW_NUMBER() OVER (PARTITION BY tp.point_index ORDER BY SQRT(POW(p.latitude - tp.transect_lat, 2) + POW(p.longitude - tp.transect_lon, 2))) as distance_rank FROM transect_points tp JOIN profiles p ON SQRT(POW(p.latitude - tp.transect_lat, 2) + POW(p.longitude - tp.transect_lon, 2)) < {max_distance} WHERE p.profile_date BETWEEN '{start_date}' AND '{end_date}') SELECT np.point_index, np.transect_lat, np.transect_lon, np.profile_id, np.profile_date, np.latitude, np.longitude, np.float_id, np.distance, m.pressure, m.depth, m.temperature, m.salinity, m.temperature_qc, m.salinity_qc, SQRT(POW(np.transect_lat - {start_lat}, 2) + POW(np.transect_lon - {start_lon}, 2)) * 111000 as distance_from_start_m FROM nearest_profiles np JOIN measurements m ON np.profile_id = m.profile_id WHERE np.distance_rank = 1 AND m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') ORDER BY np.point_index, m.pressure ASC",
+        "parameters": {
+          "start_lat": {"type": "float", "required": true, "description": "Starting latitude of transect line"},
+          "start_lon": {"type": "float", "required": true, "description": "Starting longitude of transect line"},
+          "end_lat": {"type": "float", "required": true, "description": "Ending latitude of transect line"},
+          "end_lon": {"type": "float", "required": true, "description": "Ending longitude of transect line"},
+          "max_distance": {"type": "float", "required": false, "default": 0.5, "description": "Maximum distance from transect line to include profiles (degrees)"},
+          "start_date": {"type": "date", "required": false, "default": "2023-01-01", "description": "Start date for transect analysis"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for transect analysis"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for cross-section"},
+          "depth_max": {"type": "float", "required": false, "default": 2000, "description": "Maximum depth for cross-section"}
+        },
+        "natural_language_patterns": [
+          "create ocean cross-section from {start_lat},{start_lon} to {end_lat},{end_lon}",
+          "vertical transect analysis between coordinates",
+          "cross-sectional ocean plot along transect line",
+          "vertical section visualization",
+          "ocean transect from point A to point B",
+          "cross-section temperature analysis along line",
+          "vertical slice through ocean data",
+          "sectional analysis of ocean parameters",
+          "transect visualization dashboard",
+          "cross-sectional oceanographic analysis"
+        ],
+        "visualization_config": {
+          "primary": "vertical_transect_contour_plot",
+          "chart_settings": {
+            "coordinate_system": {
+              "x_axis": "distance_along_transect_km",
+              "y_axis": "depth_inverted_meters",
+              "color_parameter": "temperature_or_salinity"
+            },
+            "interpolation": {
+              "method": "2d_objective_analysis",
+              "grid_resolution": "1km_horizontal_5m_vertical",
+              "smoothing": "gaussian_kernel_smoothing"
+            },
+            "contour_settings": {
+              "temperature_contours": "1_degree_intervals",
+              "salinity_contours": "0.1_psu_intervals",
+              "density_contours": "potential_density_overlay"
+            },
+            "topography": {
+              "bathymetry_profile": "bottom_topography_along_transect",
+              "seafloor_mask": "below_bottom_masking"
+            }
+          },
+          "dual_parameter_display": {
+            "temperature_panel": "upper_plot_panel",
+            "salinity_panel": "lower_plot_panel",
+            "synchronized_axes": "common_distance_depth_axes"
+          },
+          "analysis_tools": {
+            "water_mass_identification": "transect_water_mass_boundaries",
+            "front_detection": "horizontal_gradient_analysis",
+            "mixing_analysis": "cross_transect_mixing_indicators"
+          }
+        },
+        "conversation_followups": [
+          "analyze water mass boundaries along transect",
+          "identify oceanic fronts in cross-section",
+          "compare transects from different time periods",
+          "add current velocity data to transect",
+          "create animated transect through time"
+        ],
+        "user_expertise": "advanced",
+        "indian_ocean_context": "monsoon_front_transect_analysis",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "transect_designer": {
+            "interactive_line_drawing": "map_based_transect_selection",
+            "coordinate_input": "precise_lat_lon_specification",
+            "predefined_transects": "common_oceanographic_sections"
+          },
+          "visualization_controls": {
+            "parameter_selection": "temperature_salinity_density_options",
+            "depth_range_control": "adjustable_depth_limits",
+            "interpolation_settings": "method_and_resolution_controls"
+          },
+          "export_options": [
+            "transect_data_netcdf",
+            "cross_section_publication_figure",
+            "transect_analysis_report",
+            "3d_transect_visualization"
+          ]
+        }
+      }
+    },
+    {
+      "id": "viz_climatology_comparison_028",
+      "content": "compare with climatology, climate comparison, historical comparison, climatology analysis, compare with climate data, climate vs observation, climatology comparison, climate anomaly, compare with normal, climate deviation, historical data comparison, climatology vs current, climate benchmark, compare climate patterns, climatology reference, climate analysis comparison, long term climate comparison, climate trend comparison",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "WITH monthly_climatology AS (SELECT MONTH(p.profile_date) as month, FLOOR(p.latitude / {grid_size}) * {grid_size} as lat_grid, FLOOR(p.longitude / {grid_size}) * {grid_size} as lon_grid, AVG(m.temperature) as clim_temp_mean, STDDEV(m.temperature) as clim_temp_std, AVG(m.salinity) as clim_sal_mean, STDDEV(m.salinity) as clim_sal_std, COUNT(m.measurement_id) as clim_sample_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_date BETWEEN '{climatology_start}' AND '{climatology_end}' AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL GROUP BY MONTH(p.profile_date), FLOOR(p.latitude / {grid_size}) * {grid_size}, FLOOR(p.longitude / {grid_size}) * {grid_size} HAVING COUNT(m.measurement_id) >= {min_samples}), current_data AS (SELECT MONTH(p.profile_date) as month, FLOOR(p.latitude / {grid_size}) * {grid_size} as lat_grid, FLOOR(p.longitude / {grid_size}) * {grid_size} as lon_grid, AVG(m.temperature) as current_temp_mean, STDDEV(m.temperature) as current_temp_std, AVG(m.salinity) as current_sal_mean, STDDEV(m.salinity) as current_sal_std, COUNT(m.measurement_id) as current_sample_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_date BETWEEN '{comparison_start}' AND '{comparison_end}' AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL GROUP BY MONTH(p.profile_date), FLOOR(p.latitude / {grid_size}) * {grid_size}, FLOOR(p.longitude / {grid_size}) * {grid_size} HAVING COUNT(m.measurement_id) >= {min_samples}) SELECT c.month, c.lat_grid, c.lon_grid, c.clim_temp_mean, c.clim_temp_std, c.clim_sal_mean, c.clim_sal_std, cd.current_temp_mean, cd.current_temp_std, cd.current_sal_mean, cd.current_sal_std, (cd.current_temp_mean - c.clim_temp_mean) as temp_anomaly, (cd.current_sal_mean - c.clim_sal_mean) as sal_anomaly, (cd.current_temp_mean - c.clim_temp_mean) / c.clim_temp_std as temp_anomaly_normalized, (cd.current_sal_mean - c.clim_sal_mean) / c.clim_sal_std as sal_anomaly_normalized, c.clim_sample_count, cd.current_sample_count FROM monthly_climatology c JOIN current_data cd ON c.month = cd.month AND c.lat_grid = cd.lat_grid AND c.lon_grid = cd.lon_grid ORDER BY c.month, c.lat_grid, c.lon_grid",
+        "parameters": {
+          "climatology_start": {"type": "date", "required": false, "default": "2000-01-01", "description": "Start date for climatology reference period"},
+          "climatology_end": {"type": "date", "required": false, "default": "2020-12-31", "description": "End date for climatology reference period"},
+          "comparison_start": {"type": "date", "required": true, "description": "Start date for current data comparison"},
+          "comparison_end": {"type": "date", "required": true, "description": "End date for current data comparison"},
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for climatology comparison"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for climatology comparison"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for climatology comparison"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for climatology comparison"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for climatology analysis"},
+          "depth_max": {"type": "float", "required": false, "default": 100, "description": "Maximum depth for climatology analysis"},
+          "grid_size": {"type": "float", "required": false, "default": 1.0, "description": "Grid size in degrees for climatology calculation"},
+          "min_samples": {"type": "integer", "required": false, "default": 10, "description": "Minimum samples required for climatology calculation"}
+        },
+        "natural_language_patterns": [
+          "compare current data with climatology for {region}",
+          "climatological analysis for {region} in {comparison_period}",
+          "climate normal comparison visualization",
+          "climatological deviation analysis for {region}",
+          "compare with historical climate data",
+          "climate anomaly visualization for {region}",
+          "climatology vs observation analysis",
+          "climate comparison dashboard for {region}",
+          "climatological benchmark analysis",
+          "climate deviation visualization"
+        ],
+        "visualization_config": {
+          "primary": "multi_panel_climatology_comparison",
+          "chart_settings": {
+            "anomaly_maps": {
+              "temperature_anomaly": "spatial_anomaly_heatmap",
+              "salinity_anomaly": "spatial_anomaly_heatmap",
+              "normalized_anomaly": "standardized_deviation_map",
+              "significance_overlay": "statistical_significance_contours"
+            },
+            "time_series_comparison": {
+              "climatology_envelope": "mean_plus_minus_std",
+              "current_observations": "overlaid_timeseries",
+              "anomaly_bars": "monthly_anomaly_bars",
+              "trend_analysis": "linear_trend_overlay"
+            },
+            "statistical_analysis": {
+              "pdf_comparison": "probability_density_functions",
+              "percentile_analysis": "quantile_quantile_plots",
+              "correlation_analysis": "climatology_vs_current_correlation"
+            },
+            "regional_summaries": {
+              "anomaly_statistics": "regional_anomaly_summary_table",
+              "extremes_analysis": "record_breaking_events",
+              "seasonal_patterns": "seasonal_anomaly_cycle"
+            }
+          },
+          "statistical_tests": {
+            "significance_testing": "t_test_for_mean_differences",
+            "trend_detection": "mann_kendall_trend_test",
+            "change_point_analysis": "pettitt_change_point_test"
+          }
+        },
+        "conversation_followups": [
+          "identify regions with significant climate anomalies",
+          "analyze trends in climatological deviations",
+          "compare seasonal climatology patterns",
+          "investigate extreme climate events",
+          "assess climate change signals in data"
+        ],
+        "user_expertise": "advanced",
+        "indian_ocean_context": "indian_ocean_climate_variability_analysis",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "climatology_database": {
+            "reference_periods": "configurable_climatology_baselines",
+            "climate_indices": "integration_with_climate_indices",
+            "external_data": "satellite_climatology_comparison"
+          },
+          "analysis_tools": {
+            "anomaly_calculator": "real_time_anomaly_computation",
+            "significance_testing": "statistical_significance_assessment",
+            "trend_analyzer": "climate_trend_detection_tools"
+          },
+          "export_options": [
+            "climate_comparison_report",
+            "anomaly_analysis_netcdf",
+            "climatology_summary_pdf",
+            "climate_dashboard_html"
+          ]
+        }
+      }
+    },
+    {
+      "id": "viz_export_formats_029",
+      "content": "export data, download data, save data, export to file, data export, save to csv, export to excel, download results, export visualization, save plot, export chart, data download, export to format, save results, export analysis, download chart, save to file, data export options, export dashboard, save visualization",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT 'export_metadata' as export_type, COUNT(DISTINCT f.float_id) as float_count, COUNT(DISTINCT p.profile_id) as profile_count, COUNT(m.measurement_id) as measurement_count, MIN(p.profile_date) as data_start_date, MAX(p.profile_date) as data_end_date, MIN(p.latitude) as min_latitude, MAX(p.latitude) as max_latitude, MIN(p.longitude) as min_longitude, MAX(p.longitude) as max_longitude, MIN(m.pressure) as min_pressure, MAX(m.pressure) as max_pressure, MIN(m.temperature) as min_temperature, MAX(m.temperature) as max_temperature, MIN(m.salinity) as min_salinity, MAX(m.salinity) as max_salinity, ROUND(SUM(CASE WHEN m.temperature_qc = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(m.measurement_id), 2) as temperature_quality_percent, ROUND(SUM(CASE WHEN m.salinity_qc = 1 THEN 1 ELSE 0 END) * 100.0 / COUNT(m.measurement_id), 2) as salinity_quality_percent, '{export_format}' as requested_format, '{visualization_type}' as visualization_type, CURRENT_TIMESTAMP as export_timestamp FROM floats f JOIN profiles p ON f.float_id = p.float_id JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.pressure BETWEEN {depth_min} AND {depth_max}",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude for data export"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude for data export"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude for data export"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude for data export"},
+          "start_date": {"type": "date", "required": true, "description": "Start date for data export"},
+          "end_date": {"type": "date", "required": true, "description": "End date for data export"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for data export"},
+          "depth_max": {"type": "float", "required": false, "default": 2000, "description": "Maximum depth for data export"},
+          "export_format": {"type": "string", "required": true, "description": "Desired export format (csv, netcdf, json, excel, etc.)"},
+          "visualization_type": {"type": "string", "required": true, "description": "Type of visualization for export"}
+        },
+        "natural_language_patterns": [
+          "export data in {export_format} format",
+          "create data export for visualization",
+          "export ocean data to {export_format}",
+          "data export dashboard for {region}",
+          "export visualization data to file",
+          "create multi-format data export",
+          "export data for external analysis",
+          "visualization data export system",
+          "export formatted data for {visualization_type}",
+          "create exportable data package"
+        ],
+        "visualization_config": {
+          "primary": "export_configuration_dashboard",
+          "chart_settings": {
+            "export_preview": {
+              "data_summary": "export_statistics_table",
+              "format_preview": "sample_data_display",
+              "file_size_estimate": "export_size_calculation",
+              "quality_summary": "data_quality_overview"
+            },
+            "format_selector": {
+              "available_formats": ["csv", "netcdf", "json", "excel", "matlab", "r", "python_pickle"],
+              "format_descriptions": "detailed_format_information",
+              "compatibility_notes": "software_compatibility_matrix",
+              "compression_options": "file_compression_settings"
+            },
+            "visualization_exports": {
+              "image_formats": ["png", "svg", "pdf", "eps", "tiff"],
+              "interactive_formats": ["html", "plotly_json", "bokeh_html"],
+              "animation_formats": ["gif", "mp4", "webm"],
+              "3d_formats": ["obj", "ply", "x3d"]
+            },
+            "metadata_inclusion": {
+              "data_provenance": "source_information",
+              "processing_history": "data_transformation_log",
+              "quality_flags": "qc_information_export",
+              "citation_information": "data_citation_metadata"
+            }
+          },
+          "export_customization": {
+            "parameter_selection": "choose_variables_to_export",
+            "spatial_subsetting": "geographic_region_selection",
+            "temporal_filtering": "time_period_selection",
+            "quality_filtering": "qc_threshold_settings",
+            "coordinate_systems": "projection_transformation_options"
+          }
+        },
+        "conversation_followups": [
+          "customize export parameters and filters",
+          "preview data before export",
+          "schedule automated data exports",
+          "create export templates for reuse",
+          "integrate with external data systems"
+        ],
+        "user_expertise": "intermediate",
+        "indian_ocean_context": "standardized_indian_ocean_data_formats",
+        "floatchat_integration": {
+          "dashboard_component": "secondary",
+          "export_engine": {
+            "format_converters": "native_format_conversion_support",
+            "batch_processing": "large_dataset_export_capability",
+            "compression": "automatic_file_compression",
+            "validation": "export_data_integrity_checking"
+          },
+          "user_interface": {
+            "export_wizard": "step_by_step_export_configuration",
+            "format_preview": "real_time_export_preview",
+            "download_manager": "export_status_tracking",
+            "template_system": "saved_export_configurations"
+          },
+          "integration_options": {
+            "cloud_storage": "direct_cloud_upload_options",
+            "ftp_transfer": "automated_file_transfer",
+            "api_integration": "programmatic_data_access",
+            "email_delivery": "automated_export_delivery"
+          }
+        }
+      }
+    },
+    {
+      "id": "viz_custom_regions_030",
+      "content": "custom region, define region, custom area, user defined region, create custom area, custom boundary, define custom area, personal region, custom geographic area, define area, custom region analysis, user region, custom area selection, define boundaries, custom spatial region, personalized area, custom region definition, user defined area, create region, custom location",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "WITH region_bounds AS (SELECT '{region_name}' as region_name, {lat_points} as lat_vertices, {lon_points} as lon_vertices), region_analysis AS (SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity, m.temperature_qc, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE {custom_spatial_condition} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL), region_statistics AS (SELECT COUNT(DISTINCT profile_id) as profile_count, COUNT(DISTINCT float_id) as float_count, COUNT(measurement_id) as measurement_count, AVG(temperature) as mean_temperature, STDDEV(temperature) as std_temperature, MIN(temperature) as min_temperature, MAX(temperature) as max_temperature, AVG(salinity) as mean_salinity, STDDEV(salinity) as std_salinity, MIN(salinity) as min_salinity, MAX(salinity) as max_salinity, AVG(depth) as mean_depth, MAX(depth) as max_depth, MIN(profile_date) as earliest_date, MAX(profile_date) as latest_date FROM region_analysis) SELECT ra.*, rs.profile_count, rs.float_count, rs.measurement_count, rs.mean_temperature, rs.std_temperature, rs.mean_salinity, rs.std_salinity, rs.mean_depth, rs.max_depth FROM region_analysis ra, region_statistics rs ORDER BY ra.profile_date DESC, ra.pressure ASC",
+        "parameters": {
+          "region_name": {"type": "string", "required": true, "description": "User-defined name for the custom region"},
+          "lat_points": {"type": "string", "required": true, "description": "Comma-separated latitude points defining region boundary"},
+          "lon_points": {"type": "string", "required": true, "description": "Comma-separated longitude points defining region boundary"},
+          "custom_spatial_condition": {"type": "string", "required": true, "description": "SQL spatial condition for custom region (e.g., polygon contains point)"},
+          "start_date": {"type": "date", "required": false, "default": "2020-01-01", "description": "Start date for custom region analysis"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for custom region analysis"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for custom region analysis"},
+          "depth_max": {"type": "float", "required": false, "default": 2000, "description": "Maximum depth for custom region analysis"}
+        },
+        "natural_language_patterns": [
+          "analyze custom region {region_name}",
+          "create visualization for user-defined area",
+          "analyze data within custom boundaries",
+          "visualize custom geographic region",
+          "create dashboard for personalized region",
+          "analyze user-defined spatial area",
+          "custom region analysis for {region_name}",
+          "visualize data within custom boundaries",
+          "create custom area visualization dashboard",
+          "analyze personalized geographic region"
+        ],
+        "visualization_config": {
+          "primary": "custom_region_analysis_dashboard",
+          "chart_settings": {
+            "region_definition": {
+              "boundary_display": "custom_polygon_overlay",
+              "coordinate_markers": "boundary_vertex_points",
+              "area_calculation": "region_area_in_km2",
+              "center_point": "geographic_centroid_calculation"
+            },
+            "spatial_visualization": {
+              "data_distribution": "measurements_within_custom_boundary",
+              "spatial_density": "data_point_density_heatmap",
+              "coverage_analysis": "temporal_spatial_coverage_matrix",
+              "sampling_patterns": "float_trajectory_within_region"
+            },
+            "statistical_summary": {
+              "parameter_distributions": "custom_region_parameter_histograms",
+              "temporal_trends": "time_series_within_custom_region",
+              "depth_analysis": "vertical_structure_custom_region",
+              "quality_assessment": "data_quality_within_custom_boundaries"
+            },
+            "comparative_analysis": {
+              "regional_comparison": "custom_vs_standard_regions",
+              "boundary_effects": "edge_vs_interior_analysis",
+              "size_scaling": "parameter_scaling_with_region_size"
+            }
+          },
+          "region_tools": {
+            "boundary_editor": "interactive_polygon_drawing_tool",
+            "coordinate_input": "manual_coordinate_specification",
+            "shape_library": "predefined_oceanographic_regions",
+            "validation": "boundary_validity_checking"
+          }
+        },
+        "conversation_followups": [
+          "modify custom region boundaries",
+          "compare with other custom regions",
+          "create multiple custom regions for comparison",
+          "analyze temporal changes within custom region",
+          "export custom region definition for reuse"
+        ],
+        "user_expertise": "advanced",
+        "indian_ocean_context": "user_defined_indian_ocean_subregions",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "region_manager": {
+            "boundary_editor": "interactive_map_based_region_definition",
+            "shape_tools": "polygon_circle_rectangle_drawing_tools",
+            "coordinate_import": "shapefile_geojson_kml_import",
+            "region_library": "save_load_custom_regions"
+          },
+          "analysis_engine": {
+            "spatial_operations": "point_in_polygon_calculations",
+            "area_calculations": "geodesic_area_computation",
+            "intersection_analysis": "region_overlap_detection",
+            "buffer_operations": "region_expansion_contraction"
+          },
+          "visualization_tools": {
+            "region_overlay": "custom_boundary_map_overlay",
+            "multi_region_display": "multiple_custom_regions_simultaneously",
+            "region_comparison": "side_by_side_region_analysis",
+            "region_animation": "temporal_evolution_within_custom_boundaries"
+          }
+        }
+      }
+    },
+    {
+      "id": "viz_equatorial_salinity_031",
+      "content": "show me salinity profiles near the equator, equatorial salinity, salinity near equator, salinity profiles equatorial region, March salinity data, equatorial ocean salinity, salinity at equator, show salinity near 0 latitude, equatorial salinity profiles March 2023, salinity equatorial zone, salinity data equator, equatorial region salinity, salinity profiles tropical, show equatorial salinity, salinity near zero latitude",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.salinity, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN -5 AND 5 AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_id, m.pressure ASC",
+        "parameters": {
+          "start_date": {"type": "date", "required": false, "default": "2020-03-01", "description": "Start date for equatorial salinity analysis"},
+          "end_date": {"type": "date", "required": false, "default": "2024-03-31", "description": "End date for equatorial salinity analysis"}
+        },
+        "natural_language_patterns": [
+          "show salinity profiles near equator",
+          "equatorial salinity data for March",
+          "salinity near the equator",
+          "show equatorial ocean salinity",
+          "salinity profiles equatorial region"
+        ],
+        "visualization_config": {
+          "primary": "salinity_depth_profiles",
+          "chart_settings": {
+            "x_axis": "salinity_psu",
+            "y_axis": "depth_inverted",
+            "multiple_profiles": "overlay_with_transparency",
+            "color_coding": "by_profile_date"
+          }
+        },
+        "user_expertise": "intermediate",
+        "indian_ocean_context": "equatorial_indian_ocean_region"
+      }
+    },
+    {
+      "id": "viz_bgc_arabian_sea_032",
+      "content": "compare BGC parameters Arabian Sea, BGC floats Arabian Sea, biogeochemical parameters Arabian Sea, compare BGC data Arabian Sea last 6 months, Arabian Sea BGC analysis, biogeochemical Arabian Sea, BGC parameters comparison Arabian Sea, Arabian Sea biogeochemical data, BGC floats Arabian Sea region, compare biogeochemical parameters, BGC data Arabian Sea, Arabian Sea BGC comparison, biogeochemical analysis Arabian Sea",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity, m.dissolved_oxygen, m.ph_in_situ, m.chlorophyll_a, m.particle_backscattering, m.downward_irradiance FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN 50 AND 75 AND p.profile_date >= '{start_date}' ORDER BY p.profile_date DESC, p.profile_id, m.pressure ASC",
+        "parameters": {
+          "start_date": {"type": "date", "required": false, "default": "2018-01-01", "description": "Start date for Arabian Sea BGC analysis"}
+        },
+        "natural_language_patterns": [
+          "compare BGC parameters Arabian Sea",
+          "BGC floats Arabian Sea last 6 months",
+          "biogeochemical parameters Arabian Sea",
+          "Arabian Sea BGC analysis",
+          "compare biogeochemical data Arabian Sea"
+        ],
+        "visualization_config": {
+          "primary": "multi_parameter_comparison",
+          "chart_settings": {
+            "parameters": ["temperature", "salinity", "dissolved_oxygen", "ph_in_situ", "chlorophyll_a"],
+            "time_series": "monthly_averages",
+            "comparison_type": "temporal_trends"
+          }
+        },
+        "user_expertise": "advanced",
+        "indian_ocean_context": "arabian_sea_biogeochemical_processes"
+      }
+    },
+    {
+      "id": "viz_nearest_floats_033",
+      "content": "nearest ARGO floats to location, what are nearest floats to this location, closest ARGO floats, find nearest floats, floats near location, closest floats to coordinates, nearest ARGO floats coordinates, find closest ARGO floats to location, which floats are nearest, show nearest floats, floats closest to position, nearest floats to latitude longitude, closest ARGO floats to point, find nearby ARGO floats, floats near coordinates",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT f.float_id, f.wmo_number, f.current_status, f.last_latitude, f.last_longitude, f.last_update, f.deployment_date, f.total_profiles, SQRT(POW(f.last_latitude - {target_lat}, 2) + POW((f.last_longitude - {target_lon}) * COS(RADIANS({target_lat})), 2)) * 111 as distance_km FROM floats f ORDER BY distance_km ASC LIMIT {limit_count}",
+        "parameters": {
+          "target_lat": {"type": "float", "required": true, "description": "Target latitude for finding nearest floats"},
+          "target_lon": {"type": "float", "required": true, "description": "Target longitude for finding nearest floats"},
+          "limit_count": {"type": "integer", "required": false, "default": 10, "description": "Number of nearest floats to return"}
+        },
+        "natural_language_patterns": [
+          "nearest ARGO floats to location {target_lat} {target_lon}",
+          "what are nearest floats to this location",
+          "find closest ARGO floats to coordinates",
+          "which floats are nearest to position",
+          "show nearest floats to latitude longitude"
+        ],
+        "visualization_config": {
+          "primary": "nearest_floats_map",
+          "chart_settings": {
+            "map_type": "scatter_map_with_distances",
+            "target_marker": "star_red",
+            "float_markers": "circles_by_status",
+            "distance_circles": [100, 300, 500]
+          }
+        },
+        "user_expertise": "beginner",
+        "indian_ocean_context": "indian_ocean_float_network_proximity"
+      }
+    },
+    {
+      "id": "viz_specific_float_profiles_034",
+      "content": "show temperature salinity profiles for ARGO float, temperature and salinity profiles specific float, depth time series specific float, show profiles for float ID, temperature salinity profiles float 6903270, profiles for specific ARGO float, show data for float, temperature salinity data specific float, depth profiles specific float, show float data profiles, ARGO float temperature salinity, specific float profiles July 2024, temperature salinity depth profile float",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.temperature, m.salinity, m.temperature_qc, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id = '{float_id}' AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL ORDER BY p.profile_date, m.pressure ASC",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float ID for profile analysis"},
+          "start_date": {"type": "date", "required": false, "default": "2020-01-01", "description": "Start date for float profile analysis"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for float profile analysis"}
+        },
+        "natural_language_patterns": [
+          "show temperature salinity profiles for ARGO float {float_id}",
+          "temperature and salinity profiles float {float_id}",
+          "depth time series float {float_id} July 2024",
+          "show profiles for float {float_id}",
+          "temperature salinity data float {float_id}"
+        ],
+        "visualization_config": {
+          "primary": "depth_time_series_dual_parameter",
+          "chart_settings": {
+            "plot_type": "depth_time_contour",
+            "parameters": ["temperature", "salinity"],
+            "x_axis": "profile_date",
+            "y_axis": "depth_inverted",
+            "color_coding": "parameter_values"
+          }
+        },
+        "user_expertise": "intermediate",
+        "indian_ocean_context": "specific_float_temporal_analysis"
+      }
+    },
+    {
+      "id": "viz_regional_comparison_035",
+      "content": "compare average sea surface temperature Bay of Bengal Arabian Sea, comparative analysis Bay of Bengal vs Arabian Sea, compare temperature Bay of Bengal Arabian Sea, sea surface temperature comparison regions, compare SST Bay of Bengal Arabian Sea, regional temperature comparison, Bay of Bengal Arabian Sea temperature comparison, comparative temperature analysis regions, compare ocean temperature regions, regional SST comparison Bay of Bengal Arabian Sea, temperature comparison two regions",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT CASE WHEN p.latitude BETWEEN 5 AND 22 AND p.longitude BETWEEN 80 AND 100 THEN 'Bay_of_Bengal' WHEN p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN 50 AND 75 THEN 'Arabian_Sea' END as region, p.profile_date, AVG(m.temperature) as avg_sst, COUNT(m.measurement_id) as measurement_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE ((p.latitude BETWEEN 5 AND 22 AND p.longitude BETWEEN 80 AND 100) OR (p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN 50 AND 75)) AND m.pressure BETWEEN 0 AND 10 AND m.temperature IS NOT NULL AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' GROUP BY region, p.profile_date ORDER BY p.profile_date ASC",
+        "parameters": {
+          "start_date": {"type": "date", "required": false, "default": "2024-01-01", "description": "Start date for regional comparison"},
+          "end_date": {"type": "date", "required": false, "default": "2024-12-31", "description": "End date for regional comparison"}
+        },
+        "natural_language_patterns": [
+          "compare average sea surface temperature Bay of Bengal Arabian Sea",
+          "comparative analysis Bay of Bengal vs Arabian Sea",
+          "compare SST Bay of Bengal Arabian Sea 2024",
+          "regional temperature comparison Bay of Bengal Arabian Sea",
+          "comparative temperature analysis two regions"
+        ],
+        "visualization_config": {
+          "primary": "comparative_regional_chart",
+          "chart_settings": {
+            "chart_type": "dual_axis_time_series",
+            "regions": ["Bay_of_Bengal", "Arabian_Sea"],
+            "comparison_metric": "sea_surface_temperature",
+            "display_format": "single_easy_to_read_chart"
+          }
+        },
+        "user_expertise": "intermediate",
+        "indian_ocean_context": "bay_of_bengal_arabian_sea_comparison"
+      }
+    },
+    {
+      "id": "viz_closest_floats_andaman_036",
+      "content": "three closest ARGO floats Andaman Nicobar Islands, nearest floats Andaman Islands, closest floats to Andaman Nicobar, find nearest floats Andaman, floats closest to Andaman Islands, three nearest ARGO floats Andaman, plot trajectories Andaman floats, show float locations Andaman, nearest ARGO floats Andaman Nicobar, floats near Andaman Islands trajectories map",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT f.float_id, f.wmo_number, f.current_status, f.last_latitude, f.last_longitude, f.last_update, f.deployment_date, f.total_profiles, SQRT(POW(f.last_latitude - 11.5, 2) + POW((f.last_longitude - 92.5) * COS(RADIANS(11.5)), 2)) * 111 as distance_km FROM floats f ORDER BY distance_km ASC LIMIT 3",
+        "parameters": {},
+        "natural_language_patterns": [
+          "three closest ARGO floats Andaman Nicobar Islands",
+          "nearest floats to Andaman Islands",
+          "find three nearest floats Andaman",
+          "closest floats to Andaman Nicobar",
+          "plot trajectories floats near Andaman"
+        ],
+        "visualization_config": {
+          "primary": "trajectory_map_andaman",
+          "chart_settings": {
+            "map_center": {"lat": 11.5, "lon": 92.5},
+            "map_type": "trajectory_with_locations",
+            "andaman_boundary": "island_outline",
+            "float_trajectories": "colored_paths",
+            "current_positions": "marked_endpoints"
+          }
+        },
+        "user_expertise": "intermediate",
+        "indian_ocean_context": "andaman_nicobar_islands_float_network"
+      }
+    },
+    {
+      "id": "viz_temperature_salinity_plot_037",
+      "content": "temperature vs salinity plot, T-S diagram, temperature salinity scatter plot, temperature versus salinity graph, temp sal plot, TS diagram, temperature salinity relationship, temperature salinity correlation, create TS plot, plot temperature against salinity, temperature salinity chart, temp vs sal graph, show temperature salinity relationship, scatter plot temperature salinity, temperature salinity diagram, TS scatter plot, temperature vs salinity for float, temperature salinity plotting, temp sal relationship, temperature salinity analysis",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT m.temperature, m.salinity, m.pressure, m.depth, p.profile_date, p.latitude, p.longitude, p.float_id, m.temperature_qc, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') AND p.float_id LIKE '%{float_id}%' AND p.profile_date >= '{start_date}' AND p.profile_date <= '{end_date}' AND m.pressure BETWEEN {depth_min} AND {depth_max} ORDER BY p.profile_date DESC, m.pressure ASC LIMIT {limit_count}",
+        "parameters": {
+          "float_id": {"type": "string", "required": false, "default": "", "description": "ARGO float ID for T-S analysis (leave empty for all floats)"},
+          "start_date": {"type": "date", "required": false, "default": "2020-01-01", "description": "Start date for T-S data"},
+          "end_date": {"type": "date", "required": false, "default": "2025-12-31", "description": "End date for T-S data"},
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth for T-S plot"},
+          "depth_max": {"type": "float", "required": false, "default": 2000, "description": "Maximum depth for T-S plot"},
+          "limit_count": {"type": "integer", "required": false, "default": 10000, "description": "Maximum data points for T-S plot"}
+        },
+        "natural_language_patterns": [
+          "temperature vs salinity plot",
+          "T-S diagram for float {float_id}",
+          "temperature salinity scatter plot",
+          "create TS plot",
+          "plot temperature against salinity",
+          "temperature salinity relationship",
+          "show me temperature vs salinity graph",
+          "temp sal diagram",
+          "temperature versus salinity",
+          "scatter plot temperature salinity",
+          "temperature vs salinity for float {float_id}",
+          "TS diagram",
+          "temp vs sal plot",
+          "temperature salinity chart",
+          "show temperature salinity relationship",
+          "create temperature salinity plot",
+          "temperature salinity correlation plot",
+          "plot temp vs sal",
+          "temperature vs salinity graph for float {float_id} for its first year",
+          "give me temperature vs salinity graph"
+        ],
+        "visualization_config": {
+          "primary": "scatter_plot_ts_diagram",
+          "chart_settings": {
+            "x_axis": "salinity",
+            "y_axis": "temperature",
+            "color_by": "pressure",
+            "marker_size": "medium",
+            "alpha": 0.6,
+            "colormap": "viridis",
+            "xlabel": "Salinity (psu)",
+            "ylabel": "Temperature (°C)",
+            "title": "Temperature-Salinity Diagram",
+            "show_colorbar": true,
+            "grid": true
+          },
+          "interactive_features": ["zoom", "pan", "hover_data", "color_scale_adjustment"],
+          "secondary_plots": ["pressure_overlay", "density_contours"]
+        },
+        "conversation_followups": [
+          "add density lines to the T-S diagram",
+          "color by depth instead of pressure",
+          "filter by specific water mass properties",
+          "compare with other floats T-S characteristics",
+          "analyze water mass boundaries in T-S space"
+        ],
+        "user_expertise": "intermediate",
+        "indian_ocean_context": "applicable_to_all_regions",
+        "floatchat_integration": {
+          "dashboard_component": "primary",
+          "export_options": ["png", "svg", "pdf", "interactive_html"],
+          "real_time_update": true
+        }
+      }
+    },
+    {
+      "id": "viz_indian_ocean_float_locations_038",
+      "content": "show me all ARGO float locations in the Indian Ocean, ARGO float positions Indian Ocean, map all floats Indian Ocean, float locations Indian Ocean, show Indian Ocean floats, map ARGO floats Indian Ocean, Indian Ocean float distribution, plot float positions Indian Ocean, display all floats Indian Ocean",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT f.float_id, f.wmo_number, f.last_latitude, f.last_longitude, f.current_status, f.deployment_date, f.last_update, f.total_profiles FROM floats f WHERE f.last_latitude BETWEEN -40 AND 30 AND f.last_longitude BETWEEN 20 AND 120 ORDER BY f.last_update DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "show me all ARGO float locations in the Indian Ocean",
+          "ARGO float positions Indian Ocean",
+          "map all floats Indian Ocean",
+          "float locations Indian Ocean map",
+          "display Indian Ocean float distribution"
+        ],
+        "visualization_config": {
+          "primary": "scatter_map_plot",
+          "chart_settings": {
+            "plot_type": "geographic_scatter_map",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "color_by": "current_status",
+            "marker_size": "medium",
+            "marker_shape": "circle",
+            "basemap": "indian_ocean_coastlines",
+            "projection": "mercator",
+            "color_scheme": {
+              "ACTIVE": "green",
+              "INACTIVE": "red",
+              "UNKNOWN": "gray"
+            }
+          }
+        },
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "viz_arabian_sea_trajectories_039",
+      "content": "plot float trajectories in the Arabian Sea for 2023, Arabian Sea float trajectories 2023, float paths Arabian Sea 2023, trajectory plot Arabian Sea, Arabian Sea float movement 2023, track floats Arabian Sea 2023, float trajectory Arabian Sea",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.float_id, p.profile_date, p.latitude, p.longitude, p.profile_id FROM profiles p WHERE p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN 50 AND 75 AND p.profile_date BETWEEN '2023-01-01' AND '2023-12-31' ORDER BY p.float_id, p.profile_date ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "plot float trajectories in the Arabian Sea for 2023",
+          "Arabian Sea float trajectories 2023",
+          "show float paths Arabian Sea 2023",
+          "trajectory plot Arabian Sea 2023",
+          "track floats Arabian Sea 2023"
+        ],
+        "visualization_config": {
+          "primary": "trajectory_line_map",
+          "chart_settings": {
+            "plot_type": "trajectory_map_with_lines",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "line_grouping": "float_id",
+            "line_color": "by_float_id",
+            "line_width": 2,
+            "temporal_markers": "monthly_points",
+            "basemap": "arabian_sea_coastlines",
+            "projection": "mercator",
+            "animation": "temporal_progression"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_equatorial_pacific_temp_heatmap_040",
+      "content": "display a heat map of temperature at 100m depth across the equatorial Pacific, temperature heatmap 100m equatorial Pacific, equatorial Pacific temperature map 100m depth, heat map temperature 100m Pacific equator, Pacific equatorial temperature distribution 100m",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, AVG(m.temperature) as avg_temperature, COUNT(m.measurement_id) as data_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN -10 AND 10 AND p.longitude BETWEEN 120 AND 280 AND m.pressure BETWEEN 80 AND 120 AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') GROUP BY ROUND(p.latitude, 1), ROUND(p.longitude, 1) HAVING COUNT(m.measurement_id) >= 3 ORDER BY p.latitude, p.longitude",
+        "parameters": {},
+        "natural_language_patterns": [
+          "display heat map temperature 100m equatorial Pacific",
+          "temperature heatmap 100m depth equatorial Pacific",
+          "equatorial Pacific temperature map 100m",
+          "heat map temperature Pacific equator 100m depth"
+        ],
+        "visualization_config": {
+          "primary": "filled_contour_heatmap",
+          "chart_settings": {
+            "plot_type": "geographic_heatmap_interpolated",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "color_parameter": "avg_temperature",
+            "interpolation_method": "kriging",
+            "colormap": "thermal",
+            "contour_levels": 20,
+            "colorbar_label": "Temperature (°C)",
+            "basemap": "pacific_coastlines",
+            "projection": "cylindrical_equidistant"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_bay_bengal_salinity_surface_041",
+      "content": "map salinity distribution at surface level for the Bay of Bengal, Bay of Bengal surface salinity distribution, surface salinity map Bay of Bengal, salinity surface Bay of Bengal map, Bay of Bengal surface salinity visualization",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, AVG(m.salinity) as avg_salinity, COUNT(m.measurement_id) as data_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN 5 AND 22 AND p.longitude BETWEEN 80 AND 100 AND m.pressure BETWEEN 0 AND 20 AND m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') GROUP BY ROUND(p.latitude, 0.5), ROUND(p.longitude, 0.5) HAVING COUNT(m.measurement_id) >= 2 ORDER BY p.latitude, p.longitude",
+        "parameters": {},
+        "natural_language_patterns": [
+          "map salinity distribution surface Bay of Bengal",
+          "Bay of Bengal surface salinity distribution",
+          "surface salinity map Bay of Bengal",
+          "salinity surface level Bay of Bengal"
+        ],
+        "visualization_config": {
+          "primary": "filled_contour_salinity_map",
+          "chart_settings": {
+            "plot_type": "geographic_filled_contour",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "color_parameter": "avg_salinity",
+            "interpolation_method": "objective_analysis",
+            "colormap": "haline",
+            "contour_levels": 15,
+            "colorbar_label": "Salinity (PSU)",
+            "basemap": "bay_of_bengal_coastlines",
+            "projection": "mercator"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_bgc_oxygen_positions_042",
+      "content": "show me BGC float positions with oxygen measurements in the last 6 months, BGC floats with oxygen data last 6 months, oxygen BGC float locations recent, BGC float positions oxygen measurements, recent BGC oxygen float positions",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT DISTINCT f.float_id, f.last_latitude, f.last_longitude, f.current_status, p.profile_date, AVG(m.dissolved_oxygen) as avg_oxygen FROM floats f JOIN profiles p ON f.float_id = p.float_id JOIN measurements m ON p.profile_id = m.profile_id WHERE m.dissolved_oxygen IS NOT NULL AND p.profile_date >= DATE_SUB(CURRENT_DATE, INTERVAL 6 MONTH) GROUP BY f.float_id, f.last_latitude, f.last_longitude, f.current_status, p.profile_date ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "show BGC float positions with oxygen measurements last 6 months",
+          "BGC floats with oxygen data recent",
+          "oxygen BGC float locations last 6 months",
+          "recent BGC oxygen float positions"
+        ],
+        "visualization_config": {
+          "primary": "scatter_map_with_data_filter",
+          "chart_settings": {
+            "plot_type": "data_filtered_scatter_map",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "color_by": "avg_oxygen",
+            "marker_size": "by_data_count",
+            "marker_shape": "square",
+            "colormap": "oxygen_colormap",
+            "colorbar_label": "Dissolved Oxygen (μmol/kg)",
+            "basemap": "global_coastlines",
+            "projection": "robinson"
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_southern_ocean_float_density_043",
+      "content": "create a map showing float density by region in the Southern Ocean, Southern Ocean float density map, float density Southern Ocean regions, Southern Ocean float distribution density, regional float density Southern Ocean",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT FLOOR(f.last_latitude / 5) * 5 as lat_bin, FLOOR(f.last_longitude / 10) * 10 as lon_bin, COUNT(f.float_id) as float_density FROM floats f WHERE f.last_latitude BETWEEN -70 AND -40 GROUP BY FLOOR(f.last_latitude / 5) * 5, FLOOR(f.last_longitude / 10) * 10 ORDER BY lat_bin, lon_bin",
+        "parameters": {},
+        "natural_language_patterns": [
+          "create map showing float density by region Southern Ocean",
+          "Southern Ocean float density map",
+          "float density Southern Ocean regions",
+          "regional float density Southern Ocean"
+        ],
+        "visualization_config": {
+          "primary": "density_heatmap_binned",
+          "chart_settings": {
+            "plot_type": "binned_density_heatmap",
+            "x_axis": "longitude_bins",
+            "y_axis": "latitude_bins",
+            "color_parameter": "float_density",
+            "bin_size": "5_degree_lat_10_degree_lon",
+            "colormap": "density_colormap",
+            "colorbar_label": "Float Count per Bin",
+            "basemap": "southern_ocean_coastlines",
+            "projection": "south_polar_stereographic"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_temp_anomalies_world_march2023_044",
+      "content": "plot temperature anomalies on a world map for March 2023, world temperature anomalies March 2023, global temperature anomaly map March 2023, March 2023 temperature anomalies world map, temperature anomaly visualization March 2023",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "WITH march_avg AS (SELECT ROUND(p.latitude, 2) as lat_grid, ROUND(p.longitude, 2) as lon_grid, AVG(m.temperature) as march_2023_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_date BETWEEN '2023-03-01' AND '2023-03-31' AND m.pressure BETWEEN 0 AND 20 AND m.temperature IS NOT NULL GROUP BY lat_grid, lon_grid), climatology AS (SELECT ROUND(p.latitude, 2) as lat_grid, ROUND(p.longitude, 2) as lon_grid, AVG(m.temperature) as clim_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE MONTH(p.profile_date) = 3 AND YEAR(p.profile_date) BETWEEN 2010 AND 2022 AND m.pressure BETWEEN 0 AND 20 AND m.temperature IS NOT NULL GROUP BY lat_grid, lon_grid) SELECT ma.lat_grid, ma.lon_grid, ma.march_2023_temp, c.clim_temp, (ma.march_2023_temp - c.clim_temp) as temp_anomaly FROM march_avg ma JOIN climatology c ON ma.lat_grid = c.lat_grid AND ma.lon_grid = c.lon_grid ORDER BY ma.lat_grid, ma.lon_grid",
+        "parameters": {},
+        "natural_language_patterns": [
+          "plot temperature anomalies world map March 2023",
+          "world temperature anomalies March 2023",
+          "global temperature anomaly map March 2023",
+          "March 2023 temperature anomalies visualization"
+        ],
+        "visualization_config": {
+          "primary": "anomaly_map_diverging_colors",
+          "chart_settings": {
+            "plot_type": "global_anomaly_map",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "color_parameter": "temp_anomaly",
+            "colormap": "RdBu_r",
+            "color_center": 0,
+            "contour_levels": "symmetric_around_zero",
+            "colorbar_label": "Temperature Anomaly (°C)",
+            "basemap": "world_coastlines",
+            "projection": "robinson"
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_deployment_locations_status_045",
+      "content": "display float deployment locations colored by operational status, deployment locations by status, float deployment status map, deployment sites operational status, float deployment colored by status",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT f.float_id, f.deployment_latitude, f.deployment_longitude, f.deployment_date, f.current_status, f.total_profiles FROM floats f WHERE f.deployment_latitude IS NOT NULL AND f.deployment_longitude IS NOT NULL ORDER BY f.deployment_date DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "display float deployment locations colored by operational status",
+          "deployment locations by status",
+          "float deployment status map",
+          "deployment sites operational status"
+        ],
+        "visualization_config": {
+          "primary": "categorical_scatter_map",
+          "chart_settings": {
+            "plot_type": "categorical_colored_scatter_map",
+            "x_axis": "deployment_longitude",
+            "y_axis": "deployment_latitude",
+            "color_by": "current_status",
+            "marker_size": "medium",
+            "marker_shape": "triangle",
+            "color_scheme": {
+              "ACTIVE": "green",
+              "INACTIVE": "red",
+              "DAMAGED": "orange",
+              "UNKNOWN": "gray"
+            },
+            "basemap": "global_coastlines",
+            "projection": "natural_earth"
+          }
+        },
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "viz_chlorophyll_mediterranean_046",
+      "content": "map chlorophyll concentrations from BGC floats in the Mediterranean, Mediterranean chlorophyll BGC floats, chlorophyll concentration map Mediterranean, Mediterranean BGC chlorophyll data, chlorophyll Mediterranean BGC visualization",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, p.profile_date, AVG(m.chlorophyll_a) as avg_chlorophyll FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN 30 AND 46 AND p.longitude BETWEEN -6 AND 42 AND m.chlorophyll_a IS NOT NULL AND m.pressure BETWEEN 0 AND 50 GROUP BY ROUND(p.latitude, 0.5), ROUND(p.longitude, 0.5), p.profile_date ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "map chlorophyll concentrations BGC floats Mediterranean",
+          "Mediterranean chlorophyll BGC floats",
+          "chlorophyll concentration map Mediterranean",
+          "Mediterranean BGC chlorophyll data visualization"
+        ],
+        "visualization_config": {
+          "primary": "parameter_concentration_map",
+          "chart_settings": {
+            "plot_type": "biogeochemical_parameter_map",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "color_parameter": "avg_chlorophyll",
+            "colormap": "chlorophyll_colormap",
+            "log_scale": true,
+            "colorbar_label": "Chlorophyll-a (mg/m³)",
+            "basemap": "mediterranean_coastlines",
+            "projection": "mercator"
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_atlantic_migration_patterns_047",
+      "content": "show seasonal migration patterns of ARGO floats in the Atlantic, Atlantic float seasonal migration, seasonal float patterns Atlantic, ARGO float migration Atlantic seasonal, Atlantic seasonal float movement",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.float_id, p.latitude, p.longitude, p.profile_date, CASE WHEN MONTH(p.profile_date) IN (12,1,2) THEN 'Winter' WHEN MONTH(p.profile_date) IN (3,4,5) THEN 'Spring' WHEN MONTH(p.profile_date) IN (6,7,8) THEN 'Summer' ELSE 'Fall' END as season FROM profiles p WHERE p.longitude BETWEEN -80 AND 20 AND p.latitude BETWEEN -60 AND 70 ORDER BY p.float_id, p.profile_date",
+        "parameters": {},
+        "natural_language_patterns": [
+          "show seasonal migration patterns ARGO floats Atlantic",
+          "Atlantic float seasonal migration",
+          "seasonal float patterns Atlantic Ocean",
+          "ARGO float migration Atlantic seasonal"
+        ],
+        "visualization_config": {
+          "primary": "seasonal_trajectory_animation",
+          "chart_settings": {
+            "plot_type": "animated_seasonal_trajectories",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "animation_grouping": "season",
+            "trajectory_coloring": "by_season",
+            "seasonal_colors": {
+              "Winter": "blue",
+              "Spring": "green",
+              "Summer": "red",
+              "Fall": "orange"
+            },
+            "basemap": "atlantic_coastlines",
+            "projection": "mercator"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_bathymetry_active_floats_048",
+      "content": "create a bathymetry overlay with active float positions, bathymetry with active floats, active floats on bathymetry map, bathymetry overlay float positions, topography with float locations",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT f.float_id, f.last_latitude, f.last_longitude, f.current_status FROM floats f WHERE f.current_status = 'ACTIVE' AND f.last_latitude IS NOT NULL AND f.last_longitude IS NOT NULL ORDER BY f.last_update DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "create bathymetry overlay with active float positions",
+          "bathymetry with active floats",
+          "active floats on bathymetry map",
+          "bathymetry overlay float positions"
+        ],
+        "visualization_config": {
+          "primary": "layered_bathymetry_map",
+          "chart_settings": {
+            "plot_type": "multi_layer_map_with_bathymetry",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "base_layer": "bathymetry_contours",
+            "overlay_layer": "float_positions",
+            "bathymetry_colormap": "ocean_depth",
+            "float_markers": "red_circles",
+            "bathymetry_levels": "auto_depth_contours",
+            "projection": "natural_earth"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_kuroshio_salinity_gradients_049",
+      "content": "plot salinity gradients across the Kuroshio Current region, Kuroshio Current salinity gradients, salinity gradient Kuroshio region, Kuroshio salinity gradient visualization, gradient analysis Kuroshio Current",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "WITH gradient_calc AS (SELECT p.latitude, p.longitude, m.salinity, LAG(m.salinity) OVER (PARTITION BY p.profile_id ORDER BY p.latitude) as prev_salinity, LAG(p.latitude) OVER (PARTITION BY p.profile_id ORDER BY p.latitude) as prev_lat FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN 30 AND 40 AND p.longitude BETWEEN 135 AND 150 AND m.pressure BETWEEN 0 AND 100 AND m.salinity IS NOT NULL) SELECT latitude, longitude, salinity, (salinity - prev_salinity) / (latitude - prev_lat) as salinity_gradient FROM gradient_calc WHERE prev_salinity IS NOT NULL AND ABS(latitude - prev_lat) > 0.01",
+        "parameters": {},
+        "natural_language_patterns": [
+          "plot salinity gradients Kuroshio Current region",
+          "Kuroshio Current salinity gradients",
+          "salinity gradient Kuroshio region",
+          "gradient analysis Kuroshio Current"
+        ],
+        "visualization_config": {
+          "primary": "vector_field_gradient_map",
+          "chart_settings": {
+            "plot_type": "gradient_vector_field",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "vector_parameter": "salinity_gradient",
+            "vector_scaling": "by_magnitude",
+            "background_field": "salinity_contours",
+            "colormap": "gradient_magnitude",
+            "vector_density": "medium",
+            "basemap": "kuroshio_region_coastlines",
+            "projection": "mercator"
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_tropical_pacific_mld_050",
+      "content": "map mixed layer depth variations in the tropical Pacific, tropical Pacific mixed layer depth, MLD variations tropical Pacific, mixed layer depth map tropical Pacific, tropical Pacific MLD visualization",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, p.profile_date, AVG(m.mixed_layer_depth) as avg_mld FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN -20 AND 20 AND p.longitude BETWEEN 120 AND 280 AND m.mixed_layer_depth IS NOT NULL GROUP BY ROUND(p.latitude, 1), ROUND(p.longitude, 1), p.profile_date ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "map mixed layer depth variations tropical Pacific",
+          "tropical Pacific mixed layer depth",
+          "MLD variations tropical Pacific",
+          "mixed layer depth map tropical Pacific"
+        ],
+        "visualization_config": {
+          "primary": "mixed_layer_depth_contour_map",
+          "chart_settings": {
+            "plot_type": "oceanographic_parameter_contours",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "color_parameter": "avg_mld",
+            "colormap": "depth_colormap",
+            "contour_levels": "mld_specific_levels",
+            "colorbar_label": "Mixed Layer Depth (m)",
+            "basemap": "tropical_pacific_coastlines",
+            "projection": "cylindrical_equidistant"
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_global_coverage_gaps_051",
+      "content": "display float coverage gaps in the global ocean, global ocean coverage gaps, float coverage gaps worldwide, global float data gaps, ocean coverage analysis gaps",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "WITH coverage_grid AS (SELECT FLOOR(latitude/5)*5 as lat_bin, FLOOR(longitude/5)*5 as lon_bin, COUNT(DISTINCT float_id) as float_count, COUNT(DISTINCT profile_date) as profile_count FROM profiles WHERE profile_date >= DATE_SUB(CURRENT_DATE, INTERVAL 2 YEAR) GROUP BY lat_bin, lon_bin) SELECT lat_bin, lon_bin, float_count, profile_count, CASE WHEN float_count = 0 THEN 'No_Coverage' WHEN float_count < 2 THEN 'Poor_Coverage' WHEN float_count < 5 THEN 'Moderate_Coverage' ELSE 'Good_Coverage' END as coverage_level FROM coverage_grid ORDER BY lat_bin, lon_bin",
+        "parameters": {},
+        "natural_language_patterns": [
+          "display float coverage gaps global ocean",
+          "global ocean coverage gaps",
+          "float coverage gaps worldwide",
+          "global float data gaps analysis"
+        ],
+        "visualization_config": {
+          "primary": "coverage_analysis_map",
+          "chart_settings": {
+            "plot_type": "data_coverage_assessment_map",
+            "x_axis": "longitude_bins",
+            "y_axis": "latitude_bins",
+            "color_by": "coverage_level",
+            "color_scheme": {
+              "No_Coverage": "red",
+              "Poor_Coverage": "orange",
+              "Moderate_Coverage": "yellow",
+              "Good_Coverage": "green"
+            },
+            "basemap": "global_coastlines",
+            "projection": "robinson"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_upwelling_regions_measurements_052",
+      "content": "show upwelling regions with corresponding float measurements, upwelling regions float data, float measurements upwelling zones, upwelling regions with ARGO data, upwelling float measurement overlay",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, AVG(m.temperature) as avg_temp, AVG(m.salinity) as avg_sal, COUNT(m.measurement_id) as measurement_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE ((p.latitude BETWEEN -30 AND -15 AND p.longitude BETWEEN -20 AND 15) OR (p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN -25 AND -10) OR (p.latitude BETWEEN -15 AND -5 AND p.longitude BETWEEN -85 AND -70)) AND m.pressure BETWEEN 0 AND 50 AND m.temperature IS NOT NULL GROUP BY ROUND(p.latitude, 0.5), ROUND(p.longitude, 0.5) HAVING COUNT(m.measurement_id) >= 5",
+        "parameters": {},
+        "natural_language_patterns": [
+          "show upwelling regions with float measurements",
+          "upwelling regions float data",
+          "float measurements upwelling zones",
+          "upwelling regions ARGO data overlay"
+        ],
+        "visualization_config": {
+          "primary": "regional_overlay_map",
+          "chart_settings": {
+            "plot_type": "regional_data_overlay_map",
+            "x_axis": "longitude",
+            "y_axis": "latitude",
+            "color_parameter": "avg_temp",
+            "region_boundaries": "upwelling_zone_outlines",
+            "colormap": "temperature_upwelling",
+            "measurement_density": "point_size_scaling",
+            "basemap": "global_coastlines",
+            "projection": "natural_earth"
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_temperature_profiles_float_053",
+      "content": "show me temperature profiles from float 5904567, temperature profiles float 5904567, float 5904567 temperature profiles, temperature depth profiles float 5904567, profile temperature float 5904567",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, m.pressure, m.depth, m.temperature, m.temperature_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id = '5904567' AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {
+          "float_id": {"type": "string", "required": false, "default": "5904567", "description": "ARGO float ID for temperature profiles"}
+        },
+        "natural_language_patterns": [
+          "show temperature profiles from float {float_id}",
+          "temperature profiles float {float_id}",
+          "float {float_id} temperature profiles",
+          "temperature depth profiles float {float_id}"
+        ],
+        "visualization_config": {
+          "primary": "depth_profile_line_plot",
+          "chart_settings": {
+            "plot_type": "multiple_line_plot_depth_profiles",
+            "x_axis": "temperature",
+            "y_axis": "depth_inverted",
+            "line_grouping": "profile_date",
+            "line_coloring": "temporal_gradient",
+            "xlabel": "Temperature (°C)",
+            "ylabel": "Depth (m)",
+            "title": "Temperature Profiles - Float {float_id}",
+            "grid": true,
+            "legend": "date_based"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_salinity_depth_location_054",
+      "content": "plot salinity vs depth for all profiles near 20°N 70°E, salinity depth profiles 20N 70E, salinity profiles near 20°N 70°E, depth salinity plot 20N 70E location, salinity depth 20°N 70°E",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.salinity, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN 19 AND 21 AND p.longitude BETWEEN 69 AND 71 AND m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {
+          "target_lat": {"type": "float", "required": false, "default": 20.0, "description": "Target latitude"},
+          "target_lon": {"type": "float", "required": false, "default": 70.0, "description": "Target longitude"}
+        },
+        "natural_language_patterns": [
+          "plot salinity vs depth profiles near {target_lat}°N {target_lon}°E",
+          "salinity depth profiles {target_lat}N {target_lon}E",
+          "salinity profiles near {target_lat}°N {target_lon}°E",
+          "depth salinity plot {target_lat}N {target_lon}E"
+        ],
+        "visualization_config": {
+          "primary": "depth_profile_salinity_plot",
+          "chart_settings": {
+            "plot_type": "multiple_line_plot_salinity_depth",
+            "x_axis": "salinity",
+            "y_axis": "depth_inverted",
+            "line_grouping": "profile_date",
+            "line_coloring": "profile_date_gradient",
+            "xlabel": "Salinity (PSU)",
+            "ylabel": "Depth (m)",
+            "title": "Salinity Profiles near {target_lat}°N {target_lon}°E",
+            "grid": true,
+            "alpha": 0.7
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_bgc_oxygen_profiles_omz_055",
+      "content": "display BGC oxygen profiles in the oxygen minimum zone, BGC oxygen profiles OMZ, oxygen minimum zone profiles, dissolved oxygen profiles OMZ, BGC oxygen OMZ visualization",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.dissolved_oxygen, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE ((p.latitude BETWEEN 5 AND 25 AND p.longitude BETWEEN 50 AND 75) OR (p.latitude BETWEEN -10 AND 10 AND p.longitude BETWEEN 120 AND 280)) AND m.dissolved_oxygen IS NOT NULL AND m.pressure BETWEEN 100 AND 1000 ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "display BGC oxygen profiles oxygen minimum zone",
+          "BGC oxygen profiles OMZ",
+          "oxygen minimum zone profiles",
+          "dissolved oxygen profiles OMZ"
+        ],
+        "visualization_config": {
+          "primary": "bgc_oxygen_depth_profiles",
+          "chart_settings": {
+            "plot_type": "biogeochemical_parameter_depth_profiles",
+            "x_axis": "dissolved_oxygen",
+            "y_axis": "depth_inverted",
+            "line_grouping": "profile_id",
+            "line_coloring": "by_location",
+            "xlabel": "Dissolved Oxygen (μmol/kg)",
+            "ylabel": "Depth (m)",
+            "title": "BGC Oxygen Profiles - Oxygen Minimum Zone",
+            "omz_threshold_line": "low_oxygen_indicator",
+            "grid": true
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_summer_winter_temp_profiles_056",
+      "content": "compare temperature profiles between summer and winter in the North Atlantic, summer winter temperature profiles North Atlantic, seasonal temperature profiles North Atlantic, North Atlantic temperature profiles seasonal comparison",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.temperature, CASE WHEN MONTH(p.profile_date) IN (6,7,8) THEN 'Summer' WHEN MONTH(p.profile_date) IN (12,1,2) THEN 'Winter' END as season FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN 40 AND 65 AND p.longitude BETWEEN -60 AND -10 AND MONTH(p.profile_date) IN (6,7,8,12,1,2) AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') ORDER BY season, p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "compare temperature profiles summer winter North Atlantic",
+          "summer winter temperature profiles North Atlantic",
+          "seasonal temperature profiles North Atlantic",
+          "North Atlantic temperature profiles seasonal comparison"
+        ],
+        "visualization_config": {
+          "primary": "comparative_seasonal_profiles",
+          "chart_settings": {
+            "plot_type": "dual_panel_seasonal_comparison",
+            "x_axis": "temperature",
+            "y_axis": "depth_inverted",
+            "panel_grouping": "season",
+            "line_coloring": "by_season",
+            "seasonal_colors": {"Summer": "red", "Winter": "blue"},
+            "xlabel": "Temperature (°C)",
+            "ylabel": "Depth (m)",
+            "title": "Seasonal Temperature Profiles - North Atlantic",
+            "statistical_overlay": "mean_profiles"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_chlorophyll_profiles_equatorial_057",
+      "content": "show chlorophyll profiles from the equatorial Pacific, equatorial Pacific chlorophyll profiles, chlorophyll depth profiles equatorial Pacific, Pacific equatorial chlorophyll profiles",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.chlorophyll_a FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN -5 AND 5 AND p.longitude BETWEEN 140 AND 280 AND m.chlorophyll_a IS NOT NULL AND m.pressure BETWEEN 0 AND 200 ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "show chlorophyll profiles equatorial Pacific",
+          "equatorial Pacific chlorophyll profiles",
+          "chlorophyll depth profiles equatorial Pacific",
+          "Pacific equatorial chlorophyll profiles"
+        ],
+        "visualization_config": {
+          "primary": "bgc_chlorophyll_depth_profiles",
+          "chart_settings": {
+            "plot_type": "biogeochemical_chlorophyll_profiles",
+            "x_axis": "chlorophyll_a",
+            "y_axis": "depth_inverted",
+            "line_grouping": "profile_id",
+            "line_coloring": "temporal_gradient",
+            "xlabel": "Chlorophyll-a (mg/m³)",
+            "ylabel": "Depth (m)",
+            "title": "Chlorophyll Profiles - Equatorial Pacific",
+            "log_scale_x": true,
+            "grid": true
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_nitrate_arabian_sea_058",
+      "content": "plot nitrate concentration vs depth for Arabian Sea floats, Arabian Sea nitrate depth profiles, nitrate profiles Arabian Sea floats, nitrate concentration depth Arabian Sea",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.nitrate FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN 50 AND 75 AND m.nitrate IS NOT NULL AND m.pressure BETWEEN 0 AND 1000 ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "plot nitrate concentration vs depth Arabian Sea floats",
+          "Arabian Sea nitrate depth profiles",
+          "nitrate profiles Arabian Sea floats",
+          "nitrate concentration depth Arabian Sea"
+        ],
+        "visualization_config": {
+          "primary": "bgc_nitrate_depth_profiles",
+          "chart_settings": {
+            "plot_type": "biogeochemical_nitrate_profiles",
+            "x_axis": "nitrate",
+            "y_axis": "depth_inverted",
+            "line_grouping": "profile_id",
+            "line_coloring": "by_location",
+            "xlabel": "Nitrate (μmol/kg)",
+            "ylabel": "Depth (m)",
+            "title": "Nitrate Profiles - Arabian Sea",
+            "grid": true,
+            "alpha": 0.6
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_ph_acidification_profiles_059",
+      "content": "display pH profiles showing ocean acidification trends, pH profiles ocean acidification, ocean acidification pH profiles, pH acidification trend profiles, acidification pH depth profiles",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.ph_in_situ FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.ph_in_situ IS NOT NULL AND m.pressure BETWEEN 0 AND 500 AND p.profile_date >= '2010-01-01' ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "display pH profiles showing ocean acidification trends",
+          "pH profiles ocean acidification",
+          "ocean acidification pH profiles",
+          "pH acidification trend profiles"
+        ],
+        "visualization_config": {
+          "primary": "ph_acidification_profiles",
+          "chart_settings": {
+            "plot_type": "temporal_biogeochemical_profiles",
+            "x_axis": "ph_in_situ",
+            "y_axis": "depth_inverted",
+            "line_grouping": "profile_date",
+            "line_coloring": "temporal_trend",
+            "xlabel": "pH (in situ)",
+            "ylabel": "Depth (m)",
+            "title": "pH Profiles - Ocean Acidification Trends",
+            "temporal_trend_overlay": "linear_regression",
+            "grid": true
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_ts_diagram_tropical_060",
+      "content": "create a T-S Temperature-Salinity diagram for tropical waters, TS diagram tropical waters, temperature salinity tropical waters, tropical waters TS diagram, temperature salinity plot tropical",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT m.temperature, m.salinity, m.pressure, m.depth, p.profile_date, p.latitude, p.longitude FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN -23.5 AND 23.5 AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT 10000",
+        "parameters": {},
+        "natural_language_patterns": [
+          "create TS diagram tropical waters",
+          "temperature salinity diagram tropical waters",
+          "TS diagram tropical waters",
+          "temperature salinity plot tropical"
+        ],
+        "visualization_config": {
+          "primary": "ts_diagram_tropical_waters",
+          "chart_settings": {
+            "plot_type": "temperature_salinity_scatter_plot",
+            "x_axis": "salinity",
+            "y_axis": "temperature",
+            "color_by": "pressure",
+            "marker_size": "small",
+            "colormap": "viridis",
+            "xlabel": "Salinity (PSU)",
+            "ylabel": "Temperature (°C)",
+            "title": "T-S Diagram - Tropical Waters",
+            "density_contours": "potential_density_overlay",
+            "colorbar_label": "Pressure (dbar)"
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_pressure_temp_deep_ocean_061",
+      "content": "show pressure vs temperature profiles for deep ocean measurements, pressure temperature deep ocean profiles, deep ocean pressure temperature, temperature pressure deep sea profiles",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure > 1000 AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "show pressure vs temperature profiles deep ocean",
+          "pressure temperature deep ocean profiles",
+          "deep ocean pressure temperature",
+          "temperature pressure deep sea profiles"
+        ],
+        "visualization_config": {
+          "primary": "pressure_temperature_deep_profiles",
+          "chart_settings": {
+            "plot_type": "deep_ocean_pressure_temperature_profiles",
+            "x_axis": "temperature",
+            "y_axis": "pressure",
+            "line_grouping": "profile_id",
+            "line_coloring": "by_location",
+            "xlabel": "Temperature (°C)",
+            "ylabel": "Pressure (dbar)",
+            "title": "Pressure vs Temperature - Deep Ocean",
+            "grid": true,
+            "alpha": 0.5
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_oxygen_upwelling_profiles_062",
+      "content": "plot dissolved oxygen profiles in upwelling regions, dissolved oxygen upwelling regions, oxygen profiles upwelling zones, upwelling dissolved oxygen profiles",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.dissolved_oxygen FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE ((p.latitude BETWEEN -30 AND -15 AND p.longitude BETWEEN -20 AND 15) OR (p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN -25 AND -10)) AND m.dissolved_oxygen IS NOT NULL AND m.pressure BETWEEN 0 AND 500 ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "plot dissolved oxygen profiles upwelling regions",
+          "dissolved oxygen upwelling regions",
+          "oxygen profiles upwelling zones",
+          "upwelling dissolved oxygen profiles"
+        ],
+        "visualization_config": {
+          "primary": "oxygen_profiles_upwelling",
+          "chart_settings": {
+            "plot_type": "upwelling_region_oxygen_profiles",
+            "x_axis": "dissolved_oxygen",
+            "y_axis": "depth_inverted",
+            "line_grouping": "profile_id",
+            "line_coloring": "by_upwelling_region",
+            "xlabel": "Dissolved Oxygen (μmol/kg)",
+            "ylabel": "Depth (m)",
+            "title": "Dissolved Oxygen Profiles - Upwelling Regions",
+            "grid": true
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_density_mixed_layer_063",
+      "content": "display density profiles for the mixed layer analysis, density profiles mixed layer, mixed layer density profiles, density mixed layer analysis profiles",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.density, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.density IS NOT NULL AND m.pressure BETWEEN 0 AND 300 ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "display density profiles mixed layer analysis",
+          "density profiles mixed layer",
+          "mixed layer density profiles",
+          "density mixed layer analysis"
+        ],
+        "visualization_config": {
+          "primary": "density_mixed_layer_profiles",
+          "chart_settings": {
+            "plot_type": "mixed_layer_density_analysis_profiles",
+            "x_axis": "density",
+            "y_axis": "depth_inverted",
+            "line_grouping": "profile_id",
+            "line_coloring": "temporal_gradient",
+            "xlabel": "Density (kg/m³)",
+            "ylabel": "Depth (m)",
+            "title": "Density Profiles - Mixed Layer Analysis",
+            "mixed_layer_depth_indicator": "horizontal_line_overlay",
+            "grid": true
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_backscatter_bgc_profiles_064",
+      "content": "show backscatter profiles from BGC sensors, BGC backscatter profiles, backscatter profiles BGC sensors, particle backscatter profiles BGC",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.particle_backscattering FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.particle_backscattering IS NOT NULL AND m.pressure BETWEEN 0 AND 500 ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "show backscatter profiles BGC sensors",
+          "BGC backscatter profiles",
+          "backscatter profiles BGC sensors",
+          "particle backscatter profiles BGC"
+        ],
+        "visualization_config": {
+          "primary": "bgc_backscatter_profiles",
+          "chart_settings": {
+            "plot_type": "biogeochemical_backscatter_profiles",
+            "x_axis": "particle_backscattering",
+            "y_axis": "depth_inverted",
+            "line_grouping": "profile_id",
+            "line_coloring": "by_location",
+            "xlabel": "Particle Backscattering (m⁻¹)",
+            "ylabel": "Depth (m)",
+            "title": "Backscatter Profiles - BGC Sensors",
+            "log_scale_x": true,
+            "grid": true
+          }
+        },
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "viz_temp_timeseries_200m_065",
+      "content": "plot temperature time series at 200m depth for the last 2 years, temperature time series 200m depth 2 years, 200m temperature time series last 2 years, temperature 200m time series",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_date, AVG(m.temperature) as avg_temperature, COUNT(m.measurement_id) as data_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure BETWEEN 180 AND 220 AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') AND p.profile_date >= DATE_SUB(CURRENT_DATE, INTERVAL 2 YEAR) GROUP BY DATE(p.profile_date) ORDER BY p.profile_date ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "plot temperature time series 200m depth last 2 years",
+          "temperature time series 200m depth 2 years",
+          "200m temperature time series last 2 years",
+          "temperature 200m time series"
+        ],
+        "visualization_config": {
+          "primary": "temperature_time_series_200m",
+          "chart_settings": {
+            "plot_type": "time_series_line_plot",
+            "x_axis": "profile_date",
+            "y_axis": "avg_temperature",
+            "line_style": "connected_points",
+            "xlabel": "Date",
+            "ylabel": "Temperature (°C)",
+            "title": "Temperature Time Series at 200m Depth (Last 2 Years)",
+            "trend_line": "moving_average",
+            "grid": true
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_salinity_trends_location_066",
+      "content": "show salinity trends over time at a specific location, salinity trends specific location, location salinity trends over time, salinity time trends specific location",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_date, AVG(m.salinity) as avg_salinity, COUNT(m.measurement_id) as data_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {target_lat} - 1 AND {target_lat} + 1 AND p.longitude BETWEEN {target_lon} - 1 AND {target_lon} + 1 AND m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') AND m.pressure BETWEEN 0 AND 100 GROUP BY DATE(p.profile_date) ORDER BY p.profile_date ASC",
+        "parameters": {
+          "target_lat": {"type": "float", "required": true, "description": "Target latitude for salinity trends"},
+          "target_lon": {"type": "float", "required": true, "description": "Target longitude for salinity trends"}
+        },
+        "natural_language_patterns": [
+          "show salinity trends over time at location {target_lat} {target_lon}",
+          "salinity trends specific location {target_lat} {target_lon}",
+          "location salinity trends over time",
+          "salinity time trends specific location"
+        ],
+        "visualization_config": {
+          "primary": "salinity_trend_time_series",
+          "chart_settings": {
+            "plot_type": "temporal_trend_line_plot",
+            "x_axis": "profile_date",
+            "y_axis": "avg_salinity",
+            "line_style": "trend_with_points",
+            "xlabel": "Date",
+            "ylabel": "Salinity (PSU)",
+            "title": "Salinity Trends at {target_lat}°, {target_lon}°",
+            "trend_analysis": "linear_regression_overlay",
+            "grid": true
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_seasonal_temp_bay_bengal_067",
+      "content": "display seasonal temperature cycles in the Bay of Bengal, Bay of Bengal seasonal temperature cycles, seasonal temperature Bay of Bengal, temperature seasonal cycles Bay of Bengal",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT MONTH(p.profile_date) as month, CASE WHEN MONTH(p.profile_date) IN (12,1,2) THEN 'Winter' WHEN MONTH(p.profile_date) IN (3,4,5) THEN 'Spring' WHEN MONTH(p.profile_date) IN (6,7,8) THEN 'Summer' ELSE 'Fall' END as season, AVG(m.temperature) as avg_temperature, STDDEV(m.temperature) as std_temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN 5 AND 22 AND p.longitude BETWEEN 80 AND 100 AND m.pressure BETWEEN 0 AND 50 AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') GROUP BY MONTH(p.profile_date), season ORDER BY month ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "display seasonal temperature cycles Bay of Bengal",
+          "Bay of Bengal seasonal temperature cycles",
+          "seasonal temperature Bay of Bengal",
+          "temperature seasonal cycles Bay of Bengal"
+        ],
+        "visualization_config": {
+          "primary": "seasonal_temperature_cycle_plot",
+          "chart_settings": {
+            "plot_type": "seasonal_cycle_analysis",
+            "x_axis": "month",
+            "y_axis": "avg_temperature",
+            "seasonal_grouping": "season",
+            "error_bars": "standard_deviation",
+            "xlabel": "Month",
+            "ylabel": "Temperature (°C)",
+            "title": "Seasonal Temperature Cycles - Bay of Bengal",
+            "seasonal_colors": {"Winter": "blue", "Spring": "green", "Summer": "red", "Fall": "orange"},
+            "grid": true
+          }
+        },
+        "user_expertise": "intermediate"
+      }
+    }
+  ]
+}

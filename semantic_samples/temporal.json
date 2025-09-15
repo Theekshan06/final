@@ -1,0 +1,225 @@
+{
+  "collection_info": {
+    "name": "temporal_indian_ocean_queries",
+    "description": "High-quality temporal analysis queries for Indian Ocean ARGO float data",
+    "total_documents": 200,
+    "semantic_approach": "Maximum density with 7-dimensional context",
+    "data_source": "Indian Ocean ARGO floats (2000-2025)",
+    "regions_covered": ["Red Sea", "Persian Gulf", "Andaman Sea", "Western Australian Basin", "Mozambique Channel", "Northern Indian Ocean", "Arabian Sea", "Bay of Bengal"],
+    "temporal_coverage": "2000-2025 (25+ years)",
+    "data_quality": "Delayed-mode quality-controlled",
+    "last_updated": "2025-09-14",
+    "enhancement_version": "v3.0_semantic_density",
+    "optimization_features": [
+      "Maximum semantic context",
+      "Indian Ocean specific knowledge",
+      "Temporal pattern recognition",
+      "Oceanographic domain expertise",
+      "Multi-scale time analysis",
+      "Climate variability insights",
+      "Seasonal pattern detection"
+    ]
+  },
+  "queries": [
+    {
+      "id": "temp_seasonal_monsoon_001",
+      "content": "Primary Intent: Analyze seasonal temperature variations in the Indian Ocean during monsoon transitions to understand how ocean thermal structure responds to atmospheric forcing patterns\nSecondary Context: Researchers need this data to study monsoon-ocean interactions, predict seasonal climate patterns, validate ocean-atmosphere models, and understand heat storage mechanisms during different monsoon phases\nDomain Knowledge: Monsoon seasons create distinct thermal patterns in the Indian Ocean with southwest monsoon (June-September) causing upwelling and cooling, northeast monsoon (December-March) bringing warming, and inter-monsoon periods showing mixed layer deepening and thermal stratification changes\nNatural Query Variations: monsoon temperature patterns, seasonal thermal cycles, monsoon ocean response, temperature during southwest monsoon, northeast monsoon thermal structure, inter-monsoon ocean warming, monsoon transition temperatures\nData Relationships: Combines temperature measurements from profiles table with seasonal date filtering, geographic coordinates for monsoon-affected regions, and pressure depths to show vertical thermal structure changes across monsoon seasons\nExpected Insights: Reveals monsoon-driven thermal cycling, identifies seasonal thermocline variations, shows upwelling intensity during southwest monsoon, demonstrates inter-monsoon warming rates, and quantifies thermal energy storage across monsoon transitions\nResearch Applications: Monsoon prediction models, climate change impact studies, fisheries oceanography during monsoon seasons, marine ecosystem response to thermal cycles, and operational forecasting for monsoon-dependent industries",
+      "metadata": {
+        "category": "temporal_seasonal",
+        "complexity": "high",
+        "analytical_type": "monsoon_analysis",
+        "domain": "monsoon_oceanography",
+        "tables": ["profiles", "measurements", "floats"],
+        "parameters_required": ["monsoon_season", "indian_ocean_region", "year_range"],
+        "parameters_optional": ["depth_layers", "temperature_thresholds", "quality_flags"],
+        "geographic_scope": "indian_ocean_monsoon_regions",
+        "temporal_scope": "seasonal_monsoon_cycles",
+        "output_type": "seasonal_thermal_analysis",
+        "domain_tags": ["temperature", "monsoon", "seasonal", "thermal_structure", "upwelling", "climate"],
+        "indian_ocean_regions": ["Arabian Sea", "Bay of Bengal", "Northern Indian Ocean"],
+        "monsoon_phases": ["southwest_monsoon", "northeast_monsoon", "inter_monsoon"],
+        "research_relevance": ["climate_prediction", "fisheries", "ecosystem_response"]
+      }
+    },
+    {
+      "id": "temp_interannual_iod_002",
+      "content": "Primary Intent: Examine interannual temperature anomalies in the Indian Ocean to identify and quantify Indian Ocean Dipole (IOD) events and their thermal signatures across different phases\nSecondary Context: Climate scientists require this analysis to understand IOD impacts on regional climate, predict extreme weather events, study teleconnections with global climate patterns, and assess IOD influence on marine ecosystems and monsoon variability\nDomain Knowledge: Indian Ocean Dipole manifests as sea surface temperature anomalies between western (warming) and eastern (cooling) Indian Ocean during positive IOD events, with opposite patterns during negative IOD, creating significant impacts on regional climate, rainfall patterns, and marine productivity\nNatural Query Variations: Indian Ocean Dipole temperature patterns, IOD thermal anomalies, interannual temperature variability, positive IOD warming patterns, negative IOD cooling events, dipole mode temperature analysis, IOD index temperature correlations\nData Relationships: Links temperature measurements across IOD-sensitive regions with multi-year time series analysis, correlates eastern and western Indian Ocean temperature differences, and connects surface and subsurface thermal patterns with atmospheric indices\nExpected Insights: Identifies IOD event timing and intensity, quantifies temperature anomaly magnitudes, reveals subsurface thermal responses, demonstrates east-west temperature gradients, and shows IOD impacts on thermal structure evolution\nResearch Applications: Climate prediction and early warning systems, IOD impact assessment on agriculture and fisheries, global climate model validation, extreme weather forecasting, and marine ecosystem vulnerability studies under changing IOD patterns",
+      "metadata": {
+        "category": "temporal_interannual",
+        "complexity": "high",
+        "analytical_type": "climate_oscillation_analysis",
+        "domain": "climate_variability",
+        "tables": ["profiles", "measurements", "floats"],
+        "parameters_required": ["iod_regions", "analysis_years", "temperature_anomaly_baseline"],
+        "parameters_optional": ["iod_phase", "depth_integration", "statistical_significance"],
+        "geographic_scope": "indian_ocean_dipole_regions",
+        "temporal_scope": "interannual_variability",
+        "output_type": "climate_anomaly_analysis",
+        "domain_tags": ["temperature", "IOD", "climate_oscillation", "anomalies", "interannual", "teleconnections"],
+        "indian_ocean_regions": ["Western Indian Ocean", "Eastern Indian Ocean", "IOD_western_pole", "IOD_eastern_pole"],
+        "climate_indices": ["IOD_index", "temperature_anomalies", "thermal_gradients"],
+        "research_relevance": ["climate_prediction", "extreme_weather", "ecosystem_impacts"]
+      }
+    },
+    {
+      "id": "temp_decadal_warming_003",
+      "content": "Primary Intent: Analyze decadal-scale ocean temperature warming trends in the Indian Ocean to quantify long-term climate change signals and identify regional warming patterns over multiple decades\nSecondary Context: Climate researchers need this information to assess anthropogenic warming impacts, validate climate models, understand ocean heat content changes, study marine heatwave frequency evolution, and project future thermal conditions for ecosystem planning\nDomain Knowledge: Indian Ocean has experienced significant warming over recent decades with regional variations, showing accelerated warming in the Arabian Sea, gradual warming in the Bay of Bengal, and complex patterns in the Southern Indian Ocean influenced by Antarctic Circumpolar Current dynamics\nNatural Query Variations: long-term ocean warming, decadal temperature trends, climate change ocean heating, multi-decade thermal evolution, ocean warming rates, temperature trend analysis, decadal thermal changes\nData Relationships: Integrates temperature data across decades with trend analysis algorithms, combines surface and deep ocean measurements, links regional temperature patterns with global climate indices, and correlates warming rates with depth layers\nExpected Insights: Quantifies warming rates across different regions and depths, identifies accelerating or decelerating warming trends, reveals spatial patterns of thermal change, demonstrates seasonal variations in warming trends, and shows connections to global climate patterns\nResearch Applications: Climate change impact assessments, ocean heat budget studies, ecosystem adaptation planning, fisheries management under warming conditions, and validation of Earth system models for future projections",
+      "metadata": {
+        "category": "temporal_decadal",
+        "complexity": "high",
+        "analytical_type": "climate_trend_analysis",
+        "domain": "climate_change_oceanography",
+        "tables": ["profiles", "measurements", "floats"],
+        "parameters_required": ["decadal_periods", "indian_ocean_regions", "trend_analysis_method"],
+        "parameters_optional": ["depth_layers", "seasonal_filtering", "significance_testing"],
+        "geographic_scope": "indian_ocean_basins",
+        "temporal_scope": "multi_decadal_trends",
+        "output_type": "warming_trend_analysis",
+        "domain_tags": ["temperature", "climate_change", "warming_trends", "decadal", "heat_content", "anthropogenic"],
+        "indian_ocean_regions": ["Arabian Sea", "Bay of Bengal", "Southern Indian Ocean", "Western Australian Basin"],
+        "trend_periods": ["2000-2010", "2010-2020", "2000-2025"],
+        "research_relevance": ["climate_change_assessment", "ecosystem_adaptation", "model_validation"]
+      }
+    },
+    {
+      "id": "temp_diurnal_surface_004",
+      "content": "Primary Intent: Investigate diurnal temperature cycles in Indian Ocean surface waters to understand daily thermal variations, solar heating effects, and mixed layer dynamics on sub-daily timescales\nSecondary Context: Oceanographers need this analysis to study air-sea heat exchange processes, validate satellite sea surface temperature retrievals, understand diurnal warm layer formation, and assess impacts of daily thermal cycles on marine organisms and biogeochemical processes\nDomain Knowledge: Diurnal temperature variations in tropical Indian Ocean can reach 2-4°C in the upper few meters, with maximum warming in late afternoon, cooling at night, and complex interactions with wind mixing, solar radiation, and surface wave breaking that affect heat distribution\nNatural Query Variations: daily temperature cycles, diurnal thermal variations, surface temperature daily patterns, day-night temperature differences, solar heating ocean response, diurnal warm layer analysis, sub-daily temperature changes\nData Relationships: Connects high-frequency temperature measurements from surface floats with time-of-day analysis, links temperature profiles with solar radiation cycles, and correlates surface thermal variations with wind and wave conditions\nExpected Insights: Reveals diurnal warming and cooling magnitudes, identifies optimal times for temperature measurements, shows seasonal variations in diurnal cycles, demonstrates mixed layer response to solar heating, and quantifies thermal stratification development\nResearch Applications: Satellite validation studies, air-sea interaction research, marine biology studies of thermal stress, operational oceanography for accurate temperature monitoring, and climate model improvement for surface heat fluxes",
+      "metadata": {
+        "category": "temporal_diurnal",
+        "complexity": "medium",
+        "analytical_type": "sub_daily_analysis",
+        "domain": "surface_oceanography",
+        "tables": ["profiles", "measurements", "floats"],
+        "parameters_required": ["surface_depths", "time_of_day", "geographic_coordinates"],
+        "parameters_optional": ["seasonal_period", "weather_conditions", "solar_radiation_data"],
+        "geographic_scope": "tropical_indian_ocean",
+        "temporal_scope": "sub_daily_cycles",
+        "output_type": "diurnal_thermal_analysis",
+        "domain_tags": ["temperature", "diurnal", "surface", "solar_heating", "mixed_layer", "thermal_cycles"],
+        "indian_ocean_regions": ["Tropical Indian Ocean", "Equatorial Indian Ocean"],
+        "time_scales": ["hourly", "sub_daily", "diurnal_cycle"],
+        "research_relevance": ["satellite_validation", "air_sea_interaction", "marine_biology"]
+      }
+    },
+    {
+      "id": "temp_mhw_frequency_005",
+      "content": "Primary Intent: Analyze the temporal evolution of marine heatwave frequency, intensity, and duration in the Indian Ocean to understand how extreme thermal events are changing over time and their potential ecosystem impacts\nSecondary Context: Marine ecologists and climate scientists need this information to assess coral bleaching risks, predict fisheries disruptions, understand ecosystem resilience thresholds, and develop early warning systems for marine heatwave events in the Indian Ocean region\nDomain Knowledge: Marine heatwaves are periods of anomalously warm sea surface temperatures lasting 5+ days, with Indian Ocean experiencing increasing frequency and intensity since 2000, particularly affecting coral reefs, fisheries, and marine food webs with cascading ecological effects\nNatural Query Variations: marine heatwave analysis, extreme temperature events, ocean warming extremes, thermal stress periods, anomalous warming events, marine temperature extremes, heatwave intensity trends\nData Relationships: Combines daily temperature data with statistical algorithms to identify heatwave events, links temperature anomalies with baseline climatology, connects heatwave metrics with geographic distributions and seasonal patterns\nExpected Insights: Identifies heatwave event characteristics, quantifies changing frequency and intensity trends, reveals seasonal and geographic patterns of extreme warming, demonstrates ecosystem stress periods, and shows connections to climate variability\nResearch Applications: Coral reef monitoring and conservation, fisheries management and early warning systems, marine protected area planning, ecosystem-based adaptation strategies, and climate impact assessment for marine industries",
+      "metadata": {
+        "category": "temporal_extreme_events",
+        "complexity": "high",
+        "analytical_type": "extreme_event_analysis",
+        "domain": "marine_climate_extremes",
+        "tables": ["profiles", "measurements", "floats"],
+        "parameters_required": ["heatwave_definition", "baseline_period", "indian_ocean_regions"],
+        "parameters_optional": ["intensity_categories", "duration_thresholds", "ecological_thresholds"],
+        "geographic_scope": "indian_ocean_ecosystems",
+        "temporal_scope": "extreme_event_identification",
+        "output_type": "heatwave_event_analysis",
+        "domain_tags": ["temperature", "marine_heatwaves", "extreme_events", "ecosystem_stress", "thermal_anomalies", "coral_bleaching"],
+        "indian_ocean_regions": ["Coral Triangle", "Western Australian Coast", "Red Sea", "Persian Gulf"],
+        "event_metrics": ["frequency", "intensity", "duration", "cumulative_heat"],
+        "research_relevance": ["coral_conservation", "fisheries_management", "ecosystem_adaptation"]
+      }
+    },
+    {
+      "id": "sal_seasonal_freshwater_006",
+      "content": "Primary Intent: Examine seasonal salinity variations in the Indian Ocean to understand freshwater input cycles from monsoon rainfall, river discharge, and precipitation patterns that control surface salinity distributions\nSecondary Context: Physical oceanographers need this analysis to study mixed layer dynamics, validate precipitation datasets, understand ocean-atmosphere water cycle interactions, and assess impacts of changing precipitation patterns on ocean stratification and circulation\nDomain Knowledge: Indian Ocean salinity shows strong seasonal cycles with freshening during southwest monsoon due to heavy rainfall and river discharge, particularly in Bay of Bengal from Ganges-Brahmaputra systems, and saltier conditions during dry northeast monsoon periods\nNatural Query Variations: seasonal salinity changes, monsoon salinity patterns, freshwater input effects, precipitation ocean response, river discharge salinity impacts, seasonal salt content variations, monsoon freshening analysis\nData Relationships: Links salinity measurements with seasonal precipitation data, connects river discharge periods with near-coastal salinity changes, and correlates surface salinity patterns with atmospheric moisture transport and monsoon intensity\nExpected Insights: Reveals seasonal freshening and saltening patterns, quantifies monsoon rainfall impacts on salinity, identifies river discharge signatures, demonstrates mixed layer salinity stratification, and shows connections between atmospheric water cycle and ocean salinity\nResearch Applications: Water cycle studies, monsoon prediction and validation, ocean circulation modeling, climate model evaluation of hydrological cycles, and understanding of ocean-atmosphere feedbacks in the Indian Ocean system",
+      "metadata": {
+        "category": "temporal_seasonal",
+        "complexity": "medium",
+        "analytical_type": "freshwater_cycle_analysis",
+        "domain": "physical_oceanography",
+        "tables": ["profiles", "measurements", "floats"],
+        "parameters_required": ["monsoon_seasons", "surface_depths", "indian_ocean_regions"],
+        "parameters_optional": ["river_discharge_data", "precipitation_correlations", "salinity_thresholds"],
+        "geographic_scope": "monsoon_affected_regions",
+        "temporal_scope": "seasonal_water_cycle",
+        "output_type": "seasonal_salinity_analysis",
+        "domain_tags": ["salinity", "monsoon", "freshwater", "precipitation", "river_discharge", "water_cycle"],
+        "indian_ocean_regions": ["Bay of Bengal", "Arabian Sea", "Andaman Sea"],
+        "freshwater_sources": ["monsoon_rainfall", "river_discharge", "precipitation"],
+        "research_relevance": ["water_cycle_studies", "monsoon_prediction", "circulation_modeling"]
+      }
+    },
+    {
+      "id": "sal_barrier_layer_007",
+      "content": "Primary Intent: Analyze temporal variations in barrier layer formation and evolution in the Indian Ocean to understand how salinity stratification affects mixed layer dynamics and ocean-atmosphere heat exchange\nSecondary Context: Climate modelers need this information to improve mixed layer parameterizations, understand tropical cyclone intensification processes, study air-sea interaction in the presence of salinity stratification, and assess impacts on seasonal climate predictability\nDomain Knowledge: Barrier layers form when low-salinity surface waters create density stratification above the thermocline, common in Bay of Bengal and post-monsoon periods, affecting heat storage, mixed layer deepening, and tropical cyclone development through altered ocean heat content accessibility\nNatural Query Variations: barrier layer analysis, salinity stratification effects, mixed layer salinity caps, density stratification temporal changes, thermocline-halocline separation, salinity-controlled stratification, barrier layer thickness evolution\nData Relationships: Combines salinity and temperature profiles to calculate density stratification, identifies thermocline and halocline depths, tracks barrier layer thickness changes over time, and correlates with atmospheric forcing and mixing events\nExpected Insights: Reveals barrier layer formation timing and duration, quantifies stratification strength variations, identifies optimal conditions for barrier layer development, demonstrates seasonal cycles of salinity stratification, and shows impacts on mixed layer heat content\nResearch Applications: Tropical cyclone prediction models, seasonal climate forecasting, ocean mixed layer studies, air-sea interaction research, and improvement of ocean general circulation model parameterizations for tropical regions",
+      "metadata": {
+        "category": "temporal_process_evolution",
+        "complexity": "high",
+        "analytical_type": "stratification_analysis",
+        "domain": "mixed_layer_dynamics",
+        "tables": ["profiles", "measurements", "floats"],
+        "parameters_required": ["salinity_temperature_profiles", "density_calculations", "indian_ocean_regions"],
+        "parameters_optional": ["barrier_layer_criteria", "seasonal_filtering", "mixing_event_identification"],
+        "geographic_scope": "barrier_layer_regions",
+        "temporal_scope": "stratification_evolution",
+        "output_type": "barrier_layer_analysis",
+        "domain_tags": ["salinity", "barrier_layer", "stratification", "mixed_layer", "density", "tropical_cyclone"],
+        "indian_ocean_regions": ["Bay of Bengal", "Arabian Sea", "Tropical Indian Ocean"],
+        "physical_processes": ["stratification", "mixing", "heat_storage"],
+        "research_relevance": ["cyclone_prediction", "climate_modeling", "air_sea_interaction"]
+      }
+    },
+    {
+      "id": "temp_upwelling_intensity_008",
+      "content": "Primary Intent: Quantify temporal variations in coastal and open-ocean upwelling intensity in the Indian Ocean by analyzing temperature signatures that indicate vertical water mass movement and nutrient transport to surface waters\nSecondary Context: Marine biologists and fisheries scientists need this analysis to understand productivity cycles, predict fish population dynamics, assess ecosystem health, and study how upwelling supports marine food webs in the Indian Ocean region\nDomain Knowledge: Indian Ocean upwelling occurs along western coasts during southwest monsoon, in Arabian Sea due to Ekman transport, and through open-ocean processes, bringing cold, nutrient-rich waters to surface and supporting high biological productivity\nNatural Query Variations: upwelling temperature signals, cold water upwelling events, coastal upwelling analysis, nutrient upwelling indicators, productivity upwelling patterns, temperature-based upwelling detection, vertical mixing temperature signatures\nData Relationships: Connects surface and subsurface temperature gradients with upwelling indicators, links temperature anomalies with wind stress patterns, and correlates upwelling signatures with seasonal monsoon cycles and coastal geography\nExpected Insights: Identifies upwelling event timing and intensity, quantifies temperature cooling associated with upwelling, reveals seasonal and interannual upwelling variability, demonstrates spatial patterns of upwelling strength, and shows connections to biological productivity\nResearch Applications: Fisheries forecasting and management, marine ecosystem monitoring, coastal zone management, primary productivity studies, and understanding of ocean biogeochemical cycles supported by upwelling processes",
+      "metadata": {
+        "category": "temporal_physical_processes",
+        "complexity": "high",
+        "analytical_type": "upwelling_analysis",
+        "domain": "coastal_physical_oceanography",
+        "tables": ["profiles", "measurements", "floats"],
+        "parameters_required": ["upwelling_regions", "temperature_gradient_thresholds", "monsoon_periods"],
+        "parameters_optional": ["wind_stress_data", "biological_indicators", "depth_integration"],
+        "geographic_scope": "upwelling_systems",
+        "temporal_scope": "upwelling_event_cycles",
+        "output_type": "upwelling_intensity_analysis",
+        "domain_tags": ["temperature", "upwelling", "monsoon", "productivity", "coastal", "vertical_mixing"],
+        "indian_ocean_regions": ["Arabian Sea", "Western Indian Ocean", "Somali Coast", "Arabian Peninsula Coast"],
+        "physical_processes": ["upwelling", "ekman_transport", "vertical_mixing"],
+        "research_relevance": ["fisheries_management", "ecosystem_monitoring", "productivity_studies"]
+      }
+    },
+    {
+      "id": "temp_mld_seasonal_009",
+      "content": "Primary Intent: Analyze seasonal mixed layer depth variations and their temperature characteristics in the Indian Ocean to understand upper ocean thermal structure evolution and its response to atmospheric forcing\nSecondary Context: Ocean modelers need this information to validate mixed layer parameterizations, understand seasonal heat storage mechanisms, assess air-sea heat exchange efficiency, and study connections between mixed layer dynamics and regional climate patterns\nDomain Knowledge: Mixed layer depth in Indian Ocean shows pronounced seasonal cycles with deepening during northeast monsoon cooling and shoaling during southwest monsoon heating, controlled by surface buoyancy fluxes, wind mixing, and solar heating penetration\nNatural Query Variations: mixed layer depth temperature analysis, seasonal thermocline variations, upper ocean thermal structure, mixed layer temperature evolution, seasonal stratification changes, thermal mixed layer dynamics\nData Relationships: Combines temperature profiles with mixed layer depth calculations, links seasonal atmospheric forcing with mixed layer response, and connects thermal structure changes with geographic and temporal patterns across monsoon cycles\nExpected Insights: Reveals seasonal mixed layer deepening and shoaling patterns, quantifies temperature changes associated with mixed layer evolution, identifies regional variations in mixed layer thermal characteristics, and demonstrates monsoon impacts on upper ocean structure\nResearch Applications: Ocean model validation and improvement, seasonal climate prediction, air-sea interaction studies, upper ocean heat budget analysis, and understanding of tropical ocean dynamics in monsoon-dominated systems",
+      "metadata": {
+        "category": "temporal_structural_evolution",
+        "complexity": "high",
+        "analytical_type": "mixed_layer_analysis",
+        "domain": "upper_ocean_dynamics",
+        "tables": ["profiles", "measurements", "floats"],
+        "parameters_required": ["mixed_layer_criteria", "temperature_profiles", "seasonal_periods"],
+        "parameters_optional": ["atmospheric_forcing_data", "regional_subdivisions", "trend_analysis"],
+        "geographic_scope": "indian_ocean_mixed_layer_regions",
+        "temporal_scope": "seasonal_mixed_layer_cycles",
+        "output_type": "mixed_layer_thermal_analysis",
+        "domain_tags": ["temperature", "mixed_layer_depth", "seasonal", "thermal_structure", "stratification", "monsoon"],
+        "indian_ocean_regions": ["Arabian Sea", "Bay of Bengal", "Tropical Indian Ocean", "Southern Indian Ocean"],
+        "physical_processes": ["mixed_layer_dynamics", "seasonal_stratification", "heat_storage"],
+        "research_relevance": ["model_validation", "climate_prediction", "ocean_dynamics"]
+      }
+    },
+    {
+      "id": "temp_eddy_temporal_010",
+      "content": "Primary Intent: Track temporal evolution of mesoscale eddy temperature signatures in the Indian Ocean to understand eddy lifecycles, heat transport mechanisms, and their contributions to regional temperature variability\nSecondary Context: Physical oceanographers need this analysis to study ocean circulation patterns, quantify lateral heat transport, understand eddy-mean flow interactions, assess eddy impacts on marine ecosystems, and validate high-resolution ocean models\nDomain Knowledge: Mesoscale eddies in Indian Ocean transport heat horizontally, with warm-core anticyclonic eddies and cold-core cyclonic eddies creating temperature anomalies that persist for weeks to months, affecting local thermal structure and marine habitats\nNatural Query Variations: eddy temperature evolution, mesoscale thermal features, eddy heat content analysis, circulation eddy temperature, temperature anomaly tracking, eddy thermal signatures, oceanic eddy temperature patterns\nData Relationships: Connects temperature measurements with eddy identification algorithms, tracks temperature evolution within eddy boundaries, links eddy properties with formation and dissipation processes, and correlates eddy thermal characteristics with large-scale circulation\nExpected Insights: Reveals eddy formation and decay temperature signatures, quantifies heat content transport by eddies, identifies seasonal patterns in eddy thermal properties, demonstrates eddy impacts on regional temperature distribution, and shows eddy contribution to heat mixing\nResearch Applications: Ocean circulation studies, lateral heat transport quantification, marine ecosystem habitat modeling, fisheries management in dynamic environments, and validation of eddy-resolving ocean circulation models",
+      "metadata": {
+        "category": "temporal_mesoscale_features",
+        "complexity": "high",
+        "analytical_type": "eddy_evolution_analysis",
+        "domain": "mesoscale_oceanography",
+        "tables": ["profiles", "measurements", "floats"],
+        "parameters_required": ["eddy_identification_criteria", "temperature_anomaly_thresholds", "tracking_duration"],
+        "parameters_optional": ["eddy_type_classification", "heat_content_calculations", "lifecycle_stages"],
+        "geographic_scope": "eddy_active_regions",
+        "temporal_scope": "eddy_lifecycle_evolution",
+        "output_type": "eddy_thermal_evolution",
+        "domain_tags": ["temperature", "mesoscale_eddies", "heat_transport", "circulation", "thermal_anomalies", "ocean_dynamics"],
+        "indian_ocean_regions": ["Western Boundary Current", "Southern Indian Ocean", "Agulhas Current System"],
+        "physical_processes": ["eddy_formation", "heat_transport", "mesoscale_circulation"],
+        "research_relevance": ["circulation_studies", "heat_transport", "ecosystem_dynamics"]
+      }
+    }
+  ]
+}

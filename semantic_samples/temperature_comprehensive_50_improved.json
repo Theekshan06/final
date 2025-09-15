@@ -1,0 +1,1041 @@
+{
+  "category": "Temperature Analysis - COMPREHENSIVE 50 SAMPLES (IMPROVED)",
+  "description": "50 improved temperature samples based on similarity testing results",
+  "total_samples": 50,
+  "categories": {
+    "basic_retrieval": "Simple temperature data queries - 10 samples",
+    "visualization_plotting": "Plot-specific temperature visualization queries - 10 samples",
+    "multi_variable_analysis": "Temperature vs other parameters - 10 samples",
+    "time_series_analysis": "Temporal temperature patterns - 10 samples",
+    "spatial_analysis": "Geographic temperature distributions - 10 samples"
+  },
+  "visualization_guidance": {
+    "plot_types": [
+      "line_plot",
+      "heatmap",
+      "contour",
+      "scatter",
+      "histogram",
+      "box_plot",
+      "time_series",
+      "trajectory"
+    ],
+    "color_schemes": [
+      "viridis",
+      "plasma",
+      "coolwarm",
+      "RdBu",
+      "ocean"
+    ],
+    "interactive_features": [
+      "zoom",
+      "pan",
+      "hover",
+      "selection",
+      "animation"
+    ],
+    "export_formats": [
+      "png",
+      "svg",
+      "html",
+      "pdf"
+    ]
+  },
+  "queries": [
+    {
+      "id": "temp_basic_001",
+      "content": "temperature data, temperature measurements, temp data, show temperature, get temperature, temperature values, temperature readings, ocean temperature, temperature info, display temperature, temperature records, temp measurements, temp readings, seawater temperature, water temperature, marine temperature data",
+      "metadata": {
+        "category": "basic_retrieval",
+        "visualization_type": "table",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 100"
+        },
+        "plot_config": {
+          "type": "table",
+          "title": "Temperature Measurements",
+          "columns": [
+            "Date",
+            "Latitude",
+            "Longitude",
+            "Pressure",
+            "Temperature"
+          ]
+        }
+      }
+    },
+    {
+      "id": "temp_basic_002",
+      "content": "temperature anomaly, unusual temperature, abnormal temperature, weird temperature readings, strange temp values, temperature outliers, odd temperature data, temperature deviation, temperature anomaly detection, strange temperature patterns, temperature outlier detection, anomalous temperature",
+      "metadata": {
+        "category": "basic_retrieval",
+        "visualization_type": "scatter",
+        "sql_template": "WITH temp_stats AS (SELECT AVG(m.temperature) as mean_temp, STDDEV(m.temperature) as std_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')) SELECT p.profile_date, p.latitude, p.longitude, m.temperature, ABS((m.temperature - ts.mean_temp) / ts.std_temp) as anomaly_score FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id CROSS JOIN temp_stats ts WHERE ABS((m.temperature - ts.mean_temp) / ts.std_temp) > {anomaly_threshold} ORDER BY anomaly_score DESC LIMIT {limit_count}",
+        "parameters": {
+          "anomaly_threshold": "float, default 2.0",
+          "limit_count": "integer, default 50"
+        },
+        "plot_config": {
+          "type": "scatter",
+          "title": "Temperature Anomalies",
+          "x_axis": "Date",
+          "y_axis": "Temperature",
+          "color_by": "anomaly_score",
+          "colormap": "Reds"
+        }
+      }
+    },
+    {
+      "id": "temp_basic_003",
+      "content": "thermocline depth, find thermocline, thermocline location, thermal layer, temperature gradient, where is thermocline, thermocline analysis",
+      "metadata": {
+        "category": "basic_retrieval",
+        "visualization_type": "line_plot",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure as thermocline_depth, ABS((LAG(m.temperature, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) - m.temperature) / (m.pressure - LAG(m.pressure, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure))) as temp_gradient FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_id = {profile_id} AND m.temperature_qc IN ('1', '2') ORDER BY temp_gradient DESC LIMIT 5",
+        "parameters": {
+          "profile_id": "string, required"
+        },
+        "plot_config": {
+          "type": "line_plot",
+          "title": "Temperature vs Depth - Thermocline Detection",
+          "x_axis": "Temperature",
+          "y_axis": "Depth (Pressure)",
+          "invert_y": true
+        }
+      }
+    },
+    {
+      "id": "temp_basic_004",
+      "content": "temperature inversion, inverted temperature, temperature increases with depth, warm water below cold, subsurface warming, upside down temperature",
+      "metadata": {
+        "category": "basic_retrieval",
+        "visualization_type": "line_plot",
+        "sql_template": "WITH temp_changes AS (SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, LAG(m.temperature, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) as prev_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')) SELECT profile_id, profile_date, latitude, longitude, pressure, temperature FROM temp_changes WHERE temperature > prev_temp + {inversion_threshold} ORDER BY profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "inversion_threshold": "float, default 0.5",
+          "limit_count": "integer, default 50"
+        },
+        "plot_config": {
+          "type": "line_plot",
+          "title": "Temperature Inversions",
+          "x_axis": "Temperature",
+          "y_axis": "Pressure",
+          "highlight_inversions": true
+        }
+      }
+    },
+    {
+      "id": "temp_basic_005",
+      "content": "seasonal temperature, temperature by season, monthly temperature, temperature seasonality, seasonal temp patterns, temperature by month",
+      "metadata": {
+        "category": "basic_retrieval",
+        "visualization_type": "line_plot",
+        "sql_template": "SELECT MONTH(p.profile_date) as month, AVG(m.temperature) as avg_temp, COUNT(*) as measurements FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.temperature_qc IN ('1', '2') GROUP BY MONTH(p.profile_date) ORDER BY month",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        },
+        "plot_config": {
+          "type": "line_plot",
+          "title": "Seasonal Temperature Patterns",
+          "x_axis": "Month",
+          "y_axis": "Average Temperature",
+          "markers": true
+        }
+      }
+    },
+    {
+      "id": "temp_basic_006",
+      "content": "warming trends, temperature trends, long term temperature change, temperature time series, temperature getting warmer, temperature over time",
+      "metadata": {
+        "category": "basic_retrieval",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT YEAR(p.profile_date) as year, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.temperature_qc IN ('1', '2') GROUP BY YEAR(p.profile_date) ORDER BY year",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Long-term Temperature Trends",
+          "x_axis": "Year",
+          "y_axis": "Average Temperature",
+          "trend_line": true
+        }
+      }
+    },
+    {
+      "id": "temp_basic_007",
+      "content": "mixed layer temperature, surface mixed layer, MLD temperature, upper ocean temperature, surface layer temperature, mixed layer depth temp, thermal layer, thermal stratification, temperature layers, upper ocean layers, mixed layer thermal",
+      "metadata": {
+        "category": "basic_retrieval",
+        "visualization_type": "histogram",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, AVG(m.temperature) as mixed_layer_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure <= {mixed_layer_depth} AND m.temperature_qc IN ('1', '2') GROUP BY p.profile_id ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "mixed_layer_depth": "float, default 50.0",
+          "limit_count": "integer, default 100"
+        },
+        "plot_config": {
+          "type": "histogram",
+          "title": "Mixed Layer Temperature Distribution",
+          "x_axis": "Temperature",
+          "y_axis": "Frequency",
+          "bins": 30
+        }
+      }
+    },
+    {
+      "id": "temp_basic_008",
+      "content": "temperature variability, temperature variation, how much temperature varies, temperature fluctuations, temperature stability, temp variability",
+      "metadata": {
+        "category": "basic_retrieval",
+        "visualization_type": "box_plot",
+        "sql_template": "SELECT ROUND(p.latitude, 1) as lat_grid, ROUND(p.longitude, 1) as lon_grid, AVG(m.temperature) as mean_temp, STDDEV(m.temperature) as temp_variability FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') GROUP BY ROUND(p.latitude, 1), ROUND(p.longitude, 1) HAVING COUNT(*) >= 10 ORDER BY temp_variability DESC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 50"
+        },
+        "plot_config": {
+          "type": "box_plot",
+          "title": "Temperature Variability by Region",
+          "x_axis": "Region",
+          "y_axis": "Temperature Variability"
+        }
+      }
+    },
+    {
+      "id": "temp_basic_009",
+      "content": "temperature distribution, temperature histogram, how temperatures are distributed, temperature frequency, temperature ranges, temp distribution",
+      "metadata": {
+        "category": "basic_retrieval",
+        "visualization_type": "histogram",
+        "sql_template": "SELECT FLOOR(m.temperature) as temp_bin, COUNT(*) as frequency FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') GROUP BY FLOOR(m.temperature) ORDER BY temp_bin",
+        "parameters": {},
+        "plot_config": {
+          "type": "histogram",
+          "title": "Overall Temperature Distribution",
+          "x_axis": "Temperature (°C)",
+          "y_axis": "Frequency",
+          "color": "skyblue"
+        }
+      }
+    },
+    {
+      "id": "temp_basic_010",
+      "content": "temperature percentiles, extreme temperatures, hottest and coldest temperatures, temperature extremes, temperature ranking, temp percentiles, hottest temperature, temperature maximum, temperature minimum, temperature limits, temp extremes",
+      "metadata": {
+        "category": "basic_retrieval",
+        "visualization_type": "bar_chart",
+        "sql_template": "WITH temp_percentiles AS (SELECT m.temperature, NTILE(100) OVER (ORDER BY m.temperature) as percentile FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')) SELECT percentile, MIN(temperature) as min_temp, MAX(temperature) as max_temp FROM temp_percentiles WHERE percentile IN (1, 10, 50, 90, 99) GROUP BY percentile ORDER BY percentile",
+        "parameters": {},
+        "plot_config": {
+          "type": "bar_chart",
+          "title": "Temperature Percentiles",
+          "x_axis": "Percentile",
+          "y_axis": "Temperature",
+          "color": "orange"
+        }
+      }
+    },
+    {
+      "id": "temp_plot_001",
+      "content": "plot temperature, temperature graph, temperature chart, visualize temperature, temperature plot, draw temperature, temperature visualization, show temperature, display temperature, get temperature plot, temperature display, temperature visualization tool, temp display",
+      "metadata": {
+        "category": "visualization_plotting",
+        "visualization_type": "line_plot",
+        "sql_template": "SELECT p.profile_date, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_id = {profile_id} AND m.temperature_qc IN ('1', '2') ORDER BY m.pressure",
+        "parameters": {
+          "profile_id": "string, required"
+        },
+        "plot_config": {
+          "type": "line_plot",
+          "title": "Temperature Profile",
+          "x_axis": "Temperature (°C)",
+          "y_axis": "Pressure (dbar)",
+          "invert_y": true,
+          "color": "blue",
+          "line_width": 2
+        }
+      }
+    },
+    {
+      "id": "temp_plot_002",
+      "content": "temperature heatmap, temperature heat map, temperature contour, temperature spatial distribution, temperature grid plot, temperature color map",
+      "metadata": {
+        "category": "visualization_plotting",
+        "visualization_type": "heatmap",
+        "sql_template": "SELECT ROUND(p.latitude, 0.5) as lat_grid, ROUND(p.longitude, 0.5) as lon_grid, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure <= {depth_limit} GROUP BY ROUND(p.latitude, 0.5), ROUND(p.longitude, 0.5) HAVING COUNT(*) >= 5",
+        "parameters": {
+          "depth_limit": "float, default 10.0"
+        },
+        "plot_config": {
+          "type": "heatmap",
+          "title": "Temperature Heatmap",
+          "x_axis": "Longitude",
+          "y_axis": "Latitude",
+          "colormap": "viridis",
+          "colorbar_label": "Temperature (°C)"
+        }
+      }
+    },
+    {
+      "id": "temp_plot_003",
+      "content": "temperature scatter plot, temperature vs depth scatter, scatter plot temperature, temperature points plot, temperature dots visualization",
+      "metadata": {
+        "category": "visualization_plotting",
+        "visualization_type": "scatter",
+        "sql_template": "SELECT m.temperature, m.pressure, p.latitude, p.longitude FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} LIMIT {limit_count}",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required",
+          "limit_count": "integer, default 1000"
+        },
+        "plot_config": {
+          "type": "scatter",
+          "title": "Temperature vs Depth Scatter Plot",
+          "x_axis": "Temperature (°C)",
+          "y_axis": "Pressure (dbar)",
+          "alpha": 0.6,
+          "size": 3
+        }
+      }
+    },
+    {
+      "id": "temp_plot_004",
+      "content": "temperature contour plot, temperature contours, temperature isolines, temperature level curves, temperature topography",
+      "metadata": {
+        "category": "visualization_plotting",
+        "visualization_type": "contour",
+        "sql_template": "SELECT ROUND(p.latitude, 0.25) as lat_grid, ROUND(p.longitude, 0.25) as lon_grid, m.pressure, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') GROUP BY ROUND(p.latitude, 0.25), ROUND(p.longitude, 0.25), m.pressure HAVING COUNT(*) >= 3",
+        "parameters": {},
+        "plot_config": {
+          "type": "contour",
+          "title": "Temperature Contour Plot",
+          "x_axis": "Longitude",
+          "y_axis": "Latitude",
+          "colormap": "coolwarm",
+          "contour_levels": 20
+        }
+      }
+    },
+    {
+      "id": "temp_plot_005",
+      "content": "temperature histogram plot, temperature frequency plot, temperature distribution chart, temperature bins visualization, temperature density plot",
+      "metadata": {
+        "category": "visualization_plotting",
+        "visualization_type": "histogram",
+        "sql_template": "SELECT m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.temperature IS NOT NULL",
+        "parameters": {},
+        "plot_config": {
+          "type": "histogram",
+          "title": "Temperature Distribution Histogram",
+          "x_axis": "Temperature (°C)",
+          "y_axis": "Frequency",
+          "bins": 50,
+          "color": "lightblue",
+          "edge_color": "black"
+        }
+      }
+    },
+    {
+      "id": "temp_plot_006",
+      "content": "temperature box plot, temperature boxplot, temperature quartiles plot, temperature statistical plot, temperature summary plot",
+      "metadata": {
+        "category": "visualization_plotting",
+        "visualization_type": "box_plot",
+        "sql_template": "SELECT MONTH(p.profile_date) as month, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.temperature IS NOT NULL",
+        "parameters": {},
+        "plot_config": {
+          "type": "box_plot",
+          "title": "Monthly Temperature Box Plot",
+          "x_axis": "Month",
+          "y_axis": "Temperature (°C)",
+          "show_outliers": true
+        }
+      }
+    },
+    {
+      "id": "temp_plot_007",
+      "content": "temperature line graph, temperature time series plot, temperature trend plot, temperature over time graph, temperature chronological plot",
+      "metadata": {
+        "category": "visualization_plotting",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT DATE(p.profile_date) as date, AVG(m.temperature) as daily_avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.profile_date >= {start_date} AND p.profile_date <= {end_date} GROUP BY DATE(p.profile_date) ORDER BY date",
+        "parameters": {
+          "start_date": "date, required",
+          "end_date": "date, required"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Daily Temperature Time Series",
+          "x_axis": "Date",
+          "y_axis": "Temperature (°C)",
+          "line_style": "solid",
+          "marker": "circle"
+        }
+      }
+    },
+    {
+      "id": "temp_plot_008",
+      "content": "temperature surface plot, temperature 3D plot, temperature mesh plot, temperature wireframe, temperature surface visualization",
+      "metadata": {
+        "category": "visualization_plotting",
+        "visualization_type": "surface_3d",
+        "sql_template": "SELECT ROUND(p.latitude, 0.5) as lat_grid, ROUND(p.longitude, 0.5) as lon_grid, m.pressure, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') GROUP BY ROUND(p.latitude, 0.5), ROUND(p.longitude, 0.5), m.pressure HAVING COUNT(*) >= 3",
+        "parameters": {},
+        "plot_config": {
+          "type": "surface_3d",
+          "title": "Temperature 3D Surface Plot",
+          "x_axis": "Longitude",
+          "y_axis": "Latitude",
+          "z_axis": "Pressure",
+          "colormap": "plasma"
+        }
+      }
+    },
+    {
+      "id": "temp_plot_009",
+      "content": "temperature violin plot, temperature distribution shape, temperature density plot, temperature kernel density, temperature violin chart",
+      "metadata": {
+        "category": "visualization_plotting",
+        "visualization_type": "violin_plot",
+        "sql_template": "SELECT CASE WHEN m.pressure <= 50 THEN 'Surface' WHEN m.pressure <= 200 THEN 'Shallow' WHEN m.pressure <= 500 THEN 'Medium' ELSE 'Deep' END as depth_zone, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')",
+        "parameters": {},
+        "plot_config": {
+          "type": "violin_plot",
+          "title": "Temperature Distribution by Depth Zone",
+          "x_axis": "Depth Zone",
+          "y_axis": "Temperature (°C)",
+          "show_median": true
+        }
+      }
+    },
+    {
+      "id": "temp_plot_010",
+      "content": "temperature bar chart, temperature bar plot, temperature categorical plot, temperature comparison chart, temperature bars visualization",
+      "metadata": {
+        "category": "visualization_plotting",
+        "visualization_type": "bar_chart",
+        "sql_template": "SELECT CASE WHEN p.latitude >= 0 THEN 'Northern Hemisphere' ELSE 'Southern Hemisphere' END as hemisphere, AVG(m.temperature) as avg_temp, COUNT(*) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') GROUP BY CASE WHEN p.latitude >= 0 THEN 'Northern Hemisphere' ELSE 'Southern Hemisphere' END",
+        "parameters": {},
+        "plot_config": {
+          "type": "bar_chart",
+          "title": "Average Temperature by Hemisphere",
+          "x_axis": "Hemisphere",
+          "y_axis": "Average Temperature (°C)",
+          "color": "steelblue"
+        }
+      }
+    },
+    {
+      "id": "temp_multi_001",
+      "content": "temperature vs salinity, temperature salinity plot, temperature versus salinity, temp sal diagram, TS diagram, temperature salinity correlation, T-S diagram, TS plot, temperature-salinity diagram, theta-S diagram, temperature salinity relationship",
+      "metadata": {
+        "category": "multi_variable_analysis",
+        "visualization_type": "scatter",
+        "sql_template": "SELECT m1.temperature, m2.salinity, p.latitude, p.longitude FROM profiles p JOIN measurements m1 ON p.profile_id = m1.profile_id JOIN measurements m2 ON m1.profile_id = m2.profile_id AND m1.pressure = m2.pressure WHERE m1.temperature_qc IN ('1', '2') AND m2.salinity_qc IN ('1', '2') AND m1.temperature IS NOT NULL AND m2.salinity IS NOT NULL LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 1000"
+        },
+        "plot_config": {
+          "type": "scatter",
+          "title": "Temperature vs Salinity (TS Diagram)",
+          "x_axis": "Temperature (°C)",
+          "y_axis": "Salinity (PSU)",
+          "color_by": "depth",
+          "colormap": "viridis"
+        }
+      }
+    },
+    {
+      "id": "temp_multi_002",
+      "content": "temperature vs pressure, temperature depth profile, temperature with depth, temp pressure plot, temperature versus depth",
+      "metadata": {
+        "category": "multi_variable_analysis",
+        "visualization_type": "line_plot",
+        "sql_template": "SELECT m.temperature, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_id = {profile_id} AND m.temperature_qc IN ('1', '2') ORDER BY m.pressure",
+        "parameters": {
+          "profile_id": "string, required"
+        },
+        "plot_config": {
+          "type": "line_plot",
+          "title": "Temperature vs Pressure Profile",
+          "x_axis": "Temperature (°C)",
+          "y_axis": "Pressure (dbar)",
+          "invert_y": true,
+          "color": "red",
+          "line_width": 2
+        }
+      }
+    },
+    {
+      "id": "temp_multi_003",
+      "content": "temperature vs latitude, temperature latitude gradient, temperature by latitude, temp lat variation, zonal temperature",
+      "metadata": {
+        "category": "multi_variable_analysis",
+        "visualization_type": "scatter",
+        "sql_template": "SELECT p.latitude, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure <= {depth_limit} GROUP BY ROUND(p.latitude, 1) ORDER BY p.latitude",
+        "parameters": {
+          "depth_limit": "float, default 50.0"
+        },
+        "plot_config": {
+          "type": "scatter",
+          "title": "Temperature vs Latitude",
+          "x_axis": "Latitude",
+          "y_axis": "Average Temperature (°C)",
+          "trend_line": true
+        }
+      }
+    },
+    {
+      "id": "temp_multi_004",
+      "content": "temperature vs longitude, temperature longitude gradient, temperature by longitude, temp lon variation, meridional temperature",
+      "metadata": {
+        "category": "multi_variable_analysis",
+        "visualization_type": "scatter",
+        "sql_template": "SELECT p.longitude, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure <= {depth_limit} GROUP BY ROUND(p.longitude, 1) ORDER BY p.longitude",
+        "parameters": {
+          "depth_limit": "float, default 50.0"
+        },
+        "plot_config": {
+          "type": "scatter",
+          "title": "Temperature vs Longitude",
+          "x_axis": "Longitude",
+          "y_axis": "Average Temperature (°C)",
+          "trend_line": true
+        }
+      }
+    },
+    {
+      "id": "temp_multi_005",
+      "content": "temperature vs time, temperature temporal variation, temperature chronological, temp time series, temperature evolution",
+      "metadata": {
+        "category": "multi_variable_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT p.profile_date, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure <= {depth_limit} GROUP BY DATE(p.profile_date) ORDER BY p.profile_date",
+        "parameters": {
+          "depth_limit": "float, default 50.0"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Temperature vs Time",
+          "x_axis": "Date",
+          "y_axis": "Average Temperature (°C)",
+          "line_style": "solid"
+        }
+      }
+    },
+    {
+      "id": "temp_multi_006",
+      "content": "temperature density plot, temperature vs density, temperature density correlation, temp density relationship, temperature density scatter",
+      "metadata": {
+        "category": "multi_variable_analysis",
+        "visualization_type": "scatter",
+        "sql_template": "SELECT m1.temperature, f.density FROM profiles p JOIN measurements m1 ON p.profile_id = m1.profile_id JOIN floats f ON p.float_id = f.float_id WHERE m1.temperature_qc IN ('1', '2') AND f.density IS NOT NULL LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 1000"
+        },
+        "plot_config": {
+          "type": "scatter",
+          "title": "Temperature vs Density",
+          "x_axis": "Temperature (°C)",
+          "y_axis": "Density (kg/m³)",
+          "alpha": 0.6
+        }
+      }
+    },
+    {
+      "id": "temp_multi_007",
+      "content": "temperature gradient, temperature difference, temperature change rate, temp gradient calculation, temperature derivative",
+      "metadata": {
+        "category": "multi_variable_analysis",
+        "visualization_type": "line_plot",
+        "sql_template": "SELECT m.pressure, m.temperature, (m.temperature - LAG(m.temperature, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure)) / (m.pressure - LAG(m.pressure, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure)) as temp_gradient FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_id = {profile_id} AND m.temperature_qc IN ('1', '2') ORDER BY m.pressure",
+        "parameters": {
+          "profile_id": "string, required"
+        },
+        "plot_config": {
+          "type": "line_plot",
+          "title": "Temperature Gradient vs Depth",
+          "x_axis": "Temperature Gradient (°C/dbar)",
+          "y_axis": "Pressure (dbar)",
+          "invert_y": true
+        }
+      }
+    },
+    {
+      "id": "temp_multi_008",
+      "content": "temperature oxygen correlation, temperature vs oxygen, temp oxygen relationship, temperature oxygen plot, temperature dissolved oxygen",
+      "metadata": {
+        "category": "multi_variable_analysis",
+        "visualization_type": "scatter",
+        "sql_template": "SELECT m1.temperature, m2.oxygen FROM profiles p JOIN measurements m1 ON p.profile_id = m1.profile_id JOIN measurements m2 ON m1.profile_id = m2.profile_id AND m1.pressure = m2.pressure WHERE m1.temperature_qc IN ('1', '2') AND m2.oxygen_qc IN ('1', '2') AND m1.temperature IS NOT NULL AND m2.oxygen IS NOT NULL LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 1000"
+        },
+        "plot_config": {
+          "type": "scatter",
+          "title": "Temperature vs Oxygen",
+          "x_axis": "Temperature (°C)",
+          "y_axis": "Oxygen (μmol/kg)",
+          "alpha": 0.7
+        }
+      }
+    },
+    {
+      "id": "temp_multi_009",
+      "content": "temperature seasonal cycle, temperature monthly variation, temp seasonal pattern, temperature annual cycle, temperature seasonality analysis",
+      "metadata": {
+        "category": "multi_variable_analysis",
+        "visualization_type": "polar_plot",
+        "sql_template": "SELECT MONTH(p.profile_date) as month, AVG(m.temperature) as avg_temp, STDDEV(m.temperature) as temp_std FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} GROUP BY MONTH(p.profile_date) ORDER BY month",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        },
+        "plot_config": {
+          "type": "polar_plot",
+          "title": "Temperature Seasonal Cycle",
+          "r_axis": "Temperature (°C)",
+          "theta_axis": "Month",
+          "colormap": "viridis"
+        }
+      }
+    },
+    {
+      "id": "temp_multi_010",
+      "content": "temperature mixed layer depth, temperature MLD relationship, temp vs mixed layer, temperature mixed layer correlation, temp MLD analysis",
+      "metadata": {
+        "category": "multi_variable_analysis",
+        "visualization_type": "scatter",
+        "sql_template": "WITH mixed_layer AS (SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, MAX(m.pressure) as mld FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') GROUP BY p.profile_id) SELECT ml.mld, AVG(m.temperature) as surface_temp FROM mixed_layer ml JOIN profiles p ON ml.profile_id = p.profile_id JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure <= 10 GROUP BY ml.profile_id LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 500"
+        },
+        "plot_config": {
+          "type": "scatter",
+          "title": "Temperature vs Mixed Layer Depth",
+          "x_axis": "Mixed Layer Depth (dbar)",
+          "y_axis": "Surface Temperature (°C)",
+          "alpha": 0.6
+        }
+      }
+    },
+    {
+      "id": "temp_time_001",
+      "content": "temperature time series, temperature over time, temporal temperature, chronological temperature, temperature timeline, time based temperature",
+      "metadata": {
+        "category": "time_series_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT DATE(p.profile_date) as date, AVG(m.temperature) as avg_temp, STDDEV(m.temperature) as temp_std, COUNT(*) as measurements FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.profile_date >= {start_date} AND p.profile_date <= {end_date} GROUP BY DATE(p.profile_date) ORDER BY date",
+        "parameters": {
+          "start_date": "date, required",
+          "end_date": "date, required"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Temperature Time Series",
+          "x_axis": "Date",
+          "y_axis": "Temperature (°C)",
+          "line_color": "blue",
+          "error_bars": true
+        }
+      }
+    },
+    {
+      "id": "temp_time_002",
+      "content": "daily temperature, temperature by day, daily temp variation, temperature daily cycle, diurnal temperature",
+      "metadata": {
+        "category": "time_series_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT DATE(p.profile_date) as date, HOUR(p.profile_date) as hour, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure <= 50 GROUP BY DATE(p.profile_date), HOUR(p.profile_date) ORDER BY date, hour",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Daily Temperature Cycle",
+          "x_axis": "Hour of Day",
+          "y_axis": "Temperature (°C)",
+          "group_by": "date"
+        }
+      }
+    },
+    {
+      "id": "temp_time_003",
+      "content": "monthly temperature, temperature by month, monthly temp trends, temperature monthly average, monthly temperature pattern",
+      "metadata": {
+        "category": "time_series_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT YEAR(p.profile_date) as year, MONTH(p.profile_date) as month, AVG(m.temperature) as avg_temp, COUNT(*) as measurements FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} GROUP BY YEAR(p.profile_date), MONTH(p.profile_date) ORDER BY year, month",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Monthly Temperature Trends",
+          "x_axis": "Month-Year",
+          "y_axis": "Average Temperature (°C)",
+          "markers": true
+        }
+      }
+    },
+    {
+      "id": "temp_time_004",
+      "content": "yearly temperature, temperature by year, annual temperature, temperature annual trends, yearly temp variation",
+      "metadata": {
+        "category": "time_series_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT YEAR(p.profile_date) as year, AVG(m.temperature) as avg_temp, MIN(m.temperature) as min_temp, MAX(m.temperature) as max_temp, STDDEV(m.temperature) as temp_variability FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') GROUP BY YEAR(p.profile_date) ORDER BY year",
+        "parameters": {},
+        "plot_config": {
+          "type": "time_series",
+          "title": "Annual Temperature Trends",
+          "x_axis": "Year",
+          "y_axis": "Temperature (°C)",
+          "fill_between": [
+            "min_temp",
+            "max_temp"
+          ]
+        }
+      }
+    },
+    {
+      "id": "temp_time_005",
+      "content": "temperature forecast, temperature prediction, future temperature, projected temperature, temperature extrapolation, get temperature, temperature measurements over time, temperature data retrieval, fetch temperature, temperature query",
+      "metadata": {
+        "category": "time_series_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT DATE(p.profile_date) as date, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.profile_date >= DATE_SUB(NOW(), INTERVAL {lookback_days} DAY) GROUP BY DATE(p.profile_date) ORDER BY date",
+        "parameters": {
+          "lookback_days": "integer, default 365"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Temperature Trend for Forecasting",
+          "x_axis": "Date",
+          "y_axis": "Temperature (°C)",
+          "trend_line": true,
+          "prediction_interval": true
+        }
+      }
+    },
+    {
+      "id": "temp_time_006",
+      "content": "temperature anomaly time series, temperature deviation over time, temp anomaly timeline, temperature outliers time",
+      "metadata": {
+        "category": "time_series_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "WITH temp_baseline AS (SELECT AVG(m.temperature) as baseline_temp, STDDEV(m.temperature) as temp_std FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')) SELECT DATE(p.profile_date) as date, AVG(m.temperature) as avg_temp, (AVG(m.temperature) - tb.baseline_temp) / tb.temp_std as anomaly_score FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id CROSS JOIN temp_baseline tb WHERE m.temperature_qc IN ('1', '2') GROUP BY DATE(p.profile_date) ORDER BY date",
+        "parameters": {},
+        "plot_config": {
+          "type": "time_series",
+          "title": "Temperature Anomaly Time Series",
+          "x_axis": "Date",
+          "y_axis": "Temperature Anomaly (σ)",
+          "zero_line": true,
+          "color_by_value": true
+        }
+      }
+    },
+    {
+      "id": "temp_time_007",
+      "content": "temperature moving average, temperature smoothed, temp rolling mean, temperature filtered, temperature trend smoothing",
+      "metadata": {
+        "category": "time_series_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT DATE(p.profile_date) as date, AVG(m.temperature) as daily_temp, AVG(AVG(m.temperature)) OVER (ORDER BY DATE(p.profile_date) ROWS BETWEEN {window_size} PRECEDING AND CURRENT ROW) as moving_avg FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') GROUP BY DATE(p.profile_date) ORDER BY date",
+        "parameters": {
+          "window_size": "integer, default 7"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Temperature with Moving Average",
+          "x_axis": "Date",
+          "y_axis": "Temperature (°C)",
+          "multiple_lines": [
+            "daily_temp",
+            "moving_avg"
+          ]
+        }
+      }
+    },
+    {
+      "id": "temp_time_008",
+      "content": "temperature cyclic patterns, temperature periodic, temp oscillations, temperature cycles, temperature periodicity",
+      "metadata": {
+        "category": "time_series_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT DAYOFYEAR(p.profile_date) as day_of_year, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} GROUP BY DAYOFYEAR(p.profile_date) ORDER BY day_of_year",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Temperature Annual Cycle",
+          "x_axis": "Day of Year",
+          "y_axis": "Temperature (°C)",
+          "cyclic": true
+        }
+      }
+    },
+    {
+      "id": "temp_time_009",
+      "content": "temperature event detection, temperature spikes, temp sudden changes, temperature jumps, temperature event timeline",
+      "metadata": {
+        "category": "time_series_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "WITH temp_changes AS (SELECT p.profile_date, m.temperature, LAG(m.temperature, 1) OVER (ORDER BY p.profile_date) as prev_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') ORDER BY p.profile_date) SELECT profile_date, temperature, ABS(temperature - prev_temp) as temp_change FROM temp_changes WHERE ABS(temperature - prev_temp) > {change_threshold} ORDER BY profile_date",
+        "parameters": {
+          "change_threshold": "float, default 2.0"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Temperature Event Detection",
+          "x_axis": "Date",
+          "y_axis": "Temperature (°C)",
+          "highlight_events": true
+        }
+      }
+    },
+    {
+      "id": "temp_time_010",
+      "content": "temperature long term trends, temperature climate trends, temp decadal changes, temperature secular trends, long term temperature",
+      "metadata": {
+        "category": "time_series_analysis",
+        "visualization_type": "time_series",
+        "sql_template": "SELECT YEAR(p.profile_date) as year, AVG(m.temperature) as annual_temp, COUNT(*) as measurements FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND YEAR(p.profile_date) >= {start_year} GROUP BY YEAR(p.profile_date) ORDER BY year",
+        "parameters": {
+          "start_year": "integer, default 2000"
+        },
+        "plot_config": {
+          "type": "time_series",
+          "title": "Long-term Temperature Trends",
+          "x_axis": "Year",
+          "y_axis": "Annual Temperature (°C)",
+          "trend_line": "linear",
+          "confidence_interval": true
+        }
+      }
+    },
+    {
+      "id": "temp_spatial_001",
+      "content": "temperature map, temperature geographic distribution, spatial temperature, temperature by location, geographic temperature plot",
+      "metadata": {
+        "category": "spatial_analysis",
+        "visualization_type": "heatmap",
+        "sql_template": "SELECT ROUND(p.latitude, 0.5) as lat_grid, ROUND(p.longitude, 0.5) as lon_grid, AVG(m.temperature) as avg_temp, COUNT(*) as measurements FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure <= {depth_limit} GROUP BY ROUND(p.latitude, 0.5), ROUND(p.longitude, 0.5) HAVING COUNT(*) >= 3 ORDER BY lat_grid, lon_grid",
+        "parameters": {
+          "depth_limit": "float, default 50.0"
+        },
+        "plot_config": {
+          "type": "heatmap",
+          "title": "Temperature Spatial Distribution",
+          "x_axis": "Longitude",
+          "y_axis": "Latitude",
+          "colormap": "viridis",
+          "colorbar_label": "Temperature (°C)"
+        }
+      }
+    },
+    {
+      "id": "temp_spatial_002",
+      "content": "temperature contour map, temperature isolines, temperature contours, spatial temperature contours, temperature level curves",
+      "metadata": {
+        "category": "spatial_analysis",
+        "visualization_type": "contour",
+        "sql_template": "SELECT ROUND(p.latitude, 0.25) as lat_grid, ROUND(p.longitude, 0.25) as lon_grid, AVG(m.temperature) as avg_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure BETWEEN {depth_min} AND {depth_max} GROUP BY ROUND(p.latitude, 0.25), ROUND(p.longitude, 0.25) HAVING COUNT(*) >= 5",
+        "parameters": {
+          "depth_min": "float, default 0.0",
+          "depth_max": "float, default 100.0"
+        },
+        "plot_config": {
+          "type": "contour",
+          "title": "Temperature Contour Map",
+          "x_axis": "Longitude",
+          "y_axis": "Latitude",
+          "colormap": "coolwarm",
+          "contour_levels": 15
+        }
+      }
+    },
+    {
+      "id": "temp_spatial_003",
+      "content": "temperature gradient map, spatial temperature gradient, temperature spatial variation, temperature change map",
+      "metadata": {
+        "category": "spatial_analysis",
+        "visualization_type": "vector_field",
+        "sql_template": "WITH temp_grid AS (SELECT ROUND(p.latitude, 0.5) as lat, ROUND(p.longitude, 0.5) as lon, AVG(m.temperature) as temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure <= 50 GROUP BY ROUND(p.latitude, 0.5), ROUND(p.longitude, 0.5)) SELECT tg.lat, tg.lon, tg.temp, (tg.temp - LAG(tg.temp, 1) OVER (PARTITION BY tg.lat ORDER BY tg.lon)) as lon_gradient, (tg.temp - LAG(tg.temp, 1) OVER (PARTITION BY tg.lon ORDER BY tg.lat)) as lat_gradient FROM temp_grid tg ORDER BY tg.lat, tg.lon",
+        "parameters": {},
+        "plot_config": {
+          "type": "vector_field",
+          "title": "Temperature Spatial Gradient",
+          "x_axis": "Longitude",
+          "y_axis": "Latitude",
+          "vector_scale": 0.1
+        }
+      }
+    },
+    {
+      "id": "temp_spatial_004",
+      "content": "temperature regional analysis, temperature by region, regional temperature comparison, temperature zones, temperature regions",
+      "metadata": {
+        "category": "spatial_analysis",
+        "visualization_type": "choropleth",
+        "sql_template": "SELECT CASE WHEN p.latitude >= 30 THEN 'Tropical' WHEN p.latitude >= 0 THEN 'Subtropical North' WHEN p.latitude >= -30 THEN 'Subtropical South' ELSE 'Polar' END as region, AVG(m.temperature) as avg_temp, STDDEV(m.temperature) as temp_std, COUNT(*) as measurements FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') GROUP BY CASE WHEN p.latitude >= 30 THEN 'Tropical' WHEN p.latitude >= 0 THEN 'Subtropical North' WHEN p.latitude >= -30 THEN 'Subtropical South' ELSE 'Polar' END",
+        "parameters": {},
+        "plot_config": {
+          "type": "choropleth",
+          "title": "Temperature by Climate Region",
+          "color_by": "avg_temp",
+          "colormap": "RdYlBu_r"
+        }
+      }
+    },
+    {
+      "id": "temp_spatial_005",
+      "content": "temperature fronts, thermal fronts, temperature boundaries, ocean temperature fronts, temperature transition zones",
+      "metadata": {
+        "category": "spatial_analysis",
+        "visualization_type": "contour",
+        "sql_template": "WITH temp_grid AS (SELECT ROUND(p.latitude, 0.2) as lat, ROUND(p.longitude, 0.2) as lon, AVG(m.temperature) as temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure <= 20 GROUP BY ROUND(p.latitude, 0.2), ROUND(p.longitude, 0.2)), temp_gradients AS (SELECT lat, lon, temp, SQRT(POW((temp - LAG(temp, 1) OVER (PARTITION BY lat ORDER BY lon)), 2) + POW((temp - LAG(temp, 1) OVER (PARTITION BY lon ORDER BY lat)), 2)) as gradient FROM temp_grid) SELECT lat, lon, temp, gradient FROM temp_gradients WHERE gradient > {gradient_threshold}",
+        "parameters": {
+          "gradient_threshold": "float, default 1.0"
+        },
+        "plot_config": {
+          "type": "contour",
+          "title": "Temperature Fronts Detection",
+          "x_axis": "Longitude",
+          "y_axis": "Latitude",
+          "highlight_gradients": true
+        }
+      }
+    },
+    {
+      "id": "temp_spatial_006",
+      "content": "temperature interpolation, spatial temperature interpolation, temperature field interpolation, gridded temperature, temperature values, temperature data points, temperature measurements, gridded temperature values, temperature field values",
+      "metadata": {
+        "category": "spatial_analysis",
+        "visualization_type": "heatmap",
+        "sql_template": "SELECT p.latitude, p.longitude, m.temperature, p.profile_date FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure BETWEEN {depth_min} AND {depth_max} AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max}",
+        "parameters": {
+          "depth_min": "float, default 0.0",
+          "depth_max": "float, default 50.0",
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        },
+        "plot_config": {
+          "type": "heatmap",
+          "title": "Temperature Field Interpolation",
+          "x_axis": "Longitude",
+          "y_axis": "Latitude",
+          "interpolation": "bilinear",
+          "colormap": "plasma"
+        }
+      }
+    },
+    {
+      "id": "temp_spatial_007",
+      "content": "temperature clustering, spatial temperature clusters, temperature pattern clusters, temperature grouping spatial",
+      "metadata": {
+        "category": "spatial_analysis",
+        "visualization_type": "scatter",
+        "sql_template": "WITH temp_stats AS (SELECT ROUND(p.latitude, 0.5) as lat_grid, ROUND(p.longitude, 0.5) as lon_grid, AVG(m.temperature) as avg_temp, STDDEV(m.temperature) as temp_var FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') GROUP BY ROUND(p.latitude, 0.5), ROUND(p.longitude, 0.5) HAVING COUNT(*) >= 5) SELECT lat_grid, lon_grid, avg_temp, temp_var, CASE WHEN avg_temp > 15 AND temp_var < 2 THEN 'Warm Stable' WHEN avg_temp > 15 AND temp_var >= 2 THEN 'Warm Variable' WHEN avg_temp <= 15 AND temp_var < 2 THEN 'Cold Stable' ELSE 'Cold Variable' END as cluster FROM temp_stats",
+        "parameters": {},
+        "plot_config": {
+          "type": "scatter",
+          "title": "Temperature Spatial Clustering",
+          "x_axis": "Longitude",
+          "y_axis": "Latitude",
+          "color_by": "cluster",
+          "size_by": "temp_var"
+        }
+      }
+    },
+    {
+      "id": "temp_spatial_008",
+      "content": "temperature cross section, temperature section, temperature transect, temperature profile section, vertical temperature section",
+      "metadata": {
+        "category": "spatial_analysis",
+        "visualization_type": "cross_section",
+        "sql_template": "SELECT p.latitude, p.longitude, m.pressure, m.temperature, SQRT(POW(p.latitude - {ref_lat}, 2) + POW(p.longitude - {ref_lon}, 2)) as distance FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} ORDER BY distance, m.pressure",
+        "parameters": {
+          "ref_lat": "float, required",
+          "ref_lon": "float, required",
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        },
+        "plot_config": {
+          "type": "cross_section",
+          "title": "Temperature Cross Section",
+          "x_axis": "Distance (degrees)",
+          "y_axis": "Pressure (dbar)",
+          "colormap": "viridis",
+          "invert_y": true
+        }
+      }
+    },
+    {
+      "id": "temp_spatial_009",
+      "content": "temperature trajectory, temperature along track, temperature path, float temperature trajectory, temperature track",
+      "metadata": {
+        "category": "spatial_analysis",
+        "visualization_type": "trajectory",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, AVG(m.temperature) as surface_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id = {float_id} AND m.temperature_qc IN ('1', '2') AND m.pressure <= 10 GROUP BY p.profile_id ORDER BY p.profile_date",
+        "parameters": {
+          "float_id": "string, required"
+        },
+        "plot_config": {
+          "type": "trajectory",
+          "title": "Temperature Along Float Trajectory",
+          "x_axis": "Longitude",
+          "y_axis": "Latitude",
+          "color_by": "surface_temp",
+          "show_direction": true,
+          "colormap": "coolwarm"
+        }
+      }
+    },
+    {
+      "id": "temp_spatial_010",
+      "content": "temperature basin analysis, temperature by ocean basin, basin temperature comparison, temperature oceanic basins, ocean temperature, oceanic temperature, marine temperature, seawater temperature, ocean basin temps, basin temperature data",
+      "metadata": {
+        "category": "spatial_analysis",
+        "visualization_type": "box_plot",
+        "sql_template": "SELECT CASE WHEN p.longitude BETWEEN -180 AND -30 AND p.latitude BETWEEN -60 AND 70 THEN 'Atlantic' WHEN p.longitude BETWEEN 30 AND 150 AND p.latitude BETWEEN -60 AND 70 THEN 'Indian' WHEN p.longitude BETWEEN 150 AND 180 OR p.longitude BETWEEN -180 AND -90 THEN 'Pacific' ELSE 'Other' END as basin, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.pressure <= {depth_limit}",
+        "parameters": {
+          "depth_limit": "float, default 100.0"
+        },
+        "plot_config": {
+          "type": "box_plot",
+          "title": "Temperature by Ocean Basin",
+          "x_axis": "Ocean Basin",
+          "y_axis": "Temperature (°C)",
+          "show_outliers": false
+        }
+      }
+    }
+  ],
+  "improvement_notes": "Improved 9 samples based on comprehensive testing"
+}

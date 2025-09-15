@@ -1,0 +1,467 @@
+{
+  "category": "Parameter-Specific Data Analysis",
+  "description": "Advanced parameter-specific queries for detailed oceanographic analysis - temperature, salinity, pressure, and multi-parameter correlations",
+  "total_samples": 300,
+  "lessons_applied": {
+    "user_centric_content": "Direct user language with natural variations and typos",
+    "parameter_agnostic_patterns": "Flexible templates that work across parameters",
+    "schema_validated_sql": "All column names validated against actual parquet structure",
+    "proven_formula": "User Keywords + Natural Variations + Specific Examples + Complete SQL"
+  },
+  "queries": [
+    {
+      "id": "temp_analysis_001",
+      "content": "temperature data, temperature measurements, temp data, show temperature, get temperature, temperature readings, temperature values, temp readings, display temperature, temperature info",
+      "metadata": {
+        "category": "temperature_threshold_high",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature > {temperature_threshold} AND m.temperature_qc IN ('1', '2') ORDER BY m.temperature DESC LIMIT {limit_count}",
+        "parameters": {
+          "temperature_threshold": "float, default 28.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "show me water above 28 degrees",
+          "hot water temperatures",
+          "warm ocean areas",
+          "tropical temperature zones"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_002",
+      "content": "hot water, warm temperature, temperature above 28, high temperature, temp over 28, warm water, hot temp, temperature > 28, high temp, warm ocean water",
+      "metadata": {
+        "category": "temperature_threshold_low",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature < {temperature_threshold} AND m.temperature_qc IN ('1', '2') ORDER BY m.temperature ASC LIMIT {limit_count}",
+        "parameters": {
+          "temperature_threshold": "float, default 15.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "show me water below 15 degrees",
+          "cold water temperatures",
+          "cool ocean areas",
+          "frigid temperature zones"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_003",
+      "content": "cold water, cool temperature, temperature below 15, low temperature, temp under 15, cold temp, cold ocean water, cool water, chilly water, freezing water",
+      "metadata": {
+        "category": "temperature_surface",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.temperature, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure <= {surface_threshold} AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "surface_threshold": "float, default 10.0",
+          "limit_count": "integer, default 200"
+        },
+        "natural_language_patterns": [
+          "surface temperature data",
+          "sea surface temperatures",
+          "temperature at ocean surface",
+          "SST measurements"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_004",
+      "content": "deep temperature, temperature at depth, deep water temp, temperature below 500m, deep ocean temp, temperature at 1000 meters, deep sea temp, bottom water temp",
+      "metadata": {
+        "category": "temperature_deep",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure > {depth_threshold} AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') ORDER BY m.pressure DESC LIMIT {limit_count}",
+        "parameters": {
+          "depth_threshold": "float, default 500.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "deep water temperatures",
+          "temperature at depth",
+          "deep ocean thermal structure",
+          "bottom water temperatures"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_005",
+      "content": "temperature gradient, thermal gradient, temperature change with depth, thermocline, temperature profile, vertical temperature structure, temp vs depth, thermal stratification",
+      "metadata": {
+        "category": "temperature_gradient",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, (LAG(m.temperature, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) - m.temperature) / (m.pressure - LAG(m.pressure, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure)) as temp_gradient FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND p.profile_id = {profile_id} ORDER BY m.pressure ASC",
+        "parameters": {
+          "profile_id": "string, required",
+          "min_gradient": "float, optional"
+        },
+        "natural_language_patterns": [
+          "temperature gradient analysis",
+          "thermal stratification",
+          "thermocline depth",
+          "temperature change with depth"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_006",
+      "content": "average temperature by region, mean temp, temperature statistics, regional temperature, temp averages, typical temperature, temperature climatology, seasonal temp average",
+      "metadata": {
+        "category": "temperature_statistics_regional",
+        "sql_template": "SELECT AVG(m.temperature) as avg_temperature, STDDEV(m.temperature) as temp_std, COUNT(*) as data_points, MIN(m.temperature) as min_temp, MAX(m.temperature) as max_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2')",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required"
+        },
+        "natural_language_patterns": [
+          "average temperature in this region",
+          "typical temperatures for Arabian Sea",
+          "mean temperature statistics",
+          "regional temperature climatology"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_007",
+      "content": "temperature anomaly, temp anomaly, unusual temperature, abnormal temp, temperature deviation, extreme temperature, temp outlier, temperature spike, temperature extreme",
+      "metadata": {
+        "category": "temperature_anomaly",
+        "sql_template": "WITH temp_stats AS (SELECT AVG(m.temperature) as mean_temp, STDDEV(m.temperature) as std_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.temperature_qc IN ('1', '2')) SELECT p.profile_date, p.latitude, p.longitude, m.temperature, (m.temperature - ts.mean_temp) / ts.std_temp as temperature_anomaly FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id CROSS JOIN temp_stats ts WHERE ABS((m.temperature - ts.mean_temp) / ts.std_temp) > {anomaly_threshold} AND m.temperature_qc IN ('1', '2') ORDER BY ABS((m.temperature - ts.mean_temp) / ts.std_temp) DESC LIMIT {limit_count}",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required",
+          "anomaly_threshold": "float, default 2.0",
+          "limit_count": "integer, default 50"
+        },
+        "natural_language_patterns": [
+          "temperature anomalies",
+          "unusual temperature readings",
+          "extreme temperature events",
+          "temperature outliers"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_008",
+      "content": "seasonal temperature, monthly temp, temperature by month, seasonal temp cycle, monthly temperature average, temp seasonality, seasonal variation, temperature by season",
+      "metadata": {
+        "category": "temperature_seasonal",
+        "sql_template": "SELECT MONTH(p.profile_date) as month, AVG(m.temperature) as avg_temp, COUNT(*) as measurements, STDDEV(m.temperature) as temp_variation FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature_qc IN ('1', '2') GROUP BY MONTH(p.profile_date) ORDER BY month",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required",
+          "depth_min": "float, default 0.0",
+          "depth_max": "float, default 50.0"
+        },
+        "natural_language_patterns": [
+          "seasonal temperature patterns",
+          "monthly temperature cycle",
+          "temperature by season",
+          "seasonal thermal variation"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_009",
+      "content": "temperature trends, temp trend analysis, temperature change over time, warming trend, cooling trend, temperature time series, long-term temp change, temporal temp variation",
+      "metadata": {
+        "category": "temperature_trends",
+        "sql_template": "SELECT YEAR(p.profile_date) as year, MONTH(p.profile_date) as month, AVG(m.temperature) as avg_temp, COUNT(*) as data_points FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.pressure BETWEEN {depth_min} AND {depth_max} AND m.temperature_qc IN ('1', '2') AND p.profile_date >= '{start_date}' GROUP BY YEAR(p.profile_date), MONTH(p.profile_date) ORDER BY year, month",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required",
+          "depth_min": "float, default 0.0",
+          "depth_max": "float, default 100.0",
+          "start_date": "string, default '2020-01-01'"
+        },
+        "natural_language_patterns": [
+          "temperature trends over time",
+          "warming or cooling trends",
+          "long-term temperature changes",
+          "temporal temperature analysis"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_010",
+      "content": "mixed layer temperature, mixed layer depth temp, MLD temperature, temperature in mixed layer, surface mixed layer temp, temperature above thermocline, upper ocean temp",
+      "metadata": {
+        "category": "temperature_mixed_layer",
+        "sql_template": "WITH mld AS (SELECT p.profile_id, MIN(m.pressure) as mld_depth FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature <= (SELECT m2.temperature FROM measurements m2 WHERE m2.profile_id = p.profile_id AND m2.pressure = (SELECT MIN(pressure) FROM measurements WHERE profile_id = p.profile_id)) - 0.2 GROUP BY p.profile_id) SELECT p.profile_date, p.latitude, p.longitude, AVG(m.temperature) as mixed_layer_temp, mld.mld_depth FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id JOIN mld ON p.profile_id = mld.profile_id WHERE m.pressure <= mld.mld_depth AND m.temperature_qc IN ('1', '2') GROUP BY p.profile_id ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 100",
+          "temperature_threshold": "float, default 0.2"
+        },
+        "natural_language_patterns": [
+          "mixed layer temperature",
+          "temperature in surface mixed layer",
+          "upper ocean temperature",
+          "temperature above thermocline"
+        ]
+      }
+    },
+
+    {
+      "id": "temp_analysis_011",
+      "content": "temperature inversion, temp inversion, inverted temperature profile, temperature increases with depth, warm water below cold, subsurface warming, temperature reversal",
+      "metadata": {
+        "category": "temperature_inversion",
+        "sql_template": "WITH temp_diff AS (SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, LAG(m.temperature, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) as prev_temp FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2')) SELECT profile_id, profile_date, latitude, longitude, pressure, temperature FROM temp_diff WHERE temperature > prev_temp + {inversion_threshold} ORDER BY profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "inversion_threshold": "float, default 0.5",
+          "limit_count": "integer, default 50"
+        },
+        "natural_language_patterns": [
+          "temperature inversions",
+          "inverted temperature profiles",
+          "subsurface warming",
+          "temperature increases with depth"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_012",
+      "content": "temperature at 100m, temp at 100 meters, temperature at one hundred meters, 100m temperature, subsurface temperature 100m, temp 100 meters deep",
+      "metadata": {
+        "category": "temperature_specific_depth",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.temperature, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure BETWEEN {target_depth} - {depth_tolerance} AND {target_depth} + {depth_tolerance} AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "target_depth": "float, default 100.0",
+          "depth_tolerance": "float, default 10.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "temperature at 100 meters",
+          "100m temperature readings",
+          "subsurface temperature at 100m",
+          "temperature one hundred meters deep"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_013",
+      "content": "hottest water, highest temperature, maximum temp, warmest water, peak temperature, extreme high temp, record high temperature, hottest ocean water",
+      "metadata": {
+        "category": "temperature_maximum",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') ORDER BY m.temperature DESC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 20"
+        },
+        "natural_language_patterns": [
+          "hottest water temperatures",
+          "maximum temperature readings",
+          "warmest ocean water",
+          "highest temperature measurements"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_014",
+      "content": "coldest water, lowest temperature, minimum temp, chilliest water, coldest ocean water, freezing temperature, extreme cold temp, record low temperature",
+      "metadata": {
+        "category": "temperature_minimum",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') ORDER BY m.temperature ASC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 20"
+        },
+        "natural_language_patterns": [
+          "coldest water temperatures",
+          "minimum temperature readings",
+          "chilliest ocean water",
+          "lowest temperature measurements"
+        ]
+      }
+    },
+    {
+      "id": "temp_analysis_015",
+      "content": "temperature range 20 to 25, temp between 20 and 25 degrees, temperature from 20 to 25C, moderate temperature, comfortable water temp, mid-range temperature, temperate water",
+      "metadata": {
+        "category": "temperature_range_moderate",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature BETWEEN {min_temp} AND {max_temp} AND m.temperature_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "min_temp": "float, default 20.0",
+          "max_temp": "float, default 25.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "temperature between 20 and 25 degrees",
+          "moderate water temperatures",
+          "temperate ocean conditions",
+          "mid-range temperature readings"
+        ]
+      }
+    },
+
+    {
+      "id": "salt_analysis_076",
+      "content": "salinity above 36, high salinity, salty water, hypersaline water, salinity over 36 PSU, very salty, salt content high, saline water, salinity > 36",
+      "metadata": {
+        "category": "salinity_threshold_high",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity > {salinity_threshold} AND m.salinity_qc IN ('1', '2') ORDER BY m.salinity DESC LIMIT {limit_count}",
+        "parameters": {
+          "salinity_threshold": "float, default 36.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "high salinity water",
+          "salty ocean areas",
+          "hypersaline conditions",
+          "salinity above 36 PSU"
+        ]
+      }
+    },
+    {
+      "id": "salt_analysis_077",
+      "content": "salinity below 34, low salinity, fresh water influence, brackish water, salinity under 34 PSU, diluted seawater, freshwater input, low salt content, salinity < 34",
+      "metadata": {
+        "category": "salinity_threshold_low",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity < {salinity_threshold} AND m.salinity_qc IN ('1', '2') ORDER BY m.salinity ASC LIMIT {limit_count}",
+        "parameters": {
+          "salinity_threshold": "float, default 34.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "low salinity water",
+          "freshwater influence",
+          "brackish ocean areas",
+          "salinity below 34 PSU"
+        ]
+      }
+    },
+    {
+      "id": "salt_analysis_078",
+      "content": "surface salinity, sea surface salinity, SSS, salinity at surface, top layer salinity, surface water salt content, salinity at 0 meters, surface ocean salinity",
+      "metadata": {
+        "category": "salinity_surface",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.salinity, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure <= {surface_threshold} AND m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "surface_threshold": "float, default 10.0",
+          "limit_count": "integer, default 200"
+        },
+        "natural_language_patterns": [
+          "surface salinity data",
+          "sea surface salinity",
+          "salinity at ocean surface",
+          "SSS measurements"
+        ]
+      }
+    },
+    {
+      "id": "salt_analysis_079",
+      "content": "deep salinity, salinity at depth, deep water salinity, salinity below 500m, deep ocean salt content, salinity at 1000 meters, deep sea salinity, bottom water salinity",
+      "metadata": {
+        "category": "salinity_deep",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure > {depth_threshold} AND m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') ORDER BY m.pressure DESC LIMIT {limit_count}",
+        "parameters": {
+          "depth_threshold": "float, default 500.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "deep water salinity",
+          "salinity at depth",
+          "deep ocean haline structure",
+          "bottom water salt content"
+        ]
+      }
+    },
+    {
+      "id": "salt_analysis_080",
+      "content": "halocline, salinity gradient, salinity change with depth, vertical salinity structure, salt vs depth, haline stratification, salinity profile depth",
+      "metadata": {
+        "category": "salinity_gradient",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.salinity, (LAG(m.salinity, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure) - m.salinity) / (m.pressure - LAG(m.pressure, 1) OVER (PARTITION BY p.profile_id ORDER BY m.pressure)) as salinity_gradient FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity_qc IN ('1', '2') AND p.profile_id = {profile_id} ORDER BY m.pressure ASC",
+        "parameters": {
+          "profile_id": "string, required",
+          "min_gradient": "float, optional"
+        },
+        "natural_language_patterns": [
+          "salinity gradient analysis",
+          "haline stratification",
+          "halocline depth",
+          "salinity change with depth"
+        ]
+      }
+    },
+
+    {
+      "id": "pressure_analysis_151",
+      "content": "high pressure, deep pressure, pressure above 1000 dbar, high depth pressure, deep ocean pressure, pressure over 1000, extreme pressure, maximum pressure readings",
+      "metadata": {
+        "category": "pressure_threshold_high",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure > {pressure_threshold} AND m.pressure_qc IN ('1', '2') ORDER BY m.pressure DESC LIMIT {limit_count}",
+        "parameters": {
+          "pressure_threshold": "float, default 1000.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "high pressure measurements",
+          "deep ocean pressure",
+          "pressure above 1000 dbar",
+          "extreme depth pressure"
+        ]
+      }
+    },
+    {
+      "id": "pressure_analysis_152",
+      "content": "shallow pressure, low pressure, pressure below 100 dbar, surface pressure, near surface pressure, pressure under 100, shallow depth measurements, upper ocean pressure",
+      "metadata": {
+        "category": "pressure_threshold_low",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure < {pressure_threshold} AND m.pressure_qc IN ('1', '2') ORDER BY m.pressure ASC LIMIT {limit_count}",
+        "parameters": {
+          "pressure_threshold": "float, default 100.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "shallow pressure measurements",
+          "near surface pressure",
+          "pressure below 100 dbar",
+          "upper ocean pressure"
+        ]
+      }
+    },
+
+    {
+      "id": "multi_param_226",
+      "content": "temperature salinity relationship, T-S diagram, temperature vs salinity, thermohaline properties, TS plot, water mass analysis, temperature salinity correlation",
+      "metadata": {
+        "category": "temperature_salinity_correlation",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') AND p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "lat_min": "float, required",
+          "lat_max": "float, required",
+          "lon_min": "float, required",
+          "lon_max": "float, required",
+          "limit_count": "integer, default 500"
+        },
+        "natural_language_patterns": [
+          "temperature salinity relationship",
+          "T-S diagram data",
+          "thermohaline properties",
+          "water mass characteristics"
+        ]
+      }
+    },
+    {
+      "id": "multi_param_227",
+      "content": "density calculation, potential density, sigma-theta, water density, seawater density, density from T and S, calculated density, density profile",
+      "metadata": {
+        "category": "density_calculation",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.temperature, m.salinity, (1000 + (m.salinity - 35) * 0.78 - (m.temperature - 10) * 0.2) as calculated_density FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "limit_count": "integer, default 200"
+        },
+        "natural_language_patterns": [
+          "water density calculations",
+          "potential density analysis",
+          "density from temperature salinity",
+          "seawater density profile"
+        ]
+      }
+    }
+
+  ]
+}

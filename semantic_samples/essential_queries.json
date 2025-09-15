@@ -1,0 +1,509 @@
+{
+  "queries": [
+    {
+      "id": "basic_float_data_001",
+      "content": "show temperature data for float, get data for specific float, temperature data float ID, show float temperature, float data temperature, specific float temperature data, temperature measurements float, float temperature readings, show data for float ID, get temperature from float",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.pressure, m.depth, m.temperature, m.temperature_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id = '{float_id}' AND m.temperature IS NOT NULL ORDER BY p.profile_date, m.pressure ASC",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "ARGO float ID"}
+        },
+        "natural_language_patterns": [
+          "show temperature data for float {float_id}",
+          "get data for float {float_id}",
+          "temperature from float {float_id}"
+        ],
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "basic_recent_salinity_002",
+      "content": "get salinity profiles last 6 months, recent salinity data, salinity profiles recent, last 6 months salinity, recent salinity profiles, salinity data recent months, show recent salinity, latest salinity profiles, salinity last few months, current year salinity",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.salinity, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_date >= DATE_SUB(CURRENT_DATE, INTERVAL 6 MONTH) AND m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "get salinity profiles for the last 6 months",
+          "recent salinity data",
+          "latest salinity profiles"
+        ],
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "basic_location_date_003",
+      "content": "find data near location between dates, data near coordinates, show data location date range, get measurements near position, data at location time period, measurements location dates, find profiles near coordinates, data specific location dates, show data coordinates date range",
+      "metadata": {
+        "category": "basic_data_retrieval",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND p.profile_date BETWEEN '{start_date}' AND '{end_date}' AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL ORDER BY p.profile_date DESC",
+        "parameters": {
+          "lat_min": {"type": "float", "required": true, "description": "Minimum latitude"},
+          "lat_max": {"type": "float", "required": true, "description": "Maximum latitude"},
+          "lon_min": {"type": "float", "required": true, "description": "Minimum longitude"},
+          "lon_max": {"type": "float", "required": true, "description": "Maximum longitude"},
+          "start_date": {"type": "date", "required": true, "description": "Start date"},
+          "end_date": {"type": "date", "required": true, "description": "End date"}
+        },
+        "natural_language_patterns": [
+          "find data near {location} between {date1} and {date2}",
+          "show data at coordinates between dates",
+          "get measurements near position"
+        ],
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "spatial_arabian_sea_004",
+      "content": "show data Arabian Sea region, Arabian Sea data, data in Arabian Sea, Arabian Sea measurements, Arabian Sea profiles, Arabian Sea temperature salinity, data Arabian Sea region, measurements Arabian Sea area, Arabian Sea oceanographic data, profiles Arabian Sea",
+      "metadata": {
+        "category": "geographic_spatial",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN 50 AND 75 AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "show data in Arabian Sea region",
+          "Arabian Sea data",
+          "measurements in Arabian Sea"
+        ],
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "spatial_bay_bengal_comparison_005",
+      "content": "compare Bay of Bengal vs Arabian Sea temperature, Bay of Bengal Arabian Sea comparison, compare temperature Bay of Bengal Arabian Sea, regional temperature comparison, Bay of Bengal vs Arabian Sea, temperature comparison regions, compare two ocean regions temperature, regional comparison Bay Bengal Arabian Sea",
+      "metadata": {
+        "category": "geographic_spatial",
+        "sql_template": "SELECT CASE WHEN p.latitude BETWEEN 5 AND 22 AND p.longitude BETWEEN 80 AND 100 THEN 'Bay_of_Bengal' WHEN p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN 50 AND 75 THEN 'Arabian_Sea' END as region, AVG(m.temperature) as avg_temp, COUNT(m.measurement_id) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE ((p.latitude BETWEEN 5 AND 22 AND p.longitude BETWEEN 80 AND 100) OR (p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN 50 AND 75)) AND m.temperature IS NOT NULL GROUP BY region",
+        "parameters": {},
+        "natural_language_patterns": [
+          "compare Bay of Bengal vs Arabian Sea temperature",
+          "regional temperature comparison",
+          "Bay of Bengal Arabian Sea comparison"
+        ],
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "spatial_nearby_floats_006",
+      "content": "find floats within 100km, floats near coordinates, nearby floats location, closest floats to position, find floats near location, floats within distance, nearby ARGO floats, floats close to coordinates, find nearest floats location, floats proximity search",
+      "metadata": {
+        "category": "geographic_spatial",
+        "sql_template": "SELECT f.float_id, f.wmo_number, f.last_latitude, f.last_longitude, f.current_status, SQRT(POW(f.last_latitude - {target_lat}, 2) + POW((f.last_longitude - {target_lon}) * COS(RADIANS({target_lat})), 2)) * 111 as distance_km FROM floats f WHERE SQRT(POW(f.last_latitude - {target_lat}, 2) + POW((f.last_longitude - {target_lon}) * COS(RADIANS({target_lat})), 2)) * 111 <= {distance_km} ORDER BY distance_km ASC",
+        "parameters": {
+          "target_lat": {"type": "float", "required": true, "description": "Target latitude"},
+          "target_lon": {"type": "float", "required": true, "description": "Target longitude"},
+          "distance_km": {"type": "float", "required": false, "default": 100, "description": "Distance in kilometers"}
+        },
+        "natural_language_patterns": [
+          "find floats within 100km of {lat},{lon}",
+          "nearby floats to location",
+          "closest floats to position"
+        ],
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "temporal_monthly_average_007",
+      "content": "monthly average temperature 2023, monthly temperature averages, temperature by month, monthly temperature statistics, average temperature each month, monthly temperature data, temperature monthly analysis, monthly temperature summary, temperature monthly trends, monthly temperature mean",
+      "metadata": {
+        "category": "temporal",
+        "sql_template": "SELECT YEAR(p.profile_date) as year, MONTH(p.profile_date) as month, AVG(m.temperature) as avg_temperature, COUNT(m.measurement_id) as measurement_count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE YEAR(p.profile_date) = {year} AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') GROUP BY YEAR(p.profile_date), MONTH(p.profile_date) ORDER BY year, month",
+        "parameters": {
+          "year": {"type": "integer", "required": false, "default": 2023, "description": "Year for monthly analysis"}
+        },
+        "natural_language_patterns": [
+          "monthly average temperature for 2023",
+          "temperature by month",
+          "monthly temperature statistics"
+        ],
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "temporal_seasonal_variation_008",
+      "content": "seasonal variation salinity, seasonal salinity changes, salinity seasonal patterns, seasonal salinity analysis, salinity by season, seasonal salinity trends, salinity seasonal differences, salinity seasonal variation, seasonal salinity cycle, salinity seasonal comparison",
+      "metadata": {
+        "category": "temporal",
+        "sql_template": "SELECT CASE WHEN MONTH(p.profile_date) IN (12,1,2) THEN 'Winter' WHEN MONTH(p.profile_date) IN (3,4,5) THEN 'Spring' WHEN MONTH(p.profile_date) IN (6,7,8) THEN 'Summer' ELSE 'Fall' END as season, AVG(m.salinity) as avg_salinity, STDDEV(m.salinity) as std_salinity, COUNT(m.measurement_id) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') GROUP BY season ORDER BY season",
+        "parameters": {},
+        "natural_language_patterns": [
+          "seasonal variation in salinity",
+          "salinity by season",
+          "seasonal salinity patterns"
+        ],
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "temporal_temperature_trends_009",
+      "content": "temperature trends last 2 years, temperature trends over time, long term temperature trends, temperature changes over years, temperature trend analysis, temperature temporal trends, temperature evolution over time, temperature long term changes, temperature trend over period",
+      "metadata": {
+        "category": "temporal",
+        "sql_template": "SELECT DATE_FORMAT(p.profile_date, '%Y-%m') as year_month, AVG(m.temperature) as avg_temperature, COUNT(m.measurement_id) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_date >= DATE_SUB(CURRENT_DATE, INTERVAL 2 YEAR) AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') GROUP BY DATE_FORMAT(p.profile_date, '%Y-%m') ORDER BY year_month",
+        "parameters": {},
+        "natural_language_patterns": [
+          "temperature trends over the last 2 years",
+          "temperature changes over time",
+          "long term temperature trends"
+        ],
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "parameter_temp_salinity_plot_010",
+      "content": "temperature vs salinity plot, T-S diagram, temperature salinity scatter plot, temperature versus salinity, temp sal plot, TS diagram, temperature salinity relationship, temperature salinity correlation, temperature salinity graph, temp vs sal chart",
+      "metadata": {
+        "category": "parameter_specific",
+        "sql_template": "SELECT m.temperature, m.salinity, m.pressure, m.depth, p.latitude, p.longitude, p.profile_date FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_date DESC LIMIT 1000",
+        "parameters": {},
+        "natural_language_patterns": [
+          "temperature vs salinity plot",
+          "T-S diagram",
+          "temperature salinity relationship"
+        ],
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "parameter_temp_depth_profiles_011",
+      "content": "temperature profiles at different depths, temperature by depth, depth temperature profiles, temperature vs depth, temperature depth analysis, depth temperature variation, temperature profiles depth levels, temperature at various depths, depth temperature distribution",
+      "metadata": {
+        "category": "parameter_specific",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.temperature_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.depth BETWEEN {depth_min} AND {depth_max} ORDER BY p.profile_date DESC, m.depth ASC",
+        "parameters": {
+          "depth_min": {"type": "float", "required": false, "default": 0, "description": "Minimum depth"},
+          "depth_max": {"type": "float", "required": false, "default": 1000, "description": "Maximum depth"}
+        },
+        "natural_language_patterns": [
+          "show temperature profiles at different depths",
+          "temperature by depth",
+          "temperature vs depth"
+        ],
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "parameter_salinity_surface_012",
+      "content": "salinity distribution top 100 meters, surface salinity, salinity upper ocean, shallow salinity, salinity near surface, top 100m salinity, surface layer salinity, salinity surface waters, upper layer salinity, salinity distribution surface",
+      "metadata": {
+        "category": "parameter_specific",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.salinity, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') AND m.depth <= 100 ORDER BY p.profile_date DESC, m.depth ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "salinity distribution in top 100 meters",
+          "surface salinity",
+          "salinity near surface"
+        ],
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "viz_depth_profile_chart_013",
+      "content": "create depth profile chart temperature, depth profile temperature chart, temperature depth profile plot, depth profile visualization, temperature profile chart, depth vs temperature chart, vertical temperature profile, temperature depth plot, depth profile graph temperature",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, m.depth, m.temperature, m.temperature_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') AND p.profile_id = '{profile_id}' ORDER BY m.depth ASC",
+        "parameters": {
+          "profile_id": {"type": "string", "required": true, "description": "Profile ID for depth chart"}
+        },
+        "natural_language_patterns": [
+          "create depth profile chart for temperature",
+          "temperature depth profile plot",
+          "depth vs temperature chart"
+        ],
+        "visualization_config": {
+          "chart_type": "line_plot",
+          "x_axis": "temperature",
+          "y_axis": "depth_inverted"
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_temperature_map_014",
+      "content": "plot temperature map Indian Ocean, temperature map visualization, Indian Ocean temperature map, temperature spatial map, ocean temperature mapping, temperature distribution map, temperature geographic map, temperature contour map Indian Ocean, spatial temperature visualization",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT p.latitude, p.longitude, AVG(m.temperature) as avg_temperature, COUNT(m.measurement_id) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.depth <= 10 GROUP BY ROUND(p.latitude, 1), ROUND(p.longitude, 1) HAVING count >= 5 ORDER BY p.latitude, p.longitude",
+        "parameters": {},
+        "natural_language_patterns": [
+          "plot temperature map for Indian Ocean",
+          "temperature map visualization",
+          "ocean temperature mapping"
+        ],
+        "visualization_config": {
+          "chart_type": "heatmap",
+          "x_axis": "longitude",
+          "y_axis": "latitude",
+          "color_by": "avg_temperature"
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "viz_time_series_015",
+      "content": "show time series plot last year, temperature time series, time series visualization, temporal plot, time series chart last year, temperature over time plot, time series analysis plot, temporal temperature chart, temperature time series graph",
+      "metadata": {
+        "category": "visualization_oriented",
+        "sql_template": "SELECT DATE_FORMAT(p.profile_date, '%Y-%m-%d') as date, AVG(m.temperature) as avg_temperature, COUNT(m.measurement_id) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_date >= DATE_SUB(CURRENT_DATE, INTERVAL 1 YEAR) AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.depth <= 50 GROUP BY DATE_FORMAT(p.profile_date, '%Y-%m-%d') ORDER BY date",
+        "parameters": {},
+        "natural_language_patterns": [
+          "show time series plot for the last year",
+          "temperature time series",
+          "temperature over time"
+        ],
+        "visualization_config": {
+          "chart_type": "line_plot",
+          "x_axis": "date",
+          "y_axis": "avg_temperature"
+        },
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "quality_good_data_only_016",
+      "content": "show only good quality data, high quality data only, good quality measurements, filter good quality data, reliable data only, quality data filter, show best quality data, good QC data only, high quality profiles, quality controlled data",
+      "metadata": {
+        "category": "quality_control",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc = '1' AND m.salinity_qc = '1' AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "show only good quality data",
+          "high quality data only",
+          "reliable data only"
+        ],
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "quality_float_reliability_017",
+      "content": "how reliable is data from float, float data quality, data reliability float, float data quality assessment, quality of float data, float reliability check, data quality specific float, float measurement reliability, quality assessment float",
+      "metadata": {
+        "category": "quality_control",
+        "sql_template": "SELECT p.float_id, COUNT(m.measurement_id) as total_measurements, COUNT(CASE WHEN m.temperature_qc = '1' THEN 1 END) as good_temp_count, COUNT(CASE WHEN m.salinity_qc = '1' THEN 1 END) as good_sal_count, (COUNT(CASE WHEN m.temperature_qc = '1' THEN 1 END) * 100.0 / COUNT(m.measurement_id)) as temp_quality_percent, (COUNT(CASE WHEN m.salinity_qc = '1' THEN 1 END) * 100.0 / COUNT(m.measurement_id)) as sal_quality_percent FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id = '{float_id}' GROUP BY p.float_id",
+        "parameters": {
+          "float_id": {"type": "string", "required": true, "description": "Float ID for quality assessment"}
+        },
+        "natural_language_patterns": [
+          "how reliable is the data from float {float_id}",
+          "data quality for float {float_id}",
+          "float reliability assessment"
+        ],
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "quality_filter_bad_data_018",
+      "content": "filter out measurements QC flags greater than 2, remove bad quality data, exclude poor quality measurements, filter QC flags, remove low quality data, exclude bad measurements, filter poor quality data, remove unreliable measurements, exclude questionable data",
+      "metadata": {
+        "category": "quality_control",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity, m.temperature_qc, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') AND m.temperature IS NOT NULL AND m.salinity IS NOT NULL ORDER BY p.profile_date DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "filter out measurements with QC flags > 2",
+          "remove bad quality data",
+          "exclude poor quality measurements"
+        ],
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "comparison_regional_temp_019",
+      "content": "compare temperature between two regions, regional temperature comparison, temperature comparison regions, compare temperature different areas, temperature differences regions, regional temperature differences, compare ocean regions temperature, temperature regional comparison",
+      "metadata": {
+        "category": "comparison",
+        "sql_template": "SELECT CASE WHEN p.latitude BETWEEN {region1_lat_min} AND {region1_lat_max} AND p.longitude BETWEEN {region1_lon_min} AND {region1_lon_max} THEN '{region1_name}' WHEN p.latitude BETWEEN {region2_lat_min} AND {region2_lat_max} AND p.longitude BETWEEN {region2_lon_min} AND {region2_lon_max} THEN '{region2_name}' END as region, AVG(m.temperature) as avg_temp, STDDEV(m.temperature) as std_temp, COUNT(m.measurement_id) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE ((p.latitude BETWEEN {region1_lat_min} AND {region1_lat_max} AND p.longitude BETWEEN {region1_lon_min} AND {region1_lon_max}) OR (p.latitude BETWEEN {region2_lat_min} AND {region2_lat_max} AND p.longitude BETWEEN {region2_lon_min} AND {region2_lon_max})) AND m.temperature IS NOT NULL GROUP BY region",
+        "parameters": {
+          "region1_name": {"type": "string", "required": true, "description": "First region name"},
+          "region1_lat_min": {"type": "float", "required": true, "description": "Region 1 min latitude"},
+          "region1_lat_max": {"type": "float", "required": true, "description": "Region 1 max latitude"},
+          "region1_lon_min": {"type": "float", "required": true, "description": "Region 1 min longitude"},
+          "region1_lon_max": {"type": "float", "required": true, "description": "Region 1 max longitude"},
+          "region2_name": {"type": "string", "required": true, "description": "Second region name"},
+          "region2_lat_min": {"type": "float", "required": true, "description": "Region 2 min latitude"},
+          "region2_lat_max": {"type": "float", "required": true, "description": "Region 2 max latitude"},
+          "region2_lon_min": {"type": "float", "required": true, "description": "Region 2 min longitude"},
+          "region2_lon_max": {"type": "float", "required": true, "description": "Region 2 max longitude"}
+        },
+        "natural_language_patterns": [
+          "compare temperature between two regions",
+          "regional temperature comparison",
+          "temperature differences between regions"
+        ],
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "comparison_float_quality_020",
+      "content": "which float has better data quality, compare float data quality, float quality comparison, best quality float, compare floats quality, float reliability comparison, which float is more reliable, compare float performance, float quality ranking",
+      "metadata": {
+        "category": "comparison",
+        "sql_template": "SELECT p.float_id, COUNT(m.measurement_id) as total_measurements, (COUNT(CASE WHEN m.temperature_qc = '1' THEN 1 END) * 100.0 / COUNT(m.measurement_id)) as temp_quality_percent, (COUNT(CASE WHEN m.salinity_qc = '1' THEN 1 END) * 100.0 / COUNT(m.measurement_id)) as sal_quality_percent, ((COUNT(CASE WHEN m.temperature_qc = '1' THEN 1 END) + COUNT(CASE WHEN m.salinity_qc = '1' THEN 1 END)) * 100.0 / (COUNT(m.measurement_id) * 2)) as overall_quality_percent FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.float_id IN ('{float_id1}', '{float_id2}') GROUP BY p.float_id ORDER BY overall_quality_percent DESC",
+        "parameters": {
+          "float_id1": {"type": "string", "required": true, "description": "First float ID for comparison"},
+          "float_id2": {"type": "string", "required": true, "description": "Second float ID for comparison"}
+        },
+        "natural_language_patterns": [
+          "which float has better data quality",
+          "compare float data quality",
+          "float quality comparison"
+        ],
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "comparison_seasonal_temp_021",
+      "content": "temperature differences between seasons, seasonal temperature comparison, compare temperature seasons, temperature seasonal differences, summer vs winter temperature, seasonal temperature variations, temperature by seasons comparison, compare seasonal temperatures",
+      "metadata": {
+        "category": "comparison",
+        "sql_template": "SELECT CASE WHEN MONTH(p.profile_date) IN (12,1,2) THEN 'Winter' WHEN MONTH(p.profile_date) IN (3,4,5) THEN 'Spring' WHEN MONTH(p.profile_date) IN (6,7,8) THEN 'Summer' ELSE 'Fall' END as season, AVG(m.temperature) as avg_temperature, STDDEV(m.temperature) as std_temperature, COUNT(m.measurement_id) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2') GROUP BY season ORDER BY avg_temperature DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "temperature differences between seasons",
+          "seasonal temperature comparison",
+          "summer vs winter temperature"
+        ],
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "statistical_regional_averages_022",
+      "content": "average temperature salinity by region, regional averages, temperature salinity statistics by region, regional mean temperature salinity, average values by region, regional statistical summary, region wise averages, regional temperature salinity means",
+      "metadata": {
+        "category": "statistical",
+        "sql_template": "SELECT CASE WHEN p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN 50 AND 75 THEN 'Arabian_Sea' WHEN p.latitude BETWEEN 5 AND 22 AND p.longitude BETWEEN 80 AND 100 THEN 'Bay_of_Bengal' ELSE 'Other_Indian_Ocean' END as region, AVG(m.temperature) as avg_temperature, AVG(m.salinity) as avg_salinity, STDDEV(m.temperature) as std_temperature, STDDEV(m.salinity) as std_salinity, COUNT(m.measurement_id) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.salinity IS NOT NULL AND m.temperature_qc IN ('1', '2') AND m.salinity_qc IN ('1', '2') GROUP BY region ORDER BY region",
+        "parameters": {},
+        "natural_language_patterns": [
+          "average temperature and salinity by region",
+          "regional averages",
+          "regional statistical summary"
+        ],
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "statistical_arabian_sea_std_023",
+      "content": "standard deviation temperature Arabian Sea, temperature variability Arabian Sea, temperature standard deviation Arabian Sea, temperature variation Arabian Sea, temperature dispersion Arabian Sea, temperature spread Arabian Sea, Arabian Sea temperature statistics",
+      "metadata": {
+        "category": "statistical",
+        "sql_template": "SELECT AVG(m.temperature) as mean_temperature, STDDEV(m.temperature) as std_temperature, MIN(m.temperature) as min_temperature, MAX(m.temperature) as max_temperature, COUNT(m.measurement_id) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN 10 AND 25 AND p.longitude BETWEEN 50 AND 75 AND m.temperature IS NOT NULL AND m.temperature_qc IN ('1', '2')",
+        "parameters": {},
+        "natural_language_patterns": [
+          "standard deviation of temperature in Arabian Sea",
+          "temperature variability Arabian Sea",
+          "temperature statistics Arabian Sea"
+        ],
+        "user_expertise": "advanced"
+      }
+    },
+    {
+      "id": "statistical_salinity_minmax_024",
+      "content": "maximum minimum salinity values, salinity min max, salinity range, maximum salinity minimum salinity, salinity extremes, salinity highest lowest values, salinity maximum minimum, salinity value range, salinity limits",
+      "metadata": {
+        "category": "statistical",
+        "sql_template": "SELECT MIN(m.salinity) as min_salinity, MAX(m.salinity) as max_salinity, AVG(m.salinity) as mean_salinity, STDDEV(m.salinity) as std_salinity, (MAX(m.salinity) - MIN(m.salinity)) as salinity_range, COUNT(m.measurement_id) as count FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2')",
+        "parameters": {},
+        "natural_language_patterns": [
+          "maximum and minimum salinity values",
+          "salinity range",
+          "salinity extremes"
+        ],
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "export_temperature_csv_025",
+      "content": "export temperature data to CSV, save temperature data CSV, download temperature CSV, export temperature CSV file, temperature data export CSV, save temperature measurements CSV, export temp data CSV format",
+      "metadata": {
+        "category": "export_data_management",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.temperature_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "export temperature data to CSV",
+          "save temperature data as CSV",
+          "download temperature CSV"
+        ],
+        "export_format": "csv",
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "export_salinity_profiles_026",
+      "content": "download salinity profiles for analysis, export salinity profiles, save salinity profile data, download salinity data analysis, export salinity measurements, save salinity profiles file, download salinity profile dataset",
+      "metadata": {
+        "category": "export_data_management",
+        "sql_template": "SELECT p.profile_id, p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.salinity, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.salinity IS NOT NULL AND m.salinity_qc IN ('1', '2') ORDER BY p.profile_date DESC, m.pressure ASC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "download salinity profiles for analysis",
+          "export salinity profiles",
+          "save salinity profile data"
+        ],
+        "export_format": "profiles",
+        "user_expertise": "intermediate"
+      }
+    },
+    {
+      "id": "export_excel_results_027",
+      "content": "save results as Excel file, export data Excel, save to Excel file, export results Excel format, download Excel file, save data Excel spreadsheet, export to Excel format, create Excel file results",
+      "metadata": {
+        "category": "export_data_management",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, p.float_id, m.pressure, m.depth, m.temperature, m.salinity, m.temperature_qc, m.salinity_qc FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.temperature IS NOT NULL AND m.salinity IS NOT NULL ORDER BY p.profile_date DESC LIMIT 10000",
+        "parameters": {},
+        "natural_language_patterns": [
+          "save results as Excel file",
+          "export data to Excel",
+          "download Excel file"
+        ],
+        "export_format": "excel",
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "operational_active_floats_028",
+      "content": "which floats are currently active, active floats list, currently active ARGO floats, show active floats, list active floats, active float status, currently operational floats, active ARGO floats, operational floats list",
+      "metadata": {
+        "category": "operational_monitoring",
+        "sql_template": "SELECT float_id, wmo_number, current_status, last_latitude, last_longitude, last_update, total_profiles FROM floats WHERE current_status IN ('ACTIVE', 'OPERATIONAL') ORDER BY last_update DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "which floats are currently active",
+          "active floats list",
+          "show active floats"
+        ],
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "operational_latest_data_029",
+      "content": "latest data from all floats, most recent float data, latest measurements all floats, recent data all floats, newest float data, latest profiles all floats, most recent float measurements, current float data",
+      "metadata": {
+        "category": "operational_monitoring",
+        "sql_template": "SELECT p.float_id, MAX(p.profile_date) as latest_profile, COUNT(p.profile_id) as total_profiles, f.current_status FROM profiles p JOIN floats f ON p.float_id = f.float_id GROUP BY p.float_id, f.current_status ORDER BY latest_profile DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "latest data from all floats",
+          "most recent float data",
+          "newest float measurements"
+        ],
+        "user_expertise": "beginner"
+      }
+    },
+    {
+      "id": "operational_float_status_030",
+      "content": "float status and last transmission dates, float status transmission, last communication floats, float transmission status, float last contact, float communication status, last transmission all floats, float status updates",
+      "metadata": {
+        "category": "operational_monitoring",
+        "sql_template": "SELECT float_id, wmo_number, current_status, last_latitude, last_longitude, last_update, deployment_date, total_profiles, DATEDIFF(CURRENT_DATE, STR_TO_DATE(last_update, '%Y-%m-%d')) as days_since_contact FROM floats ORDER BY last_update DESC",
+        "parameters": {},
+        "natural_language_patterns": [
+          "float status and last transmission dates",
+          "last communication from floats",
+          "float transmission status"
+        ],
+        "user_expertise": "intermediate"
+      }
+    }
+  ]
+}

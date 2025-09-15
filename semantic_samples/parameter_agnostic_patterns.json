@@ -1,0 +1,203 @@
+{
+  "category": "Parameter-Agnostic Data Retrieval",
+  "description": "Flexible patterns that work for any oceanographic parameter (temperature, salinity, pressure, oxygen, etc.)",
+  "total_samples": 15,
+  "queries": [
+    {
+      "id": "param_agnostic_001",
+      "content": "show me {parameter} data, get {parameter} measurements, display {parameter} values, {parameter} readings from region, extract {parameter} information, give me {parameter}, show {parameter} measurements, {parameter} data from profiles",
+      "metadata": {
+        "category": "parameter_display",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.{parameter} FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.{parameter} IS NOT NULL ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "parameter": "temperature|salinity|pressure|oxygen|ph|density|conductivity",
+          "lat_min": "float",
+          "lat_max": "float",
+          "lon_min": "float",
+          "lon_max": "float",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "show me temperature data",
+          "get salinity measurements",
+          "display pressure values",
+          "give me oxygen readings",
+          "show conductivity measurements"
+        ]
+      }
+    },
+    {
+      "id": "param_agnostic_002",
+      "content": "{parameter} range between {min_value} and {max_value}, {parameter} values from {min_value} to {max_value}, {parameter} in range, specific {parameter} values, {parameter} within limits, {parameter} between values, filter {parameter} by range",
+      "metadata": {
+        "category": "parameter_range",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.{parameter} FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.{parameter} BETWEEN {min_value} AND {max_value} ORDER BY m.{parameter} DESC LIMIT {limit_count}",
+        "parameters": {
+          "parameter": "temperature|salinity|pressure|oxygen|ph|density|conductivity",
+          "min_value": "float",
+          "max_value": "float",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "temperature between 25 and 30",
+          "salinity from 34 to 36",
+          "pressure range 100 to 500",
+          "oxygen values between 4 and 8"
+        ]
+      }
+    },
+    {
+      "id": "param_agnostic_003",
+      "content": "maximum {parameter}, highest {parameter} values, peak {parameter} readings, extreme high {parameter}, {parameter} maximum values, top {parameter} measurements, hottest {parameter}, strongest {parameter}",
+      "metadata": {
+        "category": "parameter_maximum",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.{parameter} FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.{parameter} IS NOT NULL ORDER BY m.{parameter} DESC LIMIT {limit_count}",
+        "parameters": {
+          "parameter": "temperature|salinity|pressure|oxygen|ph|density|conductivity",
+          "limit_count": "integer, default 20"
+        },
+        "natural_language_patterns": [
+          "maximum temperature",
+          "highest salinity values",
+          "peak pressure readings",
+          "extreme high oxygen"
+        ]
+      }
+    },
+    {
+      "id": "param_agnostic_004",
+      "content": "minimum {parameter}, lowest {parameter} values, smallest {parameter} readings, extreme low {parameter}, {parameter} minimum values, bottom {parameter} measurements, coldest {parameter}, weakest {parameter}",
+      "metadata": {
+        "category": "parameter_minimum",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.{parameter} FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.{parameter} IS NOT NULL ORDER BY m.{parameter} ASC LIMIT {limit_count}",
+        "parameters": {
+          "parameter": "temperature|salinity|pressure|oxygen|ph|density|conductivity",
+          "limit_count": "integer, default 20"
+        },
+        "natural_language_patterns": [
+          "minimum temperature",
+          "lowest salinity values",
+          "smallest pressure readings",
+          "extreme low oxygen"
+        ]
+      }
+    },
+    {
+      "id": "param_agnostic_005",
+      "content": "average {parameter}, mean {parameter} values, {parameter} averages by region, typical {parameter} readings, {parameter} statistics, {parameter} summary statistics, {parameter} means",
+      "metadata": {
+        "category": "parameter_statistics",
+        "sql_template": "SELECT AVG(m.{parameter}) as avg_{parameter}, COUNT(m.{parameter}) as data_points, STDDEV(m.{parameter}) as std_dev, MIN(m.{parameter}) as min_val, MAX(m.{parameter}) as max_val FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.latitude BETWEEN {lat_min} AND {lat_max} AND p.longitude BETWEEN {lon_min} AND {lon_max} AND m.{parameter} IS NOT NULL",
+        "parameters": {
+          "parameter": "temperature|salinity|pressure|oxygen|ph|density|conductivity",
+          "lat_min": "float",
+          "lat_max": "float",
+          "lon_min": "float",
+          "lon_max": "float"
+        },
+        "natural_language_patterns": [
+          "average temperature",
+          "mean salinity values",
+          "pressure statistics",
+          "typical oxygen readings"
+        ]
+      }
+    },
+    {
+      "id": "param_agnostic_006",
+      "content": "{parameter} at depth {depth_value}, {parameter} at {depth_value} meters, {parameter} measurements at specific depth, {parameter} values at pressure level, {parameter} at this depth, {parameter} vertical profile",
+      "metadata": {
+        "category": "parameter_at_depth",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.{parameter} FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure BETWEEN {depth_min} AND {depth_max} AND m.{parameter} IS NOT NULL ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "parameter": "temperature|salinity|pressure|oxygen|ph|density|conductivity",
+          "depth_value": "float",
+          "depth_min": "float, calculated as depth_value - 10",
+          "depth_max": "float, calculated as depth_value + 10",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "temperature at 100 meters",
+          "salinity at 500m depth",
+          "pressure at 1000 meters",
+          "oxygen at 200m"
+        ]
+      }
+    },
+    {
+      "id": "param_agnostic_007",
+      "content": "surface {parameter}, {parameter} at surface, {parameter} at sea surface, top layer {parameter}, {parameter} near surface, surface layer {parameter} measurements",
+      "metadata": {
+        "category": "parameter_surface",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.{parameter}, m.pressure FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure <= {surface_threshold} AND m.{parameter} IS NOT NULL ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "parameter": "temperature|salinity|pressure|oxygen|ph|density|conductivity",
+          "surface_threshold": "float, default 10.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "surface temperature",
+          "salinity at surface",
+          "sea surface pressure",
+          "surface oxygen levels"
+        ]
+      }
+    },
+    {
+      "id": "param_agnostic_008",
+      "content": "deep {parameter}, {parameter} below {depth_threshold}, {parameter} in deep water, {parameter} at depth, deep water {parameter} measurements, {parameter} from deep ocean",
+      "metadata": {
+        "category": "parameter_deep",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.pressure, m.{parameter} FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE m.pressure > {depth_threshold} AND m.{parameter} IS NOT NULL ORDER BY m.pressure DESC LIMIT {limit_count}",
+        "parameters": {
+          "parameter": "temperature|salinity|pressure|oxygen|ph|density|conductivity",
+          "depth_threshold": "float, default 1000.0",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "deep temperature",
+          "salinity below 1000m",
+          "deep water pressure",
+          "oxygen in deep ocean"
+        ]
+      }
+    },
+    {
+      "id": "param_agnostic_009",
+      "content": "profiles without {parameter}, missing {parameter} data, no {parameter} measurements, {parameter} data gaps, profiles missing {parameter}, incomplete {parameter} data",
+      "metadata": {
+        "category": "parameter_missing",
+        "sql_template": "SELECT p.profile_id, p.float_id, p.profile_date, p.latitude, p.longitude FROM profiles p LEFT JOIN measurements m ON p.profile_id = m.profile_id WHERE m.{parameter} IS NULL OR m.{parameter} = '' OR m.{parameter}_qc NOT IN ('1', '2') GROUP BY p.profile_id ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "parameter": "temperature|salinity|pressure|oxygen|ph|density|conductivity",
+          "limit_count": "integer, default 50"
+        },
+        "natural_language_patterns": [
+          "profiles without temperature",
+          "missing salinity data",
+          "no pressure measurements",
+          "oxygen data gaps"
+        ]
+      }
+    },
+    {
+      "id": "param_agnostic_010",
+      "content": "recent {parameter} measurements, latest {parameter} data, newest {parameter} readings, current {parameter} values, {parameter} from last week, fresh {parameter} data",
+      "metadata": {
+        "category": "parameter_recent",
+        "sql_template": "SELECT p.profile_date, p.latitude, p.longitude, m.{parameter}, p.float_id FROM profiles p JOIN measurements m ON p.profile_id = m.profile_id WHERE p.profile_date >= DATE_SUB(CURRENT_DATE, INTERVAL {days_back} DAY) AND m.{parameter} IS NOT NULL ORDER BY p.profile_date DESC LIMIT {limit_count}",
+        "parameters": {
+          "parameter": "temperature|salinity|pressure|oxygen|ph|density|conductivity",
+          "days_back": "integer, default 7",
+          "limit_count": "integer, default 100"
+        },
+        "natural_language_patterns": [
+          "recent temperature measurements",
+          "latest salinity data",
+          "newest pressure readings",
+          "current oxygen values"
+        ]
+      }
+    }
+  ]
+}
