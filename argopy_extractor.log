@@ -1,0 +1,1498 @@
+2025-09-13 22:13:45,272 - INFO - ================================================================================
+2025-09-13 22:13:45,273 - INFO - STARTING FULL-SCALE ARGO DATA EXTRACTION
+2025-09-13 22:13:45,273 - INFO - This will download ALL Indian Ocean delayed-mode data from 2000 to present
+2025-09-13 22:13:45,274 - INFO - ================================================================================
+2025-09-13 22:13:45,275 - INFO - Will extract data from 2000 to 2025
+2025-09-13 22:13:45,276 - INFO - Total time periods: 26
+2025-09-13 22:13:45,277 - INFO - Starting extraction with NO LIMITS - all regions, all years
+2025-09-13 22:13:45,278 - INFO - Starting ARGO data extraction using argopy (delayed-mode data)
+2025-09-13 22:13:45,279 - INFO - ============================================================
+2025-09-13 22:13:45,279 - INFO - Setting up database structure...
+2025-09-13 22:13:45,280 - INFO - Clearing existing data...
+2025-09-13 22:13:45,366 - INFO - Initialized empty floats table
+2025-09-13 22:13:45,382 - INFO - Initialized empty profiles table
+2025-09-13 22:13:45,406 - INFO - Initialized empty measurements table
+2025-09-13 22:13:45,407 - INFO - Database structure ready
+2025-09-13 22:13:45,407 - INFO - Processing 9 regions x 26 years = 234 combinations
+2025-09-13 22:13:45,408 - INFO - 
+=== PROCESSING REGION: Northern Indian Ocean ===
+2025-09-13 22:13:45,408 - INFO - Extracting Northern Indian Ocean data for 2000
+2025-09-13 22:13:45,410 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2000-01-01', '2000-12-31']
+2025-09-13 22:13:50,425 - ERROR - Error extracting Northern Indian Ocean data for 2000: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=40.0&longitude<=100.0&latitude>=0.0&latitude<=30.0&pres>=0&pres<=2000&time>=946684800.0&time<=978220800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-13 22:13:50,425 - INFO - Extracting Northern Indian Ocean data for 2001
+2025-09-13 22:13:50,426 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2001-01-01', '2001-12-31']
+2025-09-13 22:13:54,431 - INFO -   Found 2096 data points
+2025-09-13 22:13:54,432 - INFO - Processing point-based dataset: 2096 data points
+2025-09-13 22:13:55,585 - INFO - Processed: 9 floats, 32 profiles, 2096 measurements
+2025-09-13 22:13:55,850 - INFO - Added 9 float records (total: 9)
+2025-09-13 22:13:55,866 - INFO - Added 32 profile records (total: 32)
+2025-09-13 22:13:55,947 - INFO - Added 2096 measurement records (total: 2096)
+2025-09-13 22:13:57,948 - INFO - Extracting Northern Indian Ocean data for 2002
+2025-09-13 22:13:57,950 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2002-01-01', '2002-12-31']
+2025-09-13 22:14:16,606 - INFO -   Found 50630 data points
+2025-09-13 22:14:16,606 - INFO - Processing point-based dataset: 50630 data points
+2025-09-13 22:14:46,050 - INFO - Processed: 23 floats, 938 profiles, 50630 measurements
+2025-09-13 22:14:46,524 - INFO - Added 23 float records (total: 140)
+2025-09-13 22:14:46,589 - INFO - Added 938 profile records (total: 1861)
+2025-09-13 22:14:51,351 - INFO - Added 50630 measurement records (total: 481876)
+2025-09-13 22:14:53,413 - INFO - Extracting Northern Indian Ocean data for 2003
+2025-09-13 22:14:53,415 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2003-01-01', '2003-12-31']
+2025-09-13 22:15:22,910 - INFO -   Found 98384 data points
+2025-09-13 22:15:22,911 - INFO - Processing point-based dataset: 98384 data points
+2025-09-13 22:16:12,295 - INFO - Processed: 66 floats, 2058 profiles, 98384 measurements
+2025-09-13 22:16:12,934 - INFO - Added 66 float records (total: 185)
+2025-09-13 22:16:13,042 - INFO - Added 2058 profile records (total: 3919)
+2025-09-13 22:16:18,593 - INFO - Added 98384 measurement records (total: 580260)
+2025-09-13 22:16:20,687 - INFO - Extracting Northern Indian Ocean data for 2004
+2025-09-13 22:16:20,688 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2004-01-01', '2004-12-31']
+2025-09-13 22:17:05,549 - INFO -   Found 169032 data points
+2025-09-13 22:17:05,550 - INFO - Processing point-based dataset: 169032 data points
+2025-09-13 22:18:43,461 - INFO - Processed: 98 floats, 3607 profiles, 169032 measurements
+2025-09-13 22:18:44,294 - INFO - Added 98 float records (total: 225)
+2025-09-13 22:18:44,438 - INFO - Added 3607 profile records (total: 7526)
+2025-09-13 22:18:52,899 - INFO - Added 169032 measurement records (total: 749292)
+2025-09-13 22:18:55,113 - INFO - Extracting Northern Indian Ocean data for 2005
+2025-09-13 22:18:55,114 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2005-01-01', '2005-12-31']
+2025-09-13 22:19:46,171 - INFO -   Found 181327 data points
+2025-09-13 22:19:46,171 - INFO - Processing point-based dataset: 181327 data points
+2025-09-13 22:21:35,318 - INFO - Processed: 114 floats, 3829 profiles, 181327 measurements
+2025-09-13 22:21:37,048 - INFO - Added 114 float records (total: 268)
+2025-09-13 22:21:37,251 - INFO - Added 3829 profile records (total: 11355)
+2025-09-13 22:21:47,430 - INFO - Added 181327 measurement records (total: 930619)
+2025-09-13 22:21:49,628 - INFO - Extracting Northern Indian Ocean data for 2006
+2025-09-13 22:21:49,631 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2006-01-01', '2006-12-31']
+2025-09-13 22:22:43,897 - INFO -   Found 242998 data points
+2025-09-13 22:22:43,898 - INFO - Processing point-based dataset: 242998 data points
+2025-09-13 22:24:45,807 - INFO - Processed: 111 floats, 4411 profiles, 242996 measurements
+2025-09-13 22:24:47,920 - INFO - Added 111 float records (total: 283)
+2025-09-13 22:24:48,142 - INFO - Added 4411 profile records (total: 15766)
+2025-09-13 22:25:01,777 - INFO - Added 242996 measurement records (total: 1173615)
+2025-09-13 22:25:04,018 - INFO - Extracting Northern Indian Ocean data for 2007
+2025-09-13 22:25:04,022 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2007-01-01', '2007-12-31']
+2025-09-13 22:26:09,226 - INFO -   Found 363412 data points
+2025-09-13 22:26:09,227 - INFO - Processing point-based dataset: 363412 data points
+2025-09-13 22:29:03,696 - INFO - Processed: 128 floats, 4985 profiles, 363406 measurements
+2025-09-13 22:29:05,885 - INFO - Added 128 float records (total: 331)
+2025-09-13 22:29:06,225 - INFO - Added 4985 profile records (total: 20751)
+2025-09-13 22:29:24,520 - INFO - Added 363406 measurement records (total: 1537021)
+2025-09-13 22:29:26,822 - INFO - Extracting Northern Indian Ocean data for 2008
+2025-09-13 22:29:26,847 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2008-01-01', '2008-12-31']
+2025-09-13 22:30:38,204 - INFO -   Found 334290 data points
+2025-09-13 22:30:38,204 - INFO - Processing point-based dataset: 334290 data points
+2025-09-13 22:33:11,890 - INFO - Processed: 136 floats, 5932 profiles, 334282 measurements
+2025-09-13 22:33:17,770 - INFO - Added 136 float records (total: 363)
+2025-09-13 22:33:19,198 - INFO - Added 5932 profile records (total: 26683)
+2025-09-13 22:33:41,158 - INFO - Added 334282 measurement records (total: 1871303)
+2025-09-13 22:33:43,600 - INFO - Extracting Northern Indian Ocean data for 2009
+2025-09-13 22:33:43,608 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2009-01-01', '2009-12-31']
+2025-09-13 22:34:26,528 - INFO -   Found 309477 data points
+2025-09-13 22:34:26,529 - INFO - Processing point-based dataset: 309477 data points
+2025-09-13 22:36:44,171 - INFO - Processed: 137 floats, 5592 profiles, 309468 measurements
+2025-09-13 22:36:49,468 - INFO - Added 137 float records (total: 394)
+2025-09-13 22:36:51,750 - INFO - Added 5592 profile records (total: 32275)
+2025-09-13 22:37:14,947 - INFO - Added 309468 measurement records (total: 2180771)
+2025-09-13 22:37:17,483 - INFO - Extracting Northern Indian Ocean data for 2010
+2025-09-13 22:37:17,492 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2010-01-01', '2010-12-31']
+2025-09-13 22:38:25,260 - INFO -   Found 319108 data points
+2025-09-13 22:38:25,261 - INFO - Processing point-based dataset: 319108 data points
+2025-09-13 22:39:42,229 - INFO - Processed: 140 floats, 4698 profiles, 319108 measurements
+2025-09-13 22:39:45,312 - INFO - Added 140 float records (total: 434)
+2025-09-13 22:39:46,005 - INFO - Added 4698 profile records (total: 36973)
+2025-09-13 22:39:58,680 - INFO - Added 319108 measurement records (total: 2499879)
+2025-09-13 22:40:01,275 - INFO - Progress: 10 extractions processed (10 successful)
+2025-09-13 22:40:01,276 - INFO - Extracting Northern Indian Ocean data for 2011
+2025-09-13 22:40:01,282 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2011-01-01', '2011-12-31']
+2025-09-13 22:41:12,638 - INFO -   Found 674854 data points
+2025-09-13 22:41:12,639 - INFO - Processing point-based dataset: 674854 data points
+2025-09-13 22:43:18,068 - INFO - Processed: 178 floats, 5765 profiles, 674853 measurements
+2025-09-13 22:43:22,373 - INFO - Added 178 float records (total: 504)
+2025-09-13 22:43:24,809 - INFO - Added 5765 profile records (total: 42738)
+2025-09-13 22:43:43,311 - INFO - Added 674853 measurement records (total: 3174732)
+2025-09-13 22:43:45,832 - INFO - Extracting Northern Indian Ocean data for 2012
+2025-09-13 22:43:45,838 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2012-01-01', '2012-12-31']
+2025-09-13 22:44:13,537 - ERROR - Error extracting Northern Indian Ocean data for 2012: ''
+2025-09-13 22:44:13,538 - INFO - Extracting Northern Indian Ocean data for 2013
+2025-09-13 22:44:13,539 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2013-01-01', '2013-12-31']
+2025-09-13 22:44:45,100 - ERROR - Error extracting Northern Indian Ocean data for 2013: ''
+2025-09-13 22:44:45,101 - INFO - Extracting Northern Indian Ocean data for 2014
+2025-09-13 22:44:45,102 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2014-01-01', '2014-12-31']
+2025-09-13 22:45:23,219 - ERROR - Error extracting Northern Indian Ocean data for 2014: ''
+2025-09-13 22:45:23,220 - INFO - Extracting Northern Indian Ocean data for 2015
+2025-09-13 22:45:23,221 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2015-01-01', '2015-12-31']
+2025-09-13 22:46:06,593 - ERROR - Error extracting Northern Indian Ocean data for 2015: ''
+2025-09-13 22:46:06,593 - INFO - Extracting Northern Indian Ocean data for 2016
+2025-09-13 22:46:06,594 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2016-01-01', '2016-12-31']
+2025-09-13 22:47:01,161 - ERROR - Error extracting Northern Indian Ocean data for 2016: ''
+2025-09-13 22:47:01,162 - INFO - Extracting Northern Indian Ocean data for 2017
+2025-09-13 22:47:01,163 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2017-01-01', '2017-12-31']
+2025-09-13 22:47:53,025 - ERROR - Error extracting Northern Indian Ocean data for 2017: ''
+2025-09-13 22:47:53,026 - INFO - Extracting Northern Indian Ocean data for 2018
+2025-09-13 22:47:53,026 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2018-01-01', '2018-12-31']
+2025-09-13 22:48:46,717 - ERROR - Error extracting Northern Indian Ocean data for 2018: ''
+2025-09-13 22:48:46,727 - INFO - Extracting Northern Indian Ocean data for 2019
+2025-09-13 22:48:46,728 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2019-01-01', '2019-12-31']
+2025-09-13 22:49:38,684 - ERROR - Error extracting Northern Indian Ocean data for 2019: ''
+2025-09-13 22:49:38,684 - INFO - Extracting Northern Indian Ocean data for 2020
+2025-09-13 22:49:38,685 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2020-01-01', '2020-12-31']
+2025-09-13 22:50:35,803 - ERROR - Error extracting Northern Indian Ocean data for 2020: ''
+2025-09-13 22:50:35,804 - INFO - Extracting Northern Indian Ocean data for 2021
+2025-09-13 22:50:35,805 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2021-01-01', '2021-12-31']
+2025-09-13 22:51:30,839 - ERROR - Error extracting Northern Indian Ocean data for 2021: ''
+2025-09-13 22:51:30,840 - INFO - Extracting Northern Indian Ocean data for 2022
+2025-09-13 22:51:30,841 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2022-01-01', '2022-12-31']
+2025-09-13 22:52:16,987 - ERROR - Error extracting Northern Indian Ocean data for 2022: ''
+2025-09-13 22:52:16,987 - INFO - Extracting Northern Indian Ocean data for 2023
+2025-09-13 22:52:16,988 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2023-01-01', '2023-12-31']
+2025-09-13 22:53:06,800 - ERROR - Error extracting Northern Indian Ocean data for 2023: ''
+2025-09-13 22:53:06,801 - INFO - Extracting Northern Indian Ocean data for 2024
+2025-09-13 22:53:06,801 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2024-01-01', '2024-12-31']
+2025-09-13 22:53:50,964 - ERROR - Error extracting Northern Indian Ocean data for 2024: ''
+2025-09-13 22:53:50,964 - INFO - Extracting Northern Indian Ocean data for 2025
+2025-09-13 22:53:50,965 - INFO -   Region box: [40.0, 100.0, 0.0, 30.0, 0, 2000, '2025-01-01', '2025-03-17']
+2025-09-13 22:54:49,466 - INFO -   Found 429151 data points
+2025-09-13 22:54:49,467 - INFO - Processing point-based dataset: 429151 data points
+2025-09-13 22:55:36,346 - INFO - Processed: 117 floats, 891 profiles, 429150 measurements
+2025-09-13 22:55:41,917 - INFO - Added 117 float records (total: 504)
+2025-09-13 22:55:43,284 - INFO - Added 891 profile records (total: 43629)
+2025-09-13 22:56:00,648 - INFO - Added 429150 measurement records (total: 3603882)
+2025-09-13 22:56:03,266 - INFO - 
+=== PROCESSING REGION: Southern Indian Ocean ===
+2025-09-13 22:56:03,267 - INFO - Extracting Southern Indian Ocean data for 2000
+2025-09-13 22:56:03,275 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2000-01-01', '2000-12-31']
+2025-09-13 22:56:08,907 - INFO -   Found 9828 data points
+2025-09-13 22:56:08,907 - INFO - Processing point-based dataset: 9828 data points
+2025-09-13 22:56:11,025 - INFO - Processed: 10 floats, 218 profiles, 9828 measurements
+2025-09-13 22:56:14,053 - INFO - Added 10 float records (total: 514)
+2025-09-13 22:56:14,308 - INFO - Added 218 profile records (total: 43847)
+2025-09-13 22:56:27,822 - INFO - Added 9828 measurement records (total: 3613710)
+2025-09-13 22:56:30,319 - INFO - Extracting Southern Indian Ocean data for 2001
+2025-09-13 22:56:30,324 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2001-01-01', '2001-12-31']
+2025-09-13 22:56:37,565 - INFO -   Found 19404 data points
+2025-09-13 22:56:37,566 - INFO - Processing point-based dataset: 19404 data points
+2025-09-13 22:56:41,567 - INFO - Processed: 20 floats, 408 profiles, 19404 measurements
+2025-09-13 22:56:43,716 - INFO - Added 20 float records (total: 523)
+2025-09-13 22:56:43,793 - INFO - Added 408 profile records (total: 44255)
+2025-09-13 22:56:58,902 - INFO - Added 19404 measurement records (total: 3633114)
+2025-09-13 22:57:01,854 - INFO - Extracting Southern Indian Ocean data for 2002
+2025-09-13 22:57:01,858 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2002-01-01', '2002-12-31']
+2025-09-13 22:57:14,809 - INFO -   Found 67785 data points
+2025-09-13 22:57:14,809 - INFO - Processing point-based dataset: 67785 data points
+2025-09-13 22:57:28,725 - INFO - Processed: 95 floats, 1251 profiles, 67785 measurements
+2025-09-13 22:57:32,011 - INFO - Added 95 float records (total: 596)
+2025-09-13 22:57:32,263 - INFO - Added 1251 profile records (total: 45506)
+2025-09-13 22:57:49,141 - INFO - Added 67785 measurement records (total: 3700899)
+2025-09-13 22:57:52,157 - INFO - Extracting Southern Indian Ocean data for 2003
+2025-09-13 22:57:52,165 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2003-01-01', '2003-12-31']
+2025-09-13 22:58:29,372 - INFO -   Found 235922 data points
+2025-09-13 22:58:29,373 - INFO - Processing point-based dataset: 235922 data points
+2025-09-13 22:59:18,407 - INFO - Processed: 144 floats, 3903 profiles, 235922 measurements
+2025-09-13 22:59:22,651 - INFO - Added 144 float records (total: 647)
+2025-09-13 22:59:23,423 - INFO - Added 3903 profile records (total: 49409)
+2025-09-13 22:59:42,838 - INFO - Added 235922 measurement records (total: 3936821)
+2025-09-13 22:59:46,665 - INFO - Extracting Southern Indian Ocean data for 2004
+2025-09-13 22:59:46,670 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2004-01-01', '2004-12-31']
+2025-09-13 23:00:31,843 - INFO -   Found 354075 data points
+2025-09-13 23:00:31,843 - INFO - Processing point-based dataset: 354075 data points
+2025-09-13 23:01:48,532 - INFO - Processed: 234 floats, 5197 profiles, 354075 measurements
+2025-09-13 23:01:52,975 - INFO - Added 234 float records (total: 756)
+2025-09-13 23:01:54,044 - INFO - Added 5197 profile records (total: 54606)
+2025-09-13 23:02:14,958 - INFO - Added 354075 measurement records (total: 4290896)
+2025-09-13 23:02:17,833 - INFO - Extracting Southern Indian Ocean data for 2005
+2025-09-13 23:02:17,845 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2005-01-01', '2005-12-31']
+2025-09-13 23:03:32,904 - INFO -   Found 527161 data points
+2025-09-13 23:03:32,905 - INFO - Processing point-based dataset: 527161 data points
+2025-09-13 23:05:41,873 - INFO - Processed: 289 floats, 7896 profiles, 527161 measurements
+2025-09-13 23:05:48,167 - INFO - Added 289 float records (total: 826)
+2025-09-13 23:05:50,146 - INFO - Added 7896 profile records (total: 62502)
+2025-09-13 23:06:16,766 - INFO - Added 527161 measurement records (total: 4818057)
+2025-09-13 23:06:20,081 - INFO - Extracting Southern Indian Ocean data for 2006
+2025-09-13 23:06:20,093 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2006-01-01', '2006-12-31']
+2025-09-13 23:07:20,526 - ERROR - Error extracting Southern Indian Ocean data for 2006: 
+2025-09-13 23:07:20,527 - INFO - Extracting Southern Indian Ocean data for 2007
+2025-09-13 23:07:20,528 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2007-01-01', '2007-12-31']
+2025-09-13 23:08:21,530 - ERROR - Error extracting Southern Indian Ocean data for 2007: 
+2025-09-13 23:08:21,531 - INFO - Extracting Southern Indian Ocean data for 2008
+2025-09-13 23:08:21,532 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2008-01-01', '2008-12-31']
+2025-09-13 23:09:10,143 - ERROR - Error extracting Southern Indian Ocean data for 2008: ''
+2025-09-13 23:09:10,144 - INFO - Extracting Southern Indian Ocean data for 2009
+2025-09-13 23:09:10,145 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2009-01-01', '2009-12-31']
+2025-09-13 23:09:58,399 - ERROR - Error extracting Southern Indian Ocean data for 2009: ''
+2025-09-13 23:09:58,400 - INFO - Extracting Southern Indian Ocean data for 2010
+2025-09-13 23:09:58,401 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2010-01-01', '2010-12-31']
+2025-09-13 23:10:51,956 - ERROR - Error extracting Southern Indian Ocean data for 2010: ''
+2025-09-13 23:10:51,957 - INFO - Extracting Southern Indian Ocean data for 2011
+2025-09-13 23:10:51,957 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2011-01-01', '2011-12-31']
+2025-09-13 23:11:52,525 - ERROR - Error extracting Southern Indian Ocean data for 2011: 
+2025-09-13 23:11:52,525 - INFO - Extracting Southern Indian Ocean data for 2012
+2025-09-13 23:11:52,526 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2012-01-01', '2012-12-31']
+2025-09-13 23:12:53,531 - ERROR - Error extracting Southern Indian Ocean data for 2012: 
+2025-09-13 23:12:53,531 - INFO - Extracting Southern Indian Ocean data for 2013
+2025-09-13 23:12:53,532 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2013-01-01', '2013-12-31']
+2025-09-13 23:13:54,520 - ERROR - Error extracting Southern Indian Ocean data for 2013: 
+2025-09-13 23:13:54,521 - INFO - Extracting Southern Indian Ocean data for 2014
+2025-09-13 23:13:54,523 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2014-01-01', '2014-12-31']
+2025-09-13 23:14:55,527 - ERROR - Error extracting Southern Indian Ocean data for 2014: 
+2025-09-13 23:14:55,528 - INFO - Extracting Southern Indian Ocean data for 2015
+2025-09-13 23:14:55,528 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2015-01-01', '2015-12-31']
+2025-09-13 23:15:56,522 - ERROR - Error extracting Southern Indian Ocean data for 2015: 
+2025-09-13 23:15:56,522 - INFO - Extracting Southern Indian Ocean data for 2016
+2025-09-13 23:15:56,523 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2016-01-01', '2016-12-31']
+2025-09-13 23:16:57,525 - ERROR - Error extracting Southern Indian Ocean data for 2016: 
+2025-09-13 23:16:57,526 - INFO - Extracting Southern Indian Ocean data for 2017
+2025-09-13 23:16:57,526 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2017-01-01', '2017-12-31']
+2025-09-13 23:17:58,530 - ERROR - Error extracting Southern Indian Ocean data for 2017: 
+2025-09-13 23:17:58,541 - INFO - Extracting Southern Indian Ocean data for 2018
+2025-09-13 23:17:58,542 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2018-01-01', '2018-12-31']
+2025-09-13 23:18:59,523 - ERROR - Error extracting Southern Indian Ocean data for 2018: 
+2025-09-13 23:18:59,523 - INFO - Extracting Southern Indian Ocean data for 2019
+2025-09-13 23:18:59,524 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2019-01-01', '2019-12-31']
+2025-09-13 23:20:00,525 - ERROR - Error extracting Southern Indian Ocean data for 2019: 
+2025-09-13 23:20:00,526 - INFO - Extracting Southern Indian Ocean data for 2020
+2025-09-13 23:20:00,526 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2020-01-01', '2020-12-31']
+2025-09-13 23:21:01,533 - ERROR - Error extracting Southern Indian Ocean data for 2020: 
+2025-09-13 23:21:01,545 - INFO - Extracting Southern Indian Ocean data for 2021
+2025-09-13 23:21:01,546 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2021-01-01', '2021-12-31']
+2025-09-13 23:22:02,534 - ERROR - Error extracting Southern Indian Ocean data for 2021: 
+2025-09-13 23:22:02,534 - INFO - Extracting Southern Indian Ocean data for 2022
+2025-09-13 23:22:02,535 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2022-01-01', '2022-12-31']
+2025-09-13 23:23:03,531 - ERROR - Error extracting Southern Indian Ocean data for 2022: 
+2025-09-13 23:23:03,532 - INFO - Extracting Southern Indian Ocean data for 2023
+2025-09-13 23:23:03,532 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2023-01-01', '2023-12-31']
+2025-09-13 23:24:04,533 - ERROR - Error extracting Southern Indian Ocean data for 2023: 
+2025-09-13 23:24:04,543 - INFO - Extracting Southern Indian Ocean data for 2024
+2025-09-13 23:24:04,544 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2024-01-01', '2024-12-31']
+2025-09-13 23:25:05,541 - ERROR - Error extracting Southern Indian Ocean data for 2024: 
+2025-09-13 23:25:05,542 - INFO - Extracting Southern Indian Ocean data for 2025
+2025-09-13 23:25:05,543 - INFO -   Region box: [40.0, 120.0, -50.0, 0.0, 0, 2000, '2025-01-01', '2025-03-17']
+2025-09-13 23:26:06,544 - ERROR - Error extracting Southern Indian Ocean data for 2025: 
+2025-09-13 23:26:06,550 - INFO - 
+=== PROCESSING REGION: Bay Of Bengal ===
+2025-09-13 23:26:06,550 - INFO - Extracting Bay Of Bengal data for 2000
+2025-09-13 23:26:06,551 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2000-01-01', '2000-12-31']
+2025-09-13 23:26:11,218 - ERROR - Error extracting Bay Of Bengal data for 2000: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=80.0&longitude<=100.0&latitude>=5.0&latitude<=25.0&pres>=0&pres<=2000&time>=946684800.0&time<=978220800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-13 23:26:11,222 - INFO - Extracting Bay Of Bengal data for 2001
+2025-09-13 23:26:11,222 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2001-01-01', '2001-12-31']
+2025-09-13 23:26:14,619 - ERROR - Error extracting Bay Of Bengal data for 2001: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=80.0&longitude<=100.0&latitude>=5.0&latitude<=25.0&pres>=0&pres<=2000&time>=978307200.0&time<=1009756800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-13 23:26:14,619 - INFO - Extracting Bay Of Bengal data for 2002
+2025-09-13 23:26:14,631 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2002-01-01', '2002-12-31']
+2025-09-13 23:26:17,950 - INFO -   Found 1571 data points
+2025-09-13 23:26:17,951 - INFO - Processing point-based dataset: 1571 data points
+2025-09-13 23:26:18,425 - INFO - Processed: 2 floats, 47 profiles, 1571 measurements
+2025-09-13 23:26:27,064 - INFO - Added 2 float records (total: 826)
+2025-09-13 23:26:27,368 - INFO - Added 47 profile records (total: 62549)
+2025-09-13 23:26:48,043 - INFO - Added 1571 measurement records (total: 4819628)
+2025-09-13 23:26:50,918 - INFO - Extracting Bay Of Bengal data for 2003
+2025-09-13 23:26:50,925 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2003-01-01', '2003-12-31']
+2025-09-13 23:26:58,509 - INFO -   Found 17314 data points
+2025-09-13 23:26:58,510 - INFO - Processing point-based dataset: 17314 data points
+2025-09-13 23:27:03,596 - INFO - Processed: 13 floats, 462 profiles, 17314 measurements
+2025-09-13 23:27:07,134 - INFO - Added 13 float records (total: 826)
+2025-09-13 23:27:07,407 - INFO - Added 462 profile records (total: 63011)
+2025-09-13 23:27:29,547 - INFO - Added 17314 measurement records (total: 4836942)
+2025-09-13 23:27:32,587 - INFO - Progress: 20 extractions processed (20 successful)
+2025-09-13 23:27:32,588 - INFO - Extracting Bay Of Bengal data for 2004
+2025-09-13 23:27:32,594 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2004-01-01', '2004-12-31']
+2025-09-13 23:27:40,836 - INFO -   Found 27900 data points
+2025-09-13 23:27:40,837 - INFO - Processing point-based dataset: 27900 data points
+2025-09-13 23:27:48,428 - INFO - Processed: 18 floats, 702 profiles, 27900 measurements
+2025-09-13 23:27:53,425 - INFO - Added 18 float records (total: 826)
+2025-09-13 23:27:53,839 - INFO - Added 702 profile records (total: 63713)
+2025-09-13 23:28:17,652 - INFO - Added 27900 measurement records (total: 4864842)
+2025-09-13 23:28:20,916 - INFO - Extracting Bay Of Bengal data for 2005
+2025-09-13 23:28:20,923 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2005-01-01', '2005-12-31']
+2025-09-13 23:28:30,747 - INFO -   Found 31926 data points
+2025-09-13 23:28:30,748 - INFO - Processing point-based dataset: 31926 data points
+2025-09-13 23:28:37,599 - INFO - Processed: 22 floats, 633 profiles, 31926 measurements
+2025-09-13 23:28:41,391 - INFO - Added 22 float records (total: 826)
+2025-09-13 23:28:41,709 - INFO - Added 633 profile records (total: 64346)
+2025-09-13 23:29:01,560 - INFO - Added 31926 measurement records (total: 4896768)
+2025-09-13 23:29:05,230 - INFO - Extracting Bay Of Bengal data for 2006
+2025-09-13 23:29:05,242 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2006-01-01', '2006-12-31']
+2025-09-13 23:29:15,886 - INFO -   Found 46744 data points
+2025-09-13 23:29:15,887 - INFO - Processing point-based dataset: 46744 data points
+2025-09-13 23:29:25,743 - INFO - Processed: 24 floats, 843 profiles, 46744 measurements
+2025-09-13 23:29:29,224 - INFO - Added 24 float records (total: 826)
+2025-09-13 23:29:29,516 - INFO - Added 843 profile records (total: 65189)
+2025-09-13 23:29:51,421 - INFO - Added 46744 measurement records (total: 4943512)
+2025-09-13 23:29:55,187 - INFO - Extracting Bay Of Bengal data for 2007
+2025-09-13 23:29:55,204 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2007-01-01', '2007-12-31']
+2025-09-13 23:30:09,760 - INFO -   Found 80510 data points
+2025-09-13 23:30:09,760 - INFO - Processing point-based dataset: 80510 data points
+2025-09-13 23:30:25,714 - INFO - Processed: 38 floats, 1158 profiles, 80508 measurements
+2025-09-13 23:30:29,892 - INFO - Added 38 float records (total: 826)
+2025-09-13 23:30:30,242 - INFO - Added 1158 profile records (total: 66347)
+2025-09-13 23:30:52,694 - INFO - Added 80508 measurement records (total: 5024020)
+2025-09-13 23:30:56,215 - INFO - Extracting Bay Of Bengal data for 2008
+2025-09-13 23:30:56,222 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2008-01-01', '2008-12-31']
+2025-09-13 23:31:12,237 - INFO -   Found 97879 data points
+2025-09-13 23:31:12,238 - INFO - Processing point-based dataset: 97879 data points
+2025-09-13 23:31:32,188 - INFO - Processed: 32 floats, 1410 profiles, 97874 measurements
+2025-09-13 23:31:38,794 - INFO - Added 32 float records (total: 826)
+2025-09-13 23:31:39,234 - INFO - Added 1410 profile records (total: 67757)
+2025-09-13 23:32:06,356 - INFO - Added 97874 measurement records (total: 5121894)
+2025-09-13 23:32:10,752 - INFO - Extracting Bay Of Bengal data for 2009
+2025-09-13 23:32:10,759 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2009-01-01', '2009-12-31']
+2025-09-13 23:32:29,675 - INFO -   Found 67722 data points
+2025-09-13 23:32:29,675 - INFO - Processing point-based dataset: 67722 data points
+2025-09-13 23:32:42,812 - INFO - Processed: 30 floats, 1024 profiles, 67717 measurements
+2025-09-13 23:32:48,434 - INFO - Added 30 float records (total: 826)
+2025-09-13 23:32:48,810 - INFO - Added 1024 profile records (total: 68781)
+2025-09-13 23:33:16,598 - INFO - Added 67717 measurement records (total: 5189611)
+2025-09-13 23:33:20,910 - INFO - Extracting Bay Of Bengal data for 2010
+2025-09-13 23:33:20,922 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2010-01-01', '2010-12-31']
+2025-09-13 23:33:39,264 - INFO -   Found 78466 data points
+2025-09-13 23:33:39,265 - INFO - Processing point-based dataset: 78466 data points
+2025-09-13 23:33:53,004 - INFO - Processed: 42 floats, 1046 profiles, 78466 measurements
+2025-09-13 23:33:57,557 - INFO - Added 42 float records (total: 826)
+2025-09-13 23:33:57,865 - INFO - Added 1046 profile records (total: 69827)
+2025-09-13 23:34:23,955 - INFO - Added 78466 measurement records (total: 5268077)
+2025-09-13 23:34:28,311 - INFO - Extracting Bay Of Bengal data for 2011
+2025-09-13 23:34:28,319 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2011-01-01', '2011-12-31']
+2025-09-13 23:35:11,332 - INFO -   Found 383993 data points
+2025-09-13 23:35:11,333 - INFO - Processing point-based dataset: 383993 data points
+2025-09-13 23:35:57,383 - INFO - Processed: 47 floats, 1692 profiles, 383993 measurements
+2025-09-13 23:36:03,741 - INFO - Added 47 float records (total: 826)
+2025-09-13 23:36:05,048 - INFO - Added 1692 profile records (total: 71519)
+2025-09-13 23:36:46,491 - INFO - Added 383993 measurement records (total: 5652070)
+2025-09-13 23:36:51,142 - INFO - Extracting Bay Of Bengal data for 2012
+2025-09-13 23:36:51,154 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2012-01-01', '2012-12-31']
+2025-09-13 23:38:05,289 - INFO -   Found 1022485 data points
+2025-09-13 23:38:05,293 - INFO - Processing point-based dataset: 1022485 data points
+2025-09-13 23:38:34,284 - ERROR - Error processing platform 2901328: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:35,325 - ERROR - Error processing platform 2901329: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:36,374 - ERROR - Error processing platform 2901330: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:37,423 - ERROR - Error processing platform 2901331: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:38,469 - ERROR - Error processing platform 2901332: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:39,514 - ERROR - Error processing platform 2901333: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:40,547 - ERROR - Error processing platform 2901334: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:41,591 - ERROR - Error processing platform 2901335: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:42,624 - ERROR - Error processing platform 2901336: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:43,671 - ERROR - Error processing platform 2901515: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:44,717 - ERROR - Error processing platform 2901592: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:45,758 - ERROR - Error processing platform 2901593: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:46,805 - ERROR - Error processing platform 2901595: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:47,838 - ERROR - Error processing platform 2901596: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:48,912 - ERROR - Error processing platform 2901620: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:50,020 - ERROR - Error processing platform 2901624: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:51,116 - ERROR - Error processing platform 2901626: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:52,213 - ERROR - Error processing platform 2901629: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:53,306 - ERROR - Error processing platform 2902081: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:54,400 - ERROR - Error processing platform 2902082: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:38:55,447 - ERROR - Error processing platform 2902083: Unable to allocate 921. MiB for an array with shape (1022485,) and data type <U236
+2025-09-13 23:39:15,438 - INFO - Processed: 33 floats, 1239 profiles, 230349 measurements
+2025-09-13 23:39:23,795 - INFO - Added 33 float records (total: 834)
+2025-09-13 23:39:24,666 - INFO - Added 1239 profile records (total: 72758)
+2025-09-13 23:39:25,923 - ERROR - Error appending to database: Unable to allocate 51.0 MiB for an array with shape (230349, 29) and data type object
+2025-09-13 23:39:28,609 - INFO - Extracting Bay Of Bengal data for 2013
+2025-09-13 23:39:28,613 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2013-01-01', '2013-12-31']
+2025-09-13 23:40:50,610 - INFO -   Found 718196 data points
+2025-09-13 23:40:50,611 - INFO - Processing point-based dataset: 718196 data points
+2025-09-13 23:41:22,709 - ERROR - Error processing platform 2901334: Unable to allocate 22.7 MiB for an array with shape (25269,) and data type <U236
+2025-09-13 23:41:22,781 - ERROR - Error processing platform 2901335: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:23,814 - ERROR - Error processing platform 2901336: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:24,838 - ERROR - Error processing platform 2901521: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:25,872 - ERROR - Error processing platform 2901522: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:26,904 - ERROR - Error processing platform 2901592: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:27,935 - ERROR - Error processing platform 2901593: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:28,968 - ERROR - Error processing platform 2901595: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:30,000 - ERROR - Error processing platform 2901620: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:31,035 - ERROR - Error processing platform 2901624: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:32,061 - ERROR - Error processing platform 2901626: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:33,092 - ERROR - Error processing platform 2901629: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:34,120 - ERROR - Error processing platform 2902081: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:35,157 - ERROR - Error processing platform 2902082: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:36,193 - ERROR - Error processing platform 2902083: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:37,225 - ERROR - Error processing platform 2902084: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:38,261 - ERROR - Error processing platform 2902086: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:39,284 - ERROR - Error processing platform 2902087: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:40,317 - ERROR - Error processing platform 2902113: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:41,347 - ERROR - Error processing platform 2902114: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:42,375 - ERROR - Error processing platform 2902365: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:43,403 - ERROR - Error processing platform 2902642: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:44,433 - ERROR - Error processing platform 2902644: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:45,466 - ERROR - Error processing platform 5903588: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:46,494 - ERROR - Error processing platform 5903589: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:47,524 - ERROR - Error processing platform 5903590: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:48,555 - ERROR - Error processing platform 5903712: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:49,589 - ERROR - Error processing platform 5903744: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:50,609 - ERROR - Error processing platform 5903745: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:51,639 - ERROR - Error processing platform 5903746: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:52,655 - ERROR - Error processing platform 5903747: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:53,679 - ERROR - Error processing platform 5904302: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:54,707 - ERROR - Error processing platform 5904313: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:55,739 - ERROR - Error processing platform 5904334: Unable to allocate 5.48 MiB for an array with shape (718196,) and data type int64
+2025-09-13 23:41:57,566 - ERROR - Error processing platform 6900996: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:58,610 - ERROR - Error processing platform 6901002: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:41:59,641 - ERROR - Error processing platform 6901541: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:42:00,685 - ERROR - Error processing platform 6901545: Unable to allocate 647. MiB for an array with shape (718196,) and data type <U236
+2025-09-13 23:42:00,691 - INFO - Processed: 21 floats, 1042 profiles, 157404 measurements
+2025-09-13 23:42:16,217 - ERROR - Error appending to database: Unable to allocate 517. MiB for an array with shape (12, 5652070) and data type object
+2025-09-13 23:42:18,270 - INFO - Progress: 30 extractions processed (30 successful)
+2025-09-13 23:42:18,271 - INFO - Extracting Bay Of Bengal data for 2014
+2025-09-13 23:42:18,275 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2014-01-01', '2014-12-31']
+2025-09-13 23:42:55,221 - ERROR - Error extracting Bay Of Bengal data for 2014: 
+2025-09-13 23:42:55,222 - INFO - Extracting Bay Of Bengal data for 2015
+2025-09-13 23:42:55,225 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2015-01-01', '2015-12-31']
+2025-09-13 23:43:38,617 - INFO -   Found 494558 data points
+2025-09-13 23:43:38,619 - INFO - Processing point-based dataset: 494558 data points
+2025-09-13 23:44:54,583 - INFO - Processed: 48 floats, 2161 profiles, 494558 measurements
+2025-09-13 23:45:02,854 - INFO - Added 48 float records (total: 874)
+2025-09-13 23:45:04,689 - INFO - Added 2161 profile records (total: 74919)
+2025-09-13 23:45:40,100 - INFO - Added 494558 measurement records (total: 6146628)
+2025-09-13 23:45:46,208 - INFO - Extracting Bay Of Bengal data for 2016
+2025-09-13 23:45:46,219 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2016-01-01', '2016-12-31']
+2025-09-13 23:46:05,481 - ERROR - Error extracting Bay Of Bengal data for 2016: ''
+2025-09-13 23:46:05,482 - INFO - Extracting Bay Of Bengal data for 2017
+2025-09-13 23:46:05,483 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2017-01-01', '2017-12-31']
+2025-09-13 23:46:32,453 - ERROR - Error extracting Bay Of Bengal data for 2017: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=80.0&longitude<=100.0&latitude>=5.0&latitude<=25.0&pres>=0&pres<=2000&time>=1483228800.0&time<=1514678400.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-13 23:46:32,454 - INFO - Extracting Bay Of Bengal data for 2018
+2025-09-13 23:46:32,454 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2018-01-01', '2018-12-31']
+2025-09-13 23:47:11,916 - INFO -   Found 568870 data points
+2025-09-13 23:47:11,916 - INFO - Processing point-based dataset: 568870 data points
+2025-09-13 23:48:22,629 - INFO - Processed: 46 floats, 1505 profiles, 568870 measurements
+2025-09-13 23:48:34,550 - INFO - Added 46 float records (total: 902)
+2025-09-13 23:48:36,301 - INFO - Added 1505 profile records (total: 76424)
+2025-09-13 23:48:52,945 - ERROR - Error appending to database: Unable to allocate 46.9 MiB for an array with shape (1, 6146628) and data type object
+2025-09-13 23:48:56,284 - INFO - Extracting Bay Of Bengal data for 2019
+2025-09-13 23:48:56,289 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2019-01-01', '2019-12-31']
+2025-09-13 23:49:16,097 - INFO -   Found 262590 data points
+2025-09-13 23:49:16,097 - INFO - Processing point-based dataset: 262590 data points
+2025-09-13 23:49:48,930 - INFO - Processed: 33 floats, 1179 profiles, 262590 measurements
+2025-09-13 23:49:57,227 - INFO - Added 33 float records (total: 914)
+2025-09-13 23:49:58,038 - INFO - Added 1179 profile records (total: 77603)
+2025-09-13 23:50:19,129 - ERROR - Error appending to database: Unable to allocate 244. MiB for an array with shape (5, 6409218) and data type object
+2025-09-13 23:50:22,181 - INFO - Extracting Bay Of Bengal data for 2020
+2025-09-13 23:50:22,188 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2020-01-01', '2020-12-31']
+2025-09-13 23:50:49,274 - INFO -   Found 356408 data points
+2025-09-13 23:50:49,275 - INFO - Processing point-based dataset: 356408 data points
+2025-09-13 23:51:44,184 - INFO - Processed: 40 floats, 1607 profiles, 356408 measurements
+2025-09-13 23:51:54,229 - INFO - Added 40 float records (total: 921)
+2025-09-13 23:51:55,494 - INFO - Added 1607 profile records (total: 79210)
+2025-09-13 23:51:58,824 - ERROR - Error appending to database: Unable to allocate 49.6 MiB for an array with shape (1, 6503036) and data type int64
+2025-09-13 23:52:02,074 - INFO - Extracting Bay Of Bengal data for 2021
+2025-09-13 23:52:02,078 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2021-01-01', '2021-12-31']
+2025-09-13 23:52:19,368 - INFO -   Found 221865 data points
+2025-09-13 23:52:19,369 - INFO - Processing point-based dataset: 221865 data points
+2025-09-13 23:52:47,192 - INFO - Processed: 32 floats, 1023 profiles, 221865 measurements
+2025-09-13 23:52:54,256 - INFO - Added 32 float records (total: 924)
+2025-09-13 23:52:55,469 - INFO - Added 1023 profile records (total: 80233)
+2025-09-13 23:52:57,105 - ERROR - Error appending to database: Unable to allocate 48.6 MiB for an array with shape (1, 6368493) and data type int64
+2025-09-13 23:52:59,827 - INFO - Extracting Bay Of Bengal data for 2022
+2025-09-13 23:52:59,834 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2022-01-01', '2022-12-31']
+2025-09-13 23:53:11,552 - INFO -   Found 149460 data points
+2025-09-13 23:53:11,552 - INFO - Processing point-based dataset: 149460 data points
+2025-09-13 23:53:31,002 - INFO - Processed: 18 floats, 619 profiles, 149460 measurements
+2025-09-13 23:53:40,536 - INFO - Added 18 float records (total: 926)
+2025-09-13 23:53:41,462 - INFO - Added 619 profile records (total: 80852)
+2025-09-13 23:54:58,371 - INFO - Added 149460 measurement records (total: 6296088)
+2025-09-13 23:55:02,972 - INFO - Extracting Bay Of Bengal data for 2023
+2025-09-13 23:55:02,983 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2023-01-01', '2023-12-31']
+2025-09-13 23:55:17,986 - INFO -   Found 99047 data points
+2025-09-13 23:55:17,987 - INFO - Processing point-based dataset: 99047 data points
+2025-09-13 23:55:35,372 - INFO - Processed: 31 floats, 581 profiles, 99047 measurements
+2025-09-13 23:55:44,683 - INFO - Added 31 float records (total: 926)
+2025-09-13 23:55:45,259 - INFO - Added 581 profile records (total: 81433)
+2025-09-13 23:56:13,667 - INFO - Added 99047 measurement records (total: 6395135)
+2025-09-13 23:56:17,504 - INFO - Extracting Bay Of Bengal data for 2024
+2025-09-13 23:56:17,513 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2024-01-01', '2024-12-31']
+2025-09-13 23:56:36,433 - INFO -   Found 163792 data points
+2025-09-13 23:56:36,434 - INFO - Processing point-based dataset: 163792 data points
+2025-09-13 23:56:57,034 - INFO - Processed: 30 floats, 849 profiles, 163337 measurements
+2025-09-13 23:57:06,880 - INFO - Added 30 float records (total: 926)
+2025-09-13 23:57:07,645 - INFO - Added 849 profile records (total: 82282)
+2025-09-13 23:57:44,897 - INFO - Added 163337 measurement records (total: 6558472)
+2025-09-13 23:57:49,511 - INFO - Extracting Bay Of Bengal data for 2025
+2025-09-13 23:57:49,525 - INFO -   Region box: [80.0, 100.0, 5.0, 25.0, 0, 2000, '2025-01-01', '2025-03-17']
+2025-09-13 23:58:00,366 - INFO -   Found 51127 data points
+2025-09-13 23:58:00,367 - INFO - Processing point-based dataset: 51127 data points
+2025-09-13 23:58:07,511 - INFO - Processed: 35 floats, 237 profiles, 51127 measurements
+2025-09-13 23:58:14,961 - INFO - Added 35 float records (total: 926)
+2025-09-13 23:58:15,546 - INFO - Added 237 profile records (total: 82519)
+2025-09-13 23:58:48,347 - INFO - Added 51127 measurement records (total: 6609599)
+2025-09-13 23:58:54,003 - INFO - 
+=== PROCESSING REGION: Arabian Sea ===
+2025-09-13 23:58:54,005 - INFO - Extracting Arabian Sea data for 2000
+2025-09-13 23:58:54,019 - INFO -   Region box: [50.0, 80.0, 8.0, 27.0, 0, 2000, '2000-01-01', '2000-12-31']
+2025-09-13 23:58:58,233 - ERROR - Error extracting Arabian Sea data for 2000: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=50.0&longitude<=80.0&latitude>=8.0&latitude<=27.0&pres>=0&pres<=2000&time>=946684800.0&time<=978220800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-13 23:58:58,236 - INFO - Extracting Arabian Sea data for 2001
+2025-09-13 23:58:58,236 - INFO -   Region box: [50.0, 80.0, 8.0, 27.0, 0, 2000, '2001-01-01', '2001-12-31']
+2025-09-13 23:59:00,097 - INFO -   Found 980 data points
+2025-09-13 23:59:00,097 - INFO - Processing point-based dataset: 980 data points
+2025-09-13 23:59:00,310 - INFO - Processed: 5 floats, 14 profiles, 980 measurements
+2025-09-13 23:59:07,075 - INFO - Added 5 float records (total: 926)
+2025-09-13 23:59:07,489 - INFO - Added 14 profile records (total: 82533)
+2025-09-13 23:59:38,029 - INFO - Added 980 measurement records (total: 6610579)
+2025-09-13 23:59:43,767 - INFO - Progress: 40 extractions processed (40 successful)
+2025-09-13 23:59:43,769 - INFO - Extracting Arabian Sea data for 2002
+2025-09-13 23:59:43,779 - INFO -   Region box: [50.0, 80.0, 8.0, 27.0, 0, 2000, '2002-01-01', '2002-12-31']
+2025-09-13 23:59:51,504 - INFO -   Found 35200 data points
+2025-09-13 23:59:51,505 - INFO - Processing point-based dataset: 35200 data points
+2025-09-14 00:00:00,160 - INFO - Processed: 12 floats, 637 profiles, 35200 measurements
+2025-09-14 00:00:08,738 - INFO - Added 12 float records (total: 926)
+2025-09-14 00:00:09,358 - INFO - Added 637 profile records (total: 83170)
+2025-09-14 00:00:43,209 - INFO - Added 35200 measurement records (total: 6645779)
+2025-09-14 00:00:48,318 - INFO - Extracting Arabian Sea data for 2003
+2025-09-14 00:00:48,330 - INFO -   Region box: [50.0, 80.0, 8.0, 27.0, 0, 2000, '2003-01-01', '2003-12-31']
+2025-09-14 00:00:59,236 - INFO -   Found 43861 data points
+2025-09-14 00:00:59,236 - INFO - Processing point-based dataset: 43861 data points
+2025-09-14 00:01:09,087 - INFO - Processed: 24 floats, 869 profiles, 43861 measurements
+2025-09-14 00:01:16,535 - INFO - Added 24 float records (total: 926)
+2025-09-14 00:01:16,952 - INFO - Added 869 profile records (total: 84039)
+2025-09-14 00:01:48,165 - INFO - Added 43861 measurement records (total: 6689640)
+2025-09-14 00:01:52,450 - INFO - Extracting Arabian Sea data for 2004
+2025-09-14 00:01:52,466 - INFO -   Region box: [50.0, 80.0, 8.0, 27.0, 0, 2000, '2004-01-01', '2004-12-31']
+2025-09-14 00:02:04,731 - INFO -   Found 56342 data points
+2025-09-14 00:02:04,732 - INFO - Processing point-based dataset: 56342 data points
+2025-09-14 00:02:16,977 - INFO - Processed: 33 floats, 1185 profiles, 56342 measurements
+2025-09-14 00:02:22,630 - INFO - Added 33 float records (total: 926)
+2025-09-14 00:02:23,041 - INFO - Added 1185 profile records (total: 85224)
+2025-09-14 00:02:59,275 - INFO - Added 56342 measurement records (total: 6745982)
+2025-09-14 00:03:06,047 - INFO - Extracting Arabian Sea data for 2005
+2025-09-14 00:03:06,058 - INFO -   Region box: [50.0, 80.0, 8.0, 27.0, 0, 2000, '2005-01-01', '2005-12-31']
+2025-09-14 00:03:16,739 - INFO -   Found 55697 data points
+2025-09-14 00:03:16,740 - INFO - Processing point-based dataset: 55697 data points
+2025-09-14 00:03:30,673 - INFO - Processed: 36 floats, 1272 profiles, 55697 measurements
+2025-09-14 00:03:40,786 - INFO - Added 36 float records (total: 926)
+2025-09-14 00:03:41,520 - INFO - Added 1272 profile records (total: 86496)
+2025-09-14 00:04:15,287 - INFO - Added 55697 measurement records (total: 6801679)
+2025-09-14 00:04:20,722 - INFO - Extracting Arabian Sea data for 2006
+2025-09-14 00:04:20,736 - INFO -   Region box: [50.0, 80.0, 8.0, 27.0, 0, 2000, '2006-01-01', '2006-12-31']
+2025-09-14 00:04:30,506 - INFO -   Found 50367 data points
+2025-09-14 00:04:30,507 - INFO - Processing point-based dataset: 50367 data points
+2025-09-14 00:04:42,381 - INFO - Processed: 36 floats, 1111 profiles, 50367 measurements
+2025-09-14 00:04:48,098 - INFO - Added 36 float records (total: 926)
+2025-09-14 00:04:48,469 - INFO - Added 1111 profile records (total: 87607)
+2025-09-14 00:05:19,445 - INFO - Added 50367 measurement records (total: 6852046)
+2025-09-14 00:05:23,675 - INFO - Extracting Arabian Sea data for 2007
+2025-09-14 00:05:23,686 - INFO -   Region box: [50.0, 80.0, 8.0, 27.0, 0, 2000, '2007-01-01', '2007-12-31']
+2025-09-14 00:05:41,425 - INFO -   Found 73005 data points
+2025-09-14 00:05:41,425 - INFO - Processing point-based dataset: 73005 data points
+2025-09-14 00:05:59,010 - INFO - Processed: 44 floats, 1616 profiles, 73005 measurements
+2025-09-14 00:06:05,802 - INFO - Added 44 float records (total: 926)
+2025-09-14 00:06:06,392 - INFO - Added 1616 profile records (total: 89223)
+2025-09-14 00:06:31,151 - ERROR - Error appending to database: Unable to allocate 52.8 MiB for an array with shape (1, 6925051) and data type object
+2025-09-14 00:06:34,786 - INFO - Extracting Arabian Sea data for 2008
+2025-09-14 00:06:34,795 - INFO -   Region box: [50.0, 80.0, 8.0, 27.0, 0, 2000, '2008-01-01', '2008-12-31']
+2025-09-14 00:06:55,122 - INFO -   Found 91335 data points
+2025-09-14 00:06:55,122 - INFO - Processing point-based dataset: 91335 data points
+2025-09-14 00:07:19,187 - INFO - Processed: 49 floats, 2334 profiles, 91334 measurements
+2025-09-14 00:07:27,401 - INFO - Added 49 float records (total: 926)
+2025-09-14 00:07:27,996 - INFO - Added 2334 profile records (total: 91557)
+2025-09-14 00:08:00,202 - INFO - Added 91334 measurement records (total: 6943380)
+2025-09-14 00:08:06,315 - INFO - Extracting Arabian Sea data for 2009
+2025-09-14 00:08:06,330 - INFO -   Region box: [50.0, 80.0, 8.0, 27.0, 0, 2000, '2009-01-01', '2009-12-31']
+2025-09-14 00:08:22,293 - INFO -   Found 100295 data points
+2025-09-14 00:08:22,294 - INFO - Processing point-based dataset: 100295 data points
+2025-09-14 00:08:54,255 - INFO - Processed: 53 floats, 2678 profiles, 100291 measurements
+2025-09-14 00:09:02,225 - INFO - Added 53 float records (total: 926)
+2025-09-14 00:09:03,051 - INFO - Added 2678 profile records (total: 94235)
+2025-09-14 00:53:16,797 - INFO - Will extract data from 2000 to 2025
+2025-09-14 00:53:16,797 - INFO - Total time periods: 26
+2025-09-14 00:53:16,797 - INFO - Starting ARGO data extraction using argopy (delayed-mode data)
+2025-09-14 00:53:16,797 - INFO - ============================================================
+2025-09-14 00:53:16,797 - INFO - Setting up database structure...
+2025-09-14 00:53:16,844 - INFO - Initialized empty floats table
+2025-09-14 00:53:16,849 - INFO - Initialized empty profiles table
+2025-09-14 00:53:16,856 - INFO - Initialized empty measurements table
+2025-09-14 00:53:16,856 - INFO - Database structure ready
+2025-09-14 00:53:16,856 - INFO - Processing 5 regions x 26 years = 130 combinations
+2025-09-14 00:53:16,856 - INFO - 
+=== PROCESSING REGION: Red Sea ===
+2025-09-14 00:53:16,856 - INFO - Extracting Red Sea data for 2000
+2025-09-14 00:53:16,857 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2000-01-01', '2000-12-31']
+2025-09-14 00:53:21,200 - ERROR - Error extracting Red Sea data for 2000: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=946684800.0&time<=978220800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:53:21,200 - INFO - Extracting Red Sea data for 2001
+2025-09-14 00:53:21,201 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2001-01-01', '2001-12-31']
+2025-09-14 00:53:24,250 - ERROR - Error extracting Red Sea data for 2001: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=978307200.0&time<=1009756800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:53:24,250 - INFO - Extracting Red Sea data for 2002
+2025-09-14 00:53:24,251 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2002-01-01', '2002-12-31']
+2025-09-14 00:53:27,271 - ERROR - Error extracting Red Sea data for 2002: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1009843200.0&time<=1041292800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:53:27,271 - INFO - Extracting Red Sea data for 2003
+2025-09-14 00:53:27,272 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2003-01-01', '2003-12-31']
+2025-09-14 00:53:30,577 - ERROR - Error extracting Red Sea data for 2003: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1041379200.0&time<=1072828800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:53:30,577 - INFO - Extracting Red Sea data for 2004
+2025-09-14 00:53:30,578 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2004-01-01', '2004-12-31']
+2025-09-14 00:53:33,628 - ERROR - Error extracting Red Sea data for 2004: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1072915200.0&time<=1104451200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:53:33,628 - INFO - Extracting Red Sea data for 2005
+2025-09-14 00:53:33,629 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2005-01-01', '2005-12-31']
+2025-09-14 00:53:37,125 - ERROR - Error extracting Red Sea data for 2005: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1104537600.0&time<=1135987200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:53:37,125 - INFO - Extracting Red Sea data for 2006
+2025-09-14 00:53:37,126 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2006-01-01', '2006-12-31']
+2025-09-14 00:53:40,306 - ERROR - Error extracting Red Sea data for 2006: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1136073600.0&time<=1167523200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:53:40,306 - INFO - Extracting Red Sea data for 2007
+2025-09-14 00:53:40,306 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2007-01-01', '2007-12-31']
+2025-09-14 00:53:43,436 - ERROR - Error extracting Red Sea data for 2007: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1167609600.0&time<=1199059200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:53:43,436 - INFO - Extracting Red Sea data for 2008
+2025-09-14 00:53:43,436 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2008-01-01', '2008-12-31']
+2025-09-14 00:53:47,200 - ERROR - Error extracting Red Sea data for 2008: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1199145600.0&time<=1230681600.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:53:47,200 - INFO - Extracting Red Sea data for 2009
+2025-09-14 00:53:47,200 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2009-01-01', '2009-12-31']
+2025-09-14 00:53:49,474 - INFO -   Found 147 data points
+2025-09-14 00:53:49,475 - INFO - Processing point-based dataset: 147 data points
+2025-09-14 00:53:49,792 - INFO - Processed: 1 floats, 49 profiles, 147 measurements
+2025-09-14 00:53:50,209 - INFO - Added 1 float records (total: 1)
+2025-09-14 00:53:50,214 - INFO - Added 49 profile records (total: 49)
+2025-09-14 00:53:50,222 - INFO - Added 147 measurement records (total: 147)
+2025-09-14 00:53:52,222 - INFO - Extracting Red Sea data for 2010
+2025-09-14 00:53:52,223 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2010-01-01', '2010-12-31']
+2025-09-14 00:53:56,395 - INFO -   Found 2144 data points
+2025-09-14 00:53:56,395 - INFO - Processing point-based dataset: 2144 data points
+2025-09-14 00:53:56,945 - INFO - Processed: 2 floats, 60 profiles, 2144 measurements
+2025-09-14 00:53:56,984 - INFO - Added 2 float records (total: 2)
+2025-09-14 00:53:56,990 - INFO - Added 60 profile records (total: 109)
+2025-09-14 00:53:57,015 - INFO - Added 2144 measurement records (total: 2291)
+2025-09-14 00:53:59,015 - INFO - Extracting Red Sea data for 2011
+2025-09-14 00:53:59,016 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2011-01-01', '2011-12-31']
+2025-09-14 00:54:01,480 - INFO -   Found 574 data points
+2025-09-14 00:54:01,480 - INFO - Processing point-based dataset: 574 data points
+2025-09-14 00:54:01,627 - INFO - Processed: 1 floats, 15 profiles, 574 measurements
+2025-09-14 00:54:01,677 - INFO - Added 1 float records (total: 2)
+2025-09-14 00:54:01,682 - INFO - Added 15 profile records (total: 124)
+2025-09-14 00:54:01,702 - INFO - Added 574 measurement records (total: 2865)
+2025-09-14 00:54:03,703 - INFO - Extracting Red Sea data for 2012
+2025-09-14 00:54:03,704 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2012-01-01', '2012-12-31']
+2025-09-14 00:54:07,226 - INFO -   Found 1065 data points
+2025-09-14 00:54:07,226 - INFO - Processing point-based dataset: 1065 data points
+2025-09-14 00:54:07,516 - INFO - Processed: 1 floats, 24 profiles, 1065 measurements
+2025-09-14 00:54:07,573 - INFO - Added 1 float records (total: 3)
+2025-09-14 00:54:07,579 - INFO - Added 24 profile records (total: 148)
+2025-09-14 00:54:07,611 - INFO - Added 1065 measurement records (total: 3930)
+2025-09-14 00:54:09,612 - INFO - Extracting Red Sea data for 2013
+2025-09-14 00:54:09,613 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2013-01-01', '2013-12-31']
+2025-09-14 00:54:13,502 - INFO -   Found 3345 data points
+2025-09-14 00:54:13,502 - INFO - Processing point-based dataset: 3345 data points
+2025-09-14 00:54:14,418 - INFO - Processed: 1 floats, 91 profiles, 3345 measurements
+2025-09-14 00:54:14,456 - INFO - Added 1 float records (total: 3)
+2025-09-14 00:54:14,462 - INFO - Added 91 profile records (total: 239)
+2025-09-14 00:54:14,513 - INFO - Added 3345 measurement records (total: 7275)
+2025-09-14 00:54:16,514 - INFO - Extracting Red Sea data for 2014
+2025-09-14 00:54:16,515 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2014-01-01', '2014-12-31']
+2025-09-14 00:54:20,222 - INFO -   Found 2405 data points
+2025-09-14 00:54:20,222 - INFO - Processing point-based dataset: 2405 data points
+2025-09-14 00:54:20,933 - INFO - Processed: 2 floats, 72 profiles, 2405 measurements
+2025-09-14 00:54:20,988 - INFO - Added 2 float records (total: 4)
+2025-09-14 00:54:20,993 - INFO - Added 72 profile records (total: 311)
+2025-09-14 00:54:21,051 - INFO - Added 2405 measurement records (total: 9680)
+2025-09-14 00:54:23,054 - INFO - Extracting Red Sea data for 2015
+2025-09-14 00:54:23,054 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2015-01-01', '2015-12-31']
+2025-09-14 00:54:30,674 - INFO -   Found 66618 data points
+2025-09-14 00:54:30,675 - INFO - Processing point-based dataset: 66618 data points
+2025-09-14 00:54:37,953 - INFO - Processed: 6 floats, 240 profiles, 66618 measurements
+2025-09-14 00:54:38,002 - INFO - Added 6 float records (total: 9)
+2025-09-14 00:54:38,023 - INFO - Added 240 profile records (total: 551)
+2025-09-14 00:54:38,642 - INFO - Added 66618 measurement records (total: 76298)
+2025-09-14 00:54:40,653 - INFO - Extracting Red Sea data for 2016
+2025-09-14 00:54:40,654 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2016-01-01', '2016-12-31']
+2025-09-14 00:54:53,561 - INFO -   Found 146878 data points
+2025-09-14 00:54:53,561 - INFO - Processing point-based dataset: 146878 data points
+2025-09-14 00:55:14,663 - INFO - Processed: 7 floats, 509 profiles, 146878 measurements
+2025-09-14 00:55:14,785 - INFO - Added 7 float records (total: 11)
+2025-09-14 00:55:14,825 - INFO - Added 509 profile records (total: 1060)
+2025-09-14 00:55:16,384 - INFO - Added 146878 measurement records (total: 223176)
+2025-09-14 00:55:18,413 - INFO - Extracting Red Sea data for 2017
+2025-09-14 00:55:18,414 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2017-01-01', '2017-12-31']
+2025-09-14 00:55:28,592 - INFO -   Found 100575 data points
+2025-09-14 00:55:28,592 - INFO - Processing point-based dataset: 100575 data points
+2025-09-14 00:55:41,478 - INFO - Processed: 7 floats, 335 profiles, 100575 measurements
+2025-09-14 00:55:41,681 - INFO - Added 7 float records (total: 13)
+2025-09-14 00:55:41,713 - INFO - Added 335 profile records (total: 1395)
+2025-09-14 00:55:43,393 - INFO - Added 100575 measurement records (total: 323751)
+2025-09-14 00:55:45,423 - INFO - Extracting Red Sea data for 2018
+2025-09-14 00:55:45,424 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2018-01-01', '2018-12-31']
+2025-09-14 00:55:54,330 - INFO -   Found 102554 data points
+2025-09-14 00:55:54,331 - INFO - Processing point-based dataset: 102554 data points
+2025-09-14 00:56:07,812 - INFO - Processed: 4 floats, 343 profiles, 102554 measurements
+2025-09-14 00:56:08,049 - INFO - Added 4 float records (total: 13)
+2025-09-14 00:56:08,082 - INFO - Added 343 profile records (total: 1738)
+2025-09-14 00:56:10,309 - INFO - Added 102554 measurement records (total: 426305)
+2025-09-14 00:56:12,354 - INFO - Progress: 10 extractions processed (10 successful)
+2025-09-14 00:56:12,355 - INFO - Extracting Red Sea data for 2019
+2025-09-14 00:56:12,356 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2019-01-01', '2019-12-31']
+2025-09-14 00:56:17,522 - ERROR - Error extracting Red Sea data for 2019: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1546300800.0&time<=1577750400.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:17,522 - INFO - Extracting Red Sea data for 2020
+2025-09-14 00:56:17,523 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2020-01-01', '2020-12-31']
+2025-09-14 00:56:20,658 - ERROR - Error extracting Red Sea data for 2020: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1577836800.0&time<=1609372800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:20,658 - INFO - Extracting Red Sea data for 2021
+2025-09-14 00:56:20,659 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2021-01-01', '2021-12-31']
+2025-09-14 00:56:23,865 - ERROR - Error extracting Red Sea data for 2021: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1609459200.0&time<=1640908800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:23,865 - INFO - Extracting Red Sea data for 2022
+2025-09-14 00:56:23,866 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2022-01-01', '2022-12-31']
+2025-09-14 00:56:26,518 - INFO -   Found 5411 data points
+2025-09-14 00:56:26,518 - INFO - Processing point-based dataset: 5411 data points
+2025-09-14 00:56:26,944 - INFO - Processed: 1 floats, 15 profiles, 5411 measurements
+2025-09-14 00:56:27,277 - INFO - Added 1 float records (total: 14)
+2025-09-14 00:56:27,287 - INFO - Added 15 profile records (total: 1753)
+2025-09-14 00:56:28,901 - INFO - Added 5411 measurement records (total: 431716)
+2025-09-14 00:56:30,947 - INFO - Extracting Red Sea data for 2023
+2025-09-14 00:56:30,947 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2023-01-01', '2023-12-31']
+2025-09-14 00:56:35,028 - ERROR - Error extracting Red Sea data for 2023: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1672531200.0&time<=1703980800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:35,029 - INFO - Extracting Red Sea data for 2024
+2025-09-14 00:56:35,029 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2024-01-01', '2024-12-31']
+2025-09-14 00:56:38,042 - ERROR - Error extracting Red Sea data for 2024: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1704067200.0&time<=1735603200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:38,042 - INFO - Extracting Red Sea data for 2025
+2025-09-14 00:56:38,042 - INFO -   Region box: [32.0, 43.0, 12.0, 30.0, 0, 2000, '2025-01-01', '2025-03-18']
+2025-09-14 00:56:41,435 - ERROR - Error extracting Red Sea data for 2025: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=32.0&longitude<=43.0&latitude>=12.0&latitude<=30.0&pres>=0&pres<=2000&time>=1735689600.0&time<=1742256000.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:41,436 - INFO - 
+=== PROCESSING REGION: Persian Gulf ===
+2025-09-14 00:56:41,436 - INFO - Extracting Persian Gulf data for 2000
+2025-09-14 00:56:41,436 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2000-01-01', '2000-12-31']
+2025-09-14 00:56:44,405 - ERROR - Error extracting Persian Gulf data for 2000: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=946684800.0&time<=978220800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:44,405 - INFO - Extracting Persian Gulf data for 2001
+2025-09-14 00:56:44,405 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2001-01-01', '2001-12-31']
+2025-09-14 00:56:47,359 - ERROR - Error extracting Persian Gulf data for 2001: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=978307200.0&time<=1009756800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:47,359 - INFO - Extracting Persian Gulf data for 2002
+2025-09-14 00:56:47,360 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2002-01-01', '2002-12-31']
+2025-09-14 00:56:51,803 - ERROR - Error extracting Persian Gulf data for 2002: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1009843200.0&time<=1041292800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:51,804 - INFO - Extracting Persian Gulf data for 2003
+2025-09-14 00:56:51,804 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2003-01-01', '2003-12-31']
+2025-09-14 00:56:54,843 - ERROR - Error extracting Persian Gulf data for 2003: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1041379200.0&time<=1072828800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:54,843 - INFO - Extracting Persian Gulf data for 2004
+2025-09-14 00:56:54,850 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2004-01-01', '2004-12-31']
+2025-09-14 00:56:57,875 - ERROR - Error extracting Persian Gulf data for 2004: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1072915200.0&time<=1104451200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:56:57,875 - INFO - Extracting Persian Gulf data for 2005
+2025-09-14 00:56:57,876 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2005-01-01', '2005-12-31']
+2025-09-14 00:57:01,349 - ERROR - Error extracting Persian Gulf data for 2005: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1104537600.0&time<=1135987200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:57:01,349 - INFO - Extracting Persian Gulf data for 2006
+2025-09-14 00:57:01,350 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2006-01-01', '2006-12-31']
+2025-09-14 00:57:04,367 - ERROR - Error extracting Persian Gulf data for 2006: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1136073600.0&time<=1167523200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:57:04,367 - INFO - Extracting Persian Gulf data for 2007
+2025-09-14 00:57:04,368 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2007-01-01', '2007-12-31']
+2025-09-14 00:57:07,466 - ERROR - Error extracting Persian Gulf data for 2007: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1167609600.0&time<=1199059200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:57:07,466 - INFO - Extracting Persian Gulf data for 2008
+2025-09-14 00:57:07,467 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2008-01-01', '2008-12-31']
+2025-09-14 00:57:09,619 - INFO -   Found 19 data points
+2025-09-14 00:57:09,619 - INFO - Processing point-based dataset: 19 data points
+2025-09-14 00:57:09,635 - INFO - Processed: 1 floats, 1 profiles, 19 measurements
+2025-09-14 00:57:09,880 - INFO - Added 1 float records (total: 15)
+2025-09-14 00:57:09,890 - INFO - Added 1 profile records (total: 1754)
+2025-09-14 00:57:11,933 - INFO - Added 19 measurement records (total: 431735)
+2025-09-14 00:57:14,029 - INFO - Extracting Persian Gulf data for 2009
+2025-09-14 00:57:14,031 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2009-01-01', '2009-12-31']
+2025-09-14 00:57:16,561 - INFO -   Found 50 data points
+2025-09-14 00:57:16,561 - INFO - Processing point-based dataset: 50 data points
+2025-09-14 00:57:16,600 - INFO - Processed: 1 floats, 2 profiles, 50 measurements
+2025-09-14 00:57:17,136 - INFO - Added 1 float records (total: 16)
+2025-09-14 00:57:17,150 - INFO - Added 2 profile records (total: 1756)
+2025-09-14 00:57:19,627 - INFO - Added 50 measurement records (total: 431785)
+2025-09-14 00:57:21,669 - INFO - Extracting Persian Gulf data for 2010
+2025-09-14 00:57:21,669 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2010-01-01', '2010-12-31']
+2025-09-14 00:57:25,842 - ERROR - Error extracting Persian Gulf data for 2010: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1262304000.0&time<=1293753600.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:57:25,842 - INFO - Extracting Persian Gulf data for 2011
+2025-09-14 00:57:25,843 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2011-01-01', '2011-12-31']
+2025-09-14 00:57:28,907 - ERROR - Error extracting Persian Gulf data for 2011: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1293840000.0&time<=1325289600.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:57:28,908 - INFO - Extracting Persian Gulf data for 2012
+2025-09-14 00:57:28,908 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2012-01-01', '2012-12-31']
+2025-09-14 00:57:32,451 - ERROR - Error extracting Persian Gulf data for 2012: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1325376000.0&time<=1356912000.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:57:32,451 - INFO - Extracting Persian Gulf data for 2013
+2025-09-14 00:57:32,452 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2013-01-01', '2013-12-31']
+2025-09-14 00:57:34,591 - INFO -   Found 314 data points
+2025-09-14 00:57:34,592 - INFO - Processing point-based dataset: 314 data points
+2025-09-14 00:57:34,681 - INFO - Processed: 2 floats, 9 profiles, 314 measurements
+2025-09-14 00:57:34,942 - INFO - Added 2 float records (total: 18)
+2025-09-14 00:57:34,951 - INFO - Added 9 profile records (total: 1765)
+2025-09-14 00:57:36,611 - INFO - Added 314 measurement records (total: 432099)
+2025-09-14 00:57:38,650 - INFO - Extracting Persian Gulf data for 2014
+2025-09-14 00:57:38,650 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2014-01-01', '2014-12-31']
+2025-09-14 00:57:41,717 - INFO -   Found 260 data points
+2025-09-14 00:57:41,717 - INFO - Processing point-based dataset: 260 data points
+2025-09-14 00:57:41,808 - INFO - Processed: 2 floats, 10 profiles, 260 measurements
+2025-09-14 00:57:42,037 - INFO - Added 2 float records (total: 20)
+2025-09-14 00:57:42,045 - INFO - Added 10 profile records (total: 1775)
+2025-09-14 00:57:43,552 - INFO - Added 260 measurement records (total: 432359)
+2025-09-14 00:57:45,588 - INFO - Extracting Persian Gulf data for 2015
+2025-09-14 00:57:45,589 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2015-01-01', '2015-12-31']
+2025-09-14 00:57:48,737 - INFO -   Found 1117 data points
+2025-09-14 00:57:48,737 - INFO - Processing point-based dataset: 1117 data points
+2025-09-14 00:57:49,067 - INFO - Processed: 4 floats, 38 profiles, 1117 measurements
+2025-09-14 00:57:49,274 - INFO - Added 4 float records (total: 22)
+2025-09-14 00:57:49,287 - INFO - Added 38 profile records (total: 1813)
+2025-09-14 00:57:50,813 - INFO - Added 1117 measurement records (total: 433476)
+2025-09-14 00:57:52,857 - INFO - Extracting Persian Gulf data for 2016
+2025-09-14 00:57:52,858 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2016-01-01', '2016-12-31']
+2025-09-14 00:57:56,097 - INFO -   Found 386 data points
+2025-09-14 00:57:56,097 - INFO - Processing point-based dataset: 386 data points
+2025-09-14 00:57:56,192 - INFO - Processed: 2 floats, 9 profiles, 386 measurements
+2025-09-14 00:57:56,398 - INFO - Added 2 float records (total: 24)
+2025-09-14 00:57:56,409 - INFO - Added 9 profile records (total: 1822)
+2025-09-14 00:57:57,929 - INFO - Added 386 measurement records (total: 433862)
+2025-09-14 00:57:59,963 - INFO - Extracting Persian Gulf data for 2017
+2025-09-14 00:57:59,964 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2017-01-01', '2017-12-31']
+2025-09-14 00:58:04,231 - ERROR - Error extracting Persian Gulf data for 2017: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1483228800.0&time<=1514678400.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:58:04,231 - INFO - Extracting Persian Gulf data for 2018
+2025-09-14 00:58:04,232 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2018-01-01', '2018-12-31']
+2025-09-14 00:58:07,379 - ERROR - Error extracting Persian Gulf data for 2018: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1514764800.0&time<=1546214400.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:58:07,380 - INFO - Extracting Persian Gulf data for 2019
+2025-09-14 00:58:07,380 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2019-01-01', '2019-12-31']
+2025-09-14 00:58:10,555 - ERROR - Error extracting Persian Gulf data for 2019: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1546300800.0&time<=1577750400.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:58:10,555 - INFO - Extracting Persian Gulf data for 2020
+2025-09-14 00:58:10,556 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2020-01-01', '2020-12-31']
+2025-09-14 00:58:13,656 - ERROR - Error extracting Persian Gulf data for 2020: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1577836800.0&time<=1609372800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:58:13,657 - INFO - Extracting Persian Gulf data for 2021
+2025-09-14 00:58:13,657 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2021-01-01', '2021-12-31']
+2025-09-14 00:58:17,192 - INFO -   Found 7726 data points
+2025-09-14 00:58:17,193 - INFO - Processing point-based dataset: 7726 data points
+2025-09-14 00:58:17,808 - INFO - Processed: 2 floats, 22 profiles, 7726 measurements
+2025-09-14 00:58:18,017 - INFO - Added 2 float records (total: 26)
+2025-09-14 00:58:18,030 - INFO - Added 22 profile records (total: 1844)
+2025-09-14 00:58:19,671 - INFO - Added 7726 measurement records (total: 441588)
+2025-09-14 00:58:21,713 - INFO - Extracting Persian Gulf data for 2022
+2025-09-14 00:58:21,714 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2022-01-01', '2022-12-31']
+2025-09-14 00:58:25,755 - INFO -   Found 1367 data points
+2025-09-14 00:58:25,755 - INFO - Processing point-based dataset: 1367 data points
+2025-09-14 00:58:25,865 - INFO - Processed: 1 floats, 4 profiles, 1367 measurements
+2025-09-14 00:58:26,120 - INFO - Added 1 float records (total: 26)
+2025-09-14 00:58:26,131 - INFO - Added 4 profile records (total: 1848)
+2025-09-14 00:58:27,735 - INFO - Added 1367 measurement records (total: 442955)
+2025-09-14 00:58:29,783 - INFO - Extracting Persian Gulf data for 2023
+2025-09-14 00:58:29,784 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2023-01-01', '2023-12-31']
+2025-09-14 00:58:33,470 - INFO -   Found 922 data points
+2025-09-14 00:58:33,470 - INFO - Processing point-based dataset: 922 data points
+2025-09-14 00:58:33,544 - INFO - Processed: 1 floats, 3 profiles, 922 measurements
+2025-09-14 00:58:33,823 - INFO - Added 1 float records (total: 27)
+2025-09-14 00:58:33,835 - INFO - Added 3 profile records (total: 1851)
+2025-09-14 00:58:35,498 - INFO - Added 922 measurement records (total: 443877)
+2025-09-14 00:58:37,535 - INFO - Progress: 20 extractions processed (20 successful)
+2025-09-14 00:58:37,535 - INFO - Extracting Persian Gulf data for 2024
+2025-09-14 00:58:37,536 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2024-01-01', '2024-12-31']
+2025-09-14 00:58:41,701 - ERROR - Error extracting Persian Gulf data for 2024: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1704067200.0&time<=1735603200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:58:41,701 - INFO - Extracting Persian Gulf data for 2025
+2025-09-14 00:58:41,702 - INFO -   Region box: [48.0, 57.0, 24.0, 31.0, 0, 2000, '2025-01-01', '2025-03-18']
+2025-09-14 00:58:44,680 - ERROR - Error extracting Persian Gulf data for 2025: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=48.0&longitude<=57.0&latitude>=24.0&latitude<=31.0&pres>=0&pres<=2000&time>=1735689600.0&time<=1742256000.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:58:44,680 - INFO - 
+=== PROCESSING REGION: Andaman Sea ===
+2025-09-14 00:58:44,680 - INFO - Extracting Andaman Sea data for 2000
+2025-09-14 00:58:44,681 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2000-01-01', '2000-12-31']
+2025-09-14 00:58:47,623 - ERROR - Error extracting Andaman Sea data for 2000: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=92.0&longitude<=100.0&latitude>=5.0&latitude<=20.0&pres>=0&pres<=2000&time>=946684800.0&time<=978220800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:58:47,623 - INFO - Extracting Andaman Sea data for 2001
+2025-09-14 00:58:47,624 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2001-01-01', '2001-12-31']
+2025-09-14 00:58:51,005 - ERROR - Error extracting Andaman Sea data for 2001: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=92.0&longitude<=100.0&latitude>=5.0&latitude<=20.0&pres>=0&pres<=2000&time>=978307200.0&time<=1009756800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:58:51,006 - INFO - Extracting Andaman Sea data for 2002
+2025-09-14 00:58:51,006 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2002-01-01', '2002-12-31']
+2025-09-14 00:58:54,164 - ERROR - Error extracting Andaman Sea data for 2002: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=92.0&longitude<=100.0&latitude>=5.0&latitude<=20.0&pres>=0&pres<=2000&time>=1009843200.0&time<=1041292800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 00:58:54,164 - INFO - Extracting Andaman Sea data for 2003
+2025-09-14 00:58:54,165 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2003-01-01', '2003-12-31']
+2025-09-14 00:58:56,881 - INFO -   Found 1891 data points
+2025-09-14 00:58:56,882 - INFO - Processing point-based dataset: 1891 data points
+2025-09-14 00:58:57,341 - INFO - Processed: 4 floats, 50 profiles, 1891 measurements
+2025-09-14 00:58:57,565 - INFO - Added 4 float records (total: 31)
+2025-09-14 00:58:57,579 - INFO - Added 50 profile records (total: 1901)
+2025-09-14 00:58:59,249 - INFO - Added 1891 measurement records (total: 445768)
+2025-09-14 00:59:01,292 - INFO - Extracting Andaman Sea data for 2004
+2025-09-14 00:59:01,293 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2004-01-01', '2004-12-31']
+2025-09-14 00:59:09,015 - INFO -   Found 3500 data points
+2025-09-14 00:59:09,015 - INFO - Processing point-based dataset: 3500 data points
+2025-09-14 00:59:09,901 - INFO - Processed: 2 floats, 100 profiles, 3500 measurements
+2025-09-14 00:59:10,139 - INFO - Added 2 float records (total: 32)
+2025-09-14 00:59:10,151 - INFO - Added 100 profile records (total: 2001)
+2025-09-14 00:59:11,817 - INFO - Added 3500 measurement records (total: 449268)
+2025-09-14 00:59:13,862 - INFO - Extracting Andaman Sea data for 2005
+2025-09-14 00:59:13,862 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2005-01-01', '2005-12-31']
+2025-09-14 00:59:17,421 - INFO -   Found 2288 data points
+2025-09-14 00:59:17,421 - INFO - Processing point-based dataset: 2288 data points
+2025-09-14 00:59:17,925 - INFO - Processed: 2 floats, 55 profiles, 2288 measurements
+2025-09-14 00:59:18,201 - INFO - Added 2 float records (total: 34)
+2025-09-14 00:59:18,215 - INFO - Added 55 profile records (total: 2056)
+2025-09-14 00:59:19,853 - INFO - Added 2288 measurement records (total: 451556)
+2025-09-14 00:59:21,895 - INFO - Extracting Andaman Sea data for 2006
+2025-09-14 00:59:21,896 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2006-01-01', '2006-12-31']
+2025-09-14 00:59:25,795 - INFO -   Found 2828 data points
+2025-09-14 00:59:25,796 - INFO - Processing point-based dataset: 2828 data points
+2025-09-14 00:59:26,382 - INFO - Processed: 3 floats, 52 profiles, 2828 measurements
+2025-09-14 00:59:26,653 - INFO - Added 3 float records (total: 36)
+2025-09-14 00:59:26,666 - INFO - Added 52 profile records (total: 2108)
+2025-09-14 00:59:28,424 - INFO - Added 2828 measurement records (total: 454384)
+2025-09-14 00:59:30,466 - INFO - Extracting Andaman Sea data for 2007
+2025-09-14 00:59:30,467 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2007-01-01', '2007-12-31']
+2025-09-14 00:59:36,105 - INFO -   Found 2247 data points
+2025-09-14 00:59:36,106 - INFO - Processing point-based dataset: 2247 data points
+2025-09-14 00:59:36,507 - INFO - Processed: 3 floats, 41 profiles, 2247 measurements
+2025-09-14 00:59:36,731 - INFO - Added 3 float records (total: 37)
+2025-09-14 00:59:36,743 - INFO - Added 41 profile records (total: 2149)
+2025-09-14 00:59:38,499 - INFO - Added 2247 measurement records (total: 456631)
+2025-09-14 00:59:40,542 - INFO - Extracting Andaman Sea data for 2008
+2025-09-14 00:59:40,543 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2008-01-01', '2008-12-31']
+2025-09-14 00:59:45,533 - INFO -   Found 7941 data points
+2025-09-14 00:59:45,533 - INFO - Processing point-based dataset: 7941 data points
+2025-09-14 00:59:46,988 - INFO - Processed: 10 floats, 152 profiles, 7941 measurements
+2025-09-14 00:59:47,217 - INFO - Added 10 float records (total: 46)
+2025-09-14 00:59:47,238 - INFO - Added 152 profile records (total: 2301)
+2025-09-14 00:59:48,957 - INFO - Added 7941 measurement records (total: 464572)
+2025-09-14 00:59:51,000 - INFO - Extracting Andaman Sea data for 2009
+2025-09-14 00:59:51,001 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2009-01-01', '2009-12-31']
+2025-09-14 00:59:56,203 - INFO -   Found 8978 data points
+2025-09-14 00:59:56,203 - INFO - Processing point-based dataset: 8978 data points
+2025-09-14 00:59:58,063 - INFO - Processed: 6 floats, 161 profiles, 8978 measurements
+2025-09-14 00:59:58,301 - INFO - Added 6 float records (total: 46)
+2025-09-14 00:59:58,316 - INFO - Added 161 profile records (total: 2462)
+2025-09-14 01:00:00,086 - INFO - Added 8978 measurement records (total: 473550)
+2025-09-14 01:00:02,132 - INFO - Extracting Andaman Sea data for 2010
+2025-09-14 01:00:02,133 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2010-01-01', '2010-12-31']
+2025-09-14 01:00:06,542 - INFO -   Found 8022 data points
+2025-09-14 01:00:06,542 - INFO - Processing point-based dataset: 8022 data points
+2025-09-14 01:00:07,852 - INFO - Processed: 5 floats, 120 profiles, 8022 measurements
+2025-09-14 01:00:08,090 - INFO - Added 5 float records (total: 48)
+2025-09-14 01:00:08,105 - INFO - Added 120 profile records (total: 2582)
+2025-09-14 01:00:09,856 - INFO - Added 8022 measurement records (total: 481572)
+2025-09-14 01:00:11,908 - INFO - Extracting Andaman Sea data for 2011
+2025-09-14 01:00:11,910 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2011-01-01', '2011-12-31']
+2025-09-14 01:00:16,544 - INFO -   Found 6013 data points
+2025-09-14 01:00:16,544 - INFO - Processing point-based dataset: 6013 data points
+2025-09-14 01:00:17,614 - INFO - Processed: 6 floats, 98 profiles, 6013 measurements
+2025-09-14 01:00:17,876 - INFO - Added 6 float records (total: 51)
+2025-09-14 01:00:17,890 - INFO - Added 98 profile records (total: 2680)
+2025-09-14 01:00:19,705 - INFO - Added 6013 measurement records (total: 487585)
+2025-09-14 01:00:21,759 - INFO - Extracting Andaman Sea data for 2012
+2025-09-14 01:00:21,761 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2012-01-01', '2012-12-31']
+2025-09-14 01:00:26,568 - INFO -   Found 13103 data points
+2025-09-14 01:00:26,568 - INFO - Processing point-based dataset: 13103 data points
+2025-09-14 01:00:28,145 - INFO - Processed: 5 floats, 65 profiles, 13103 measurements
+2025-09-14 01:00:28,440 - INFO - Added 5 float records (total: 55)
+2025-09-14 01:00:28,458 - INFO - Added 65 profile records (total: 2745)
+2025-09-14 01:00:30,505 - INFO - Added 13103 measurement records (total: 500688)
+2025-09-14 01:00:32,560 - INFO - Progress: 30 extractions processed (30 successful)
+2025-09-14 01:00:32,560 - INFO - Extracting Andaman Sea data for 2013
+2025-09-14 01:00:32,561 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2013-01-01', '2013-12-31']
+2025-09-14 01:00:42,397 - INFO -   Found 48924 data points
+2025-09-14 01:00:42,397 - INFO - Processing point-based dataset: 48924 data points
+2025-09-14 01:00:55,295 - INFO - Processed: 8 floats, 511 profiles, 48924 measurements
+2025-09-14 01:00:55,569 - INFO - Added 8 float records (total: 60)
+2025-09-14 01:00:55,596 - INFO - Added 511 profile records (total: 3256)
+2025-09-14 01:00:57,882 - INFO - Added 48924 measurement records (total: 549612)
+2025-09-14 01:00:59,938 - INFO - Extracting Andaman Sea data for 2014
+2025-09-14 01:00:59,939 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2014-01-01', '2014-12-31']
+2025-09-14 01:01:05,307 - INFO -   Found 5660 data points
+2025-09-14 01:01:05,308 - INFO - Processing point-based dataset: 5660 data points
+2025-09-14 01:01:05,913 - INFO - Processed: 3 floats, 34 profiles, 5660 measurements
+2025-09-14 01:01:06,243 - INFO - Added 3 float records (total: 62)
+2025-09-14 01:01:06,257 - INFO - Added 34 profile records (total: 3290)
+2025-09-14 01:01:08,241 - INFO - Added 5660 measurement records (total: 555272)
+2025-09-14 01:01:10,287 - INFO - Extracting Andaman Sea data for 2015
+2025-09-14 01:01:10,288 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2015-01-01', '2015-12-31']
+2025-09-14 01:01:18,349 - INFO -   Found 38257 data points
+2025-09-14 01:01:18,350 - INFO - Processing point-based dataset: 38257 data points
+2025-09-14 01:01:24,373 - INFO - Processed: 13 floats, 369 profiles, 38257 measurements
+2025-09-14 01:01:24,696 - INFO - Added 13 float records (total: 73)
+2025-09-14 01:01:24,732 - INFO - Added 369 profile records (total: 3659)
+2025-09-14 01:01:27,096 - INFO - Added 38257 measurement records (total: 593529)
+2025-09-14 01:01:29,148 - INFO - Extracting Andaman Sea data for 2016
+2025-09-14 01:01:29,149 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2016-01-01', '2016-12-31']
+2025-09-14 01:01:38,682 - INFO -   Found 58317 data points
+2025-09-14 01:01:38,682 - INFO - Processing point-based dataset: 58317 data points
+2025-09-14 01:01:46,333 - INFO - Processed: 15 floats, 360 profiles, 58317 measurements
+2025-09-14 01:01:46,670 - INFO - Added 15 float records (total: 79)
+2025-09-14 01:01:46,702 - INFO - Added 360 profile records (total: 4019)
+2025-09-14 01:01:49,241 - INFO - Added 58317 measurement records (total: 651846)
+2025-09-14 01:01:51,339 - INFO - Extracting Andaman Sea data for 2017
+2025-09-14 01:01:51,340 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2017-01-01', '2017-12-31']
+2025-09-14 01:02:03,221 - INFO -   Found 106245 data points
+2025-09-14 01:02:03,222 - INFO - Processing point-based dataset: 106245 data points
+2025-09-14 01:02:15,370 - INFO - Processed: 15 floats, 316 profiles, 106245 measurements
+2025-09-14 01:02:15,793 - INFO - Added 15 float records (total: 88)
+2025-09-14 01:02:15,829 - INFO - Added 316 profile records (total: 4335)
+2025-09-14 01:02:19,092 - INFO - Added 106245 measurement records (total: 758091)
+2025-09-14 01:02:21,159 - INFO - Extracting Andaman Sea data for 2018
+2025-09-14 01:02:21,160 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2018-01-01', '2018-12-31']
+2025-09-14 01:02:30,276 - INFO -   Found 41833 data points
+2025-09-14 01:02:30,277 - INFO - Processing point-based dataset: 41833 data points
+2025-09-14 01:02:33,897 - INFO - Processed: 11 floats, 120 profiles, 41833 measurements
+2025-09-14 01:02:34,327 - INFO - Added 11 float records (total: 91)
+2025-09-14 01:02:34,350 - INFO - Added 120 profile records (total: 4455)
+2025-09-14 01:02:37,447 - INFO - Added 41833 measurement records (total: 799924)
+2025-09-14 01:02:39,524 - INFO - Extracting Andaman Sea data for 2019
+2025-09-14 01:02:39,524 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2019-01-01', '2019-12-31']
+2025-09-14 01:02:45,206 - INFO -   Found 14379 data points
+2025-09-14 01:02:45,207 - INFO - Processing point-based dataset: 14379 data points
+2025-09-14 01:02:46,883 - INFO - Processed: 6 floats, 97 profiles, 14379 measurements
+2025-09-14 01:02:47,321 - INFO - Added 6 float records (total: 94)
+2025-09-14 01:02:47,343 - INFO - Added 97 profile records (total: 4552)
+2025-09-14 01:02:50,390 - INFO - Added 14379 measurement records (total: 814303)
+2025-09-14 01:02:52,461 - INFO - Extracting Andaman Sea data for 2020
+2025-09-14 01:02:52,461 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2020-01-01', '2020-12-31']
+2025-09-14 01:02:58,277 - INFO -   Found 19751 data points
+2025-09-14 01:02:58,278 - INFO - Processing point-based dataset: 19751 data points
+2025-09-14 01:03:01,087 - INFO - Processed: 7 floats, 171 profiles, 19751 measurements
+2025-09-14 01:03:01,544 - INFO - Added 7 float records (total: 98)
+2025-09-14 01:03:01,564 - INFO - Added 171 profile records (total: 4723)
+2025-09-14 01:03:04,608 - INFO - Added 19751 measurement records (total: 834054)
+2025-09-14 01:03:06,697 - INFO - Extracting Andaman Sea data for 2021
+2025-09-14 01:03:06,699 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2021-01-01', '2021-12-31']
+2025-09-14 01:03:11,362 - INFO -   Found 7635 data points
+2025-09-14 01:03:11,362 - INFO - Processing point-based dataset: 7635 data points
+2025-09-14 01:03:12,364 - INFO - Processed: 4 floats, 76 profiles, 7635 measurements
+2025-09-14 01:03:12,789 - INFO - Added 4 float records (total: 98)
+2025-09-14 01:03:12,806 - INFO - Added 76 profile records (total: 4799)
+2025-09-14 01:03:15,967 - INFO - Added 7635 measurement records (total: 841689)
+2025-09-14 01:03:18,040 - INFO - Extracting Andaman Sea data for 2022
+2025-09-14 01:03:18,041 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2022-01-01', '2022-12-31']
+2025-09-14 01:03:21,752 - INFO -   Found 957 data points
+2025-09-14 01:03:21,753 - INFO - Processing point-based dataset: 957 data points
+2025-09-14 01:03:21,813 - INFO - Processed: 1 floats, 1 profiles, 957 measurements
+2025-09-14 01:03:22,247 - INFO - Added 1 float records (total: 99)
+2025-09-14 01:03:22,275 - INFO - Added 1 profile records (total: 4800)
+2025-09-14 01:03:25,250 - INFO - Added 957 measurement records (total: 842646)
+2025-09-14 01:03:27,325 - INFO - Progress: 40 extractions processed (40 successful)
+2025-09-14 01:03:27,326 - INFO - Extracting Andaman Sea data for 2023
+2025-09-14 01:03:27,326 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2023-01-01', '2023-12-31']
+2025-09-14 01:03:32,852 - ERROR - Error extracting Andaman Sea data for 2023: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=92.0&longitude<=100.0&latitude>=5.0&latitude<=20.0&pres>=0&pres<=2000&time>=1672531200.0&time<=1703980800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 01:03:32,853 - INFO - Extracting Andaman Sea data for 2024
+2025-09-14 01:03:32,853 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2024-01-01', '2024-12-31']
+2025-09-14 01:03:35,961 - ERROR - Error extracting Andaman Sea data for 2024: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=92.0&longitude<=100.0&latitude>=5.0&latitude<=20.0&pres>=0&pres<=2000&time>=1704067200.0&time<=1735603200.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 01:03:35,961 - INFO - Extracting Andaman Sea data for 2025
+2025-09-14 01:03:35,962 - INFO -   Region box: [92.0, 100.0, 5.0, 20.0, 0, 2000, '2025-01-01', '2025-03-18']
+2025-09-14 01:03:39,126 - ERROR - Error extracting Andaman Sea data for 2025: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=92.0&longitude<=100.0&latitude>=5.0&latitude<=20.0&pres>=0&pres<=2000&time>=1735689600.0&time<=1742256000.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 01:03:39,138 - INFO - 
+=== PROCESSING REGION: Western Australian Basin ===
+2025-09-14 01:03:39,139 - INFO - Extracting Western Australian Basin data for 2000
+2025-09-14 01:03:39,139 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2000-01-01', '2000-12-31']
+2025-09-14 01:03:42,778 - INFO -   Found 9108 data points
+2025-09-14 01:03:42,779 - INFO - Processing point-based dataset: 9108 data points
+2025-09-14 01:03:44,676 - INFO - Processed: 9 floats, 203 profiles, 9108 measurements
+2025-09-14 01:03:45,085 - INFO - Added 9 float records (total: 108)
+2025-09-14 01:03:45,103 - INFO - Added 203 profile records (total: 5003)
+2025-09-14 01:03:48,246 - INFO - Added 9108 measurement records (total: 851754)
+2025-09-14 01:03:50,325 - INFO - Extracting Western Australian Basin data for 2001
+2025-09-14 01:03:50,326 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2001-01-01', '2001-12-31']
+2025-09-14 01:03:55,220 - INFO -   Found 12193 data points
+2025-09-14 01:03:55,220 - INFO - Processing point-based dataset: 12193 data points
+2025-09-14 01:03:57,924 - INFO - Processed: 9 floats, 291 profiles, 12193 measurements
+2025-09-14 01:03:58,402 - INFO - Added 9 float records (total: 108)
+2025-09-14 01:03:58,438 - INFO - Added 291 profile records (total: 5294)
+2025-09-14 01:04:01,618 - INFO - Added 12193 measurement records (total: 863947)
+2025-09-14 01:04:03,704 - INFO - Extracting Western Australian Basin data for 2002
+2025-09-14 01:04:03,705 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2002-01-01', '2002-12-31']
+2025-09-14 01:04:10,467 - INFO -   Found 24097 data points
+2025-09-14 01:04:10,467 - INFO - Processing point-based dataset: 24097 data points
+2025-09-14 01:04:15,482 - INFO - Processed: 31 floats, 524 profiles, 24097 measurements
+2025-09-14 01:04:15,987 - INFO - Added 31 float records (total: 131)
+2025-09-14 01:04:16,012 - INFO - Added 524 profile records (total: 5818)
+2025-09-14 01:04:19,399 - INFO - Added 24097 measurement records (total: 888044)
+2025-09-14 01:04:21,492 - INFO - Extracting Western Australian Basin data for 2003
+2025-09-14 01:04:21,493 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2003-01-01', '2003-12-31']
+2025-09-14 01:04:32,628 - INFO -   Found 62271 data points
+2025-09-14 01:04:32,629 - INFO - Processing point-based dataset: 62271 data points
+2025-09-14 01:04:45,044 - INFO - Processed: 45 floats, 1192 profiles, 62271 measurements
+2025-09-14 01:04:45,480 - INFO - Added 45 float records (total: 150)
+2025-09-14 01:04:45,529 - INFO - Added 1192 profile records (total: 7010)
+2025-09-14 01:04:49,095 - INFO - Added 62271 measurement records (total: 950315)
+2025-09-14 01:04:51,199 - INFO - Extracting Western Australian Basin data for 2004
+2025-09-14 01:04:51,200 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2004-01-01', '2004-12-31']
+2025-09-14 01:05:04,161 - INFO -   Found 68604 data points
+2025-09-14 01:05:04,161 - INFO - Processing point-based dataset: 68604 data points
+2025-09-14 01:05:18,462 - INFO - Processed: 52 floats, 1221 profiles, 68604 measurements
+2025-09-14 01:05:19,130 - INFO - Added 52 float records (total: 166)
+2025-09-14 01:05:19,178 - INFO - Added 1221 profile records (total: 8231)
+2025-09-14 01:05:23,465 - INFO - Added 68604 measurement records (total: 1018919)
+2025-09-14 01:05:25,575 - INFO - Extracting Western Australian Basin data for 2005
+2025-09-14 01:05:25,575 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2005-01-01', '2005-12-31']
+2025-09-14 01:05:44,435 - INFO -   Found 85700 data points
+2025-09-14 01:05:44,435 - INFO - Processing point-based dataset: 85700 data points
+2025-09-14 01:06:00,909 - INFO - Processed: 60 floats, 1498 profiles, 85700 measurements
+2025-09-14 01:06:01,500 - INFO - Added 60 float records (total: 185)
+2025-09-14 01:06:01,546 - INFO - Added 1498 profile records (total: 9729)
+2025-09-14 01:06:05,916 - INFO - Added 85700 measurement records (total: 1104619)
+2025-09-14 01:06:08,077 - INFO - Extracting Western Australian Basin data for 2006
+2025-09-14 01:06:08,078 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2006-01-01', '2006-12-31']
+2025-09-14 01:06:32,693 - INFO -   Found 135806 data points
+2025-09-14 01:06:32,693 - INFO - Processing point-based dataset: 135806 data points
+2025-09-14 01:06:55,524 - INFO - Processed: 92 floats, 1877 profiles, 135806 measurements
+2025-09-14 01:06:56,170 - INFO - Added 92 float records (total: 231)
+2025-09-14 01:06:56,231 - INFO - Added 1877 profile records (total: 11606)
+2025-09-14 01:07:01,423 - INFO - Added 135806 measurement records (total: 1240425)
+2025-09-14 01:07:03,589 - INFO - Extracting Western Australian Basin data for 2007
+2025-09-14 01:07:03,590 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2007-01-01', '2007-12-31']
+2025-09-14 01:07:34,797 - INFO -   Found 256177 data points
+2025-09-14 01:07:34,797 - INFO - Processing point-based dataset: 256177 data points
+2025-09-14 01:08:17,977 - INFO - Processed: 117 floats, 3105 profiles, 256175 measurements
+2025-09-14 01:08:18,705 - INFO - Added 117 float records (total: 274)
+2025-09-14 01:08:18,798 - INFO - Added 3105 profile records (total: 14711)
+2025-09-14 01:08:25,508 - INFO - Added 256175 measurement records (total: 1496600)
+2025-09-14 01:08:27,725 - INFO - Extracting Western Australian Basin data for 2008
+2025-09-14 01:08:27,725 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2008-01-01', '2008-12-31']
+2025-09-14 01:09:00,111 - INFO -   Found 269319 data points
+2025-09-14 01:09:00,111 - INFO - Processing point-based dataset: 269319 data points
+2025-09-14 01:09:44,775 - INFO - Processed: 129 floats, 3295 profiles, 269318 measurements
+2025-09-14 01:09:45,805 - INFO - Added 129 float records (total: 301)
+2025-09-14 01:09:45,905 - INFO - Added 3295 profile records (total: 18006)
+2025-09-14 01:09:53,660 - INFO - Added 269318 measurement records (total: 1765918)
+2025-09-14 01:09:55,869 - INFO - Extracting Western Australian Basin data for 2009
+2025-09-14 01:09:55,871 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2009-01-01', '2009-12-31']
+2025-09-14 01:10:48,029 - INFO -   Found 432350 data points
+2025-09-14 01:10:48,030 - INFO - Processing point-based dataset: 432350 data points
+2025-09-14 01:11:53,611 - INFO - Processed: 137 floats, 3787 profiles, 432347 measurements
+2025-09-14 01:11:55,028 - INFO - Added 137 float records (total: 328)
+2025-09-14 01:11:55,172 - INFO - Added 3787 profile records (total: 21793)
+2025-09-14 01:12:05,187 - INFO - Added 432347 measurement records (total: 2198265)
+2025-09-14 01:12:07,449 - INFO - Progress: 50 extractions processed (50 successful)
+2025-09-14 01:12:07,459 - INFO - Extracting Western Australian Basin data for 2010
+2025-09-14 01:12:07,465 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2010-01-01', '2010-12-31']
+2025-09-14 01:12:47,235 - INFO -   Found 423124 data points
+2025-09-14 01:12:47,236 - INFO - Processing point-based dataset: 423124 data points
+2025-09-14 01:13:47,894 - INFO - Processed: 122 floats, 3491 profiles, 423118 measurements
+2025-09-14 01:13:49,710 - INFO - Added 122 float records (total: 339)
+2025-09-14 01:13:50,132 - INFO - Added 3491 profile records (total: 25284)
+2025-09-14 01:14:01,656 - INFO - Added 423118 measurement records (total: 2621383)
+2025-09-14 01:14:04,017 - INFO - Extracting Western Australian Basin data for 2011
+2025-09-14 01:14:04,019 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2011-01-01', '2011-12-31']
+2025-09-14 01:14:55,243 - INFO -   Found 371184 data points
+2025-09-14 01:14:55,243 - INFO - Processing point-based dataset: 371184 data points
+2025-09-14 01:15:50,252 - INFO - Processed: 136 floats, 3001 profiles, 371180 measurements
+2025-09-14 01:15:52,262 - INFO - Added 136 float records (total: 375)
+2025-09-14 01:15:52,631 - INFO - Added 3001 profile records (total: 28285)
+2025-09-14 01:16:05,825 - INFO - Added 371180 measurement records (total: 2992563)
+2025-09-14 01:16:08,257 - INFO - Extracting Western Australian Basin data for 2012
+2025-09-14 01:16:08,259 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2012-01-01', '2012-12-31']
+2025-09-14 01:17:36,778 - INFO -   Found 1032487 data points
+2025-09-14 01:17:36,778 - INFO - Processing point-based dataset: 1032487 data points
+2025-09-14 01:22:00,107 - INFO - Processed: 130 floats, 4687 profiles, 1032485 measurements
+2025-09-14 01:22:04,646 - INFO - Added 130 float records (total: 403)
+2025-09-14 01:22:08,064 - INFO - Added 4687 profile records (total: 32972)
+2025-09-14 01:22:30,830 - INFO - Added 1032485 measurement records (total: 4025048)
+2025-09-14 01:22:33,410 - INFO - Extracting Western Australian Basin data for 2013
+2025-09-14 01:22:33,418 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2013-01-01', '2013-12-31']
+2025-09-14 01:23:44,630 - INFO -   Found 1057002 data points
+2025-09-14 01:23:44,630 - INFO - Processing point-based dataset: 1057002 data points
+2025-09-14 01:25:47,837 - INFO - Processed: 123 floats, 3009 profiles, 1057001 measurements
+2025-09-14 01:25:54,930 - INFO - Added 123 float records (total: 422)
+2025-09-14 01:25:56,435 - INFO - Added 3009 profile records (total: 35981)
+2025-09-14 01:26:22,490 - INFO - Added 1057001 measurement records (total: 5082049)
+2025-09-14 01:26:25,285 - INFO - Extracting Western Australian Basin data for 2014
+2025-09-14 01:26:25,296 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2014-01-01', '2014-12-31']
+2025-09-14 01:26:53,670 - ERROR - Error extracting Western Australian Basin data for 2014: ''
+2025-09-14 01:26:53,672 - INFO - Extracting Western Australian Basin data for 2015
+2025-09-14 01:26:53,673 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2015-01-01', '2015-12-31']
+2025-09-14 01:27:25,634 - ERROR - Error extracting Western Australian Basin data for 2015: ''
+2025-09-14 01:27:25,634 - INFO - Extracting Western Australian Basin data for 2016
+2025-09-14 01:27:25,635 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2016-01-01', '2016-12-31']
+2025-09-14 01:28:14,734 - ERROR - Error extracting Western Australian Basin data for 2016: ''
+2025-09-14 01:28:14,734 - INFO - Extracting Western Australian Basin data for 2017
+2025-09-14 01:28:14,735 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2017-01-01', '2017-12-31']
+2025-09-14 01:28:59,941 - ERROR - Error extracting Western Australian Basin data for 2017: ''
+2025-09-14 01:28:59,941 - INFO - Extracting Western Australian Basin data for 2018
+2025-09-14 01:28:59,942 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2018-01-01', '2018-12-31']
+2025-09-14 01:29:49,334 - ERROR - Error extracting Western Australian Basin data for 2018: ''
+2025-09-14 01:29:49,334 - INFO - Extracting Western Australian Basin data for 2019
+2025-09-14 01:29:49,335 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2019-01-01', '2019-12-31']
+2025-09-14 01:30:41,843 - ERROR - Error extracting Western Australian Basin data for 2019: ''
+2025-09-14 01:30:41,843 - INFO - Extracting Western Australian Basin data for 2020
+2025-09-14 01:30:41,844 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2020-01-01', '2020-12-31']
+2025-09-14 01:31:42,172 - ERROR - Error extracting Western Australian Basin data for 2020: 
+2025-09-14 01:31:42,172 - INFO - Extracting Western Australian Basin data for 2021
+2025-09-14 01:31:42,173 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2021-01-01', '2021-12-31']
+2025-09-14 01:32:34,336 - ERROR - Error extracting Western Australian Basin data for 2021: ''
+2025-09-14 01:32:34,337 - INFO - Extracting Western Australian Basin data for 2022
+2025-09-14 01:32:34,338 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2022-01-01', '2022-12-31']
+2025-09-14 01:33:24,162 - ERROR - Error extracting Western Australian Basin data for 2022: ''
+2025-09-14 01:33:24,163 - INFO - Extracting Western Australian Basin data for 2023
+2025-09-14 01:33:24,163 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2023-01-01', '2023-12-31']
+2025-09-14 01:34:07,025 - ERROR - Error extracting Western Australian Basin data for 2023: ''
+2025-09-14 01:34:07,026 - INFO - Extracting Western Australian Basin data for 2024
+2025-09-14 01:34:07,026 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2024-01-01', '2024-12-31']
+2025-09-14 01:34:44,782 - ERROR - Error extracting Western Australian Basin data for 2024: ''
+2025-09-14 01:34:44,782 - INFO - Extracting Western Australian Basin data for 2025
+2025-09-14 01:34:44,783 - INFO -   Region box: [90.0, 120.0, -40.0, -10.0, 0, 2000, '2025-01-01', '2025-03-18']
+2025-09-14 01:35:35,282 - INFO -   Found 630437 data points
+2025-09-14 01:35:35,282 - INFO - Processing point-based dataset: 630437 data points
+2025-09-14 01:36:34,027 - INFO - Processed: 107 floats, 772 profiles, 630437 measurements
+2025-09-14 01:36:42,193 - INFO - Added 107 float records (total: 529)
+2025-09-14 01:36:43,609 - INFO - Added 772 profile records (total: 36753)
+2025-09-14 01:37:10,520 - INFO - Added 630437 measurement records (total: 5712486)
+2025-09-14 01:37:13,545 - INFO - 
+=== PROCESSING REGION: Mozambique Channel ===
+2025-09-14 01:37:13,548 - INFO - Extracting Mozambique Channel data for 2000
+2025-09-14 01:37:13,558 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2000-01-01', '2000-12-31']
+2025-09-14 01:37:17,699 - ERROR - Error extracting Mozambique Channel data for 2000: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=40.0&longitude<=50.0&latitude>=-27.0&latitude<=-10.0&pres>=0&pres<=2000&time>=946684800.0&time<=978220800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 01:37:17,701 - INFO - Extracting Mozambique Channel data for 2001
+2025-09-14 01:37:17,702 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2001-01-01', '2001-12-31']
+2025-09-14 01:37:19,614 - INFO -   Found 280 data points
+2025-09-14 01:37:19,614 - INFO - Processing point-based dataset: 280 data points
+2025-09-14 01:37:19,668 - INFO - Processed: 1 floats, 4 profiles, 280 measurements
+2025-09-14 01:37:24,614 - INFO - Added 1 float records (total: 530)
+2025-09-14 01:37:24,698 - INFO - Added 4 profile records (total: 36757)
+2025-09-14 01:37:46,435 - INFO - Added 280 measurement records (total: 5712766)
+2025-09-14 01:37:49,245 - INFO - Extracting Mozambique Channel data for 2002
+2025-09-14 01:37:49,251 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2002-01-01', '2002-12-31']
+2025-09-14 01:37:53,585 - ERROR - Error extracting Mozambique Channel data for 2002: https://erddap.ifremer.fr/erddap/tabledap/ArgoFloats.nc?config_mission_number,cycle_number,data_mode,direction,latitude,longitude,platform_number,position_qc,pres,pres_adjusted,pres_adjusted_error,pres_adjusted_qc,pres_qc,psal,psal_adjusted,psal_adjusted_error,psal_adjusted_qc,psal_qc,temp,temp_adjusted,temp_adjusted_error,temp_adjusted_qc,temp_qc,time,time_qc,vertical_sampling_scheme&longitude>=40.0&longitude<=50.0&latitude>=-27.0&latitude<=-10.0&pres>=0&pres<=2000&time>=1009843200.0&time<=1041292800.0&latitude!=NaN&longitude!=NaN&distinct()&orderBy("time,pres")
+2025-09-14 01:37:53,586 - INFO - Extracting Mozambique Channel data for 2003
+2025-09-14 01:37:53,587 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2003-01-01', '2003-12-31']
+2025-09-14 01:37:56,949 - INFO -   Found 4611 data points
+2025-09-14 01:37:56,949 - INFO - Processing point-based dataset: 4611 data points
+2025-09-14 01:37:57,729 - INFO - Processed: 5 floats, 67 profiles, 4611 measurements
+2025-09-14 01:38:01,226 - INFO - Added 5 float records (total: 535)
+2025-09-14 01:38:01,306 - INFO - Added 67 profile records (total: 36824)
+2025-09-14 01:38:23,528 - INFO - Added 4611 measurement records (total: 5717377)
+2025-09-14 01:38:26,336 - INFO - Extracting Mozambique Channel data for 2004
+2025-09-14 01:38:26,343 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2004-01-01', '2004-12-31']
+2025-09-14 01:38:31,959 - INFO -   Found 8764 data points
+2025-09-14 01:38:31,959 - INFO - Processing point-based dataset: 8764 data points
+2025-09-14 01:38:33,479 - INFO - Processed: 11 floats, 130 profiles, 8764 measurements
+2025-09-14 01:38:37,140 - INFO - Added 11 float records (total: 541)
+2025-09-14 01:38:37,324 - INFO - Added 130 profile records (total: 36954)
+2025-09-14 01:38:59,688 - INFO - Added 8764 measurement records (total: 5726141)
+2025-09-14 01:39:02,531 - INFO - Extracting Mozambique Channel data for 2005
+2025-09-14 01:39:02,535 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2005-01-01', '2005-12-31']
+2025-09-14 01:39:08,890 - INFO -   Found 7111 data points
+2025-09-14 01:39:08,890 - INFO - Processing point-based dataset: 7111 data points
+2025-09-14 01:39:10,327 - INFO - Processed: 13 floats, 129 profiles, 7111 measurements
+2025-09-14 01:39:14,163 - INFO - Added 13 float records (total: 547)
+2025-09-14 01:39:14,336 - INFO - Added 129 profile records (total: 37083)
+2025-09-14 01:39:38,430 - INFO - Added 7111 measurement records (total: 5733252)
+2025-09-14 01:39:41,302 - INFO - Extracting Mozambique Channel data for 2006
+2025-09-14 01:39:41,310 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2006-01-01', '2006-12-31']
+2025-09-14 01:39:48,192 - INFO -   Found 13500 data points
+2025-09-14 01:39:48,192 - INFO - Processing point-based dataset: 13500 data points
+2025-09-14 01:39:50,389 - INFO - Processed: 15 floats, 189 profiles, 13500 measurements
+2025-09-14 01:39:54,211 - INFO - Added 15 float records (total: 554)
+2025-09-14 01:39:54,384 - INFO - Added 189 profile records (total: 37272)
+2025-09-14 01:40:16,591 - INFO - Added 13500 measurement records (total: 5746752)
+2025-09-14 01:40:19,489 - INFO - Progress: 60 extractions processed (60 successful)
+2025-09-14 01:40:19,491 - INFO - Extracting Mozambique Channel data for 2007
+2025-09-14 01:40:19,498 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2007-01-01', '2007-12-31']
+2025-09-14 01:40:27,085 - INFO -   Found 17151 data points
+2025-09-14 01:40:27,085 - INFO - Processing point-based dataset: 17151 data points
+2025-09-14 01:40:30,085 - INFO - Processed: 19 floats, 268 profiles, 17151 measurements
+2025-09-14 01:40:33,595 - INFO - Added 19 float records (total: 562)
+2025-09-14 01:40:33,783 - INFO - Added 268 profile records (total: 37540)
+2025-09-14 01:40:56,092 - INFO - Added 17151 measurement records (total: 5763903)
+2025-09-14 01:40:58,898 - INFO - Extracting Mozambique Channel data for 2008
+2025-09-14 01:40:58,905 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2008-01-01', '2008-12-31']
+2025-09-14 01:41:06,622 - INFO -   Found 15400 data points
+2025-09-14 01:41:06,622 - INFO - Processing point-based dataset: 15400 data points
+2025-09-14 01:41:09,050 - INFO - Processed: 17 floats, 200 profiles, 15400 measurements
+2025-09-14 01:41:12,240 - INFO - Added 17 float records (total: 570)
+2025-09-14 01:41:12,316 - INFO - Added 200 profile records (total: 37740)
+2025-09-14 01:41:35,094 - INFO - Added 15400 measurement records (total: 5779303)
+2025-09-14 01:41:37,898 - INFO - Extracting Mozambique Channel data for 2009
+2025-09-14 01:41:37,907 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2009-01-01', '2009-12-31']
+2025-09-14 01:41:44,555 - INFO -   Found 10396 data points
+2025-09-14 01:41:44,556 - INFO - Processing point-based dataset: 10396 data points
+2025-09-14 01:41:46,487 - INFO - Processed: 19 floats, 168 profiles, 10396 measurements
+2025-09-14 01:41:49,939 - INFO - Added 19 float records (total: 579)
+2025-09-14 01:41:50,019 - INFO - Added 168 profile records (total: 37908)
+2025-09-14 01:42:11,983 - INFO - Added 10396 measurement records (total: 5789699)
+2025-09-14 01:42:14,779 - INFO - Extracting Mozambique Channel data for 2010
+2025-09-14 01:42:14,783 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2010-01-01', '2010-12-31']
+2025-09-14 01:42:23,425 - INFO -   Found 11772 data points
+2025-09-14 01:42:23,426 - INFO - Processing point-based dataset: 11772 data points
+2025-09-14 01:42:25,337 - INFO - Processed: 21 floats, 152 profiles, 11772 measurements
+2025-09-14 01:42:28,855 - INFO - Added 21 float records (total: 593)
+2025-09-14 01:42:28,930 - INFO - Added 152 profile records (total: 38060)
+2025-09-14 01:42:51,637 - INFO - Added 11772 measurement records (total: 5801471)
+2025-09-14 01:42:54,446 - INFO - Extracting Mozambique Channel data for 2011
+2025-09-14 01:42:54,449 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2011-01-01', '2011-12-31']
+2025-09-14 01:43:03,382 - INFO -   Found 17161 data points
+2025-09-14 01:43:03,383 - INFO - Processing point-based dataset: 17161 data points
+2025-09-14 01:43:06,121 - INFO - Processed: 24 floats, 213 profiles, 17161 measurements
+2025-09-14 01:43:10,004 - INFO - Added 24 float records (total: 607)
+2025-09-14 01:43:10,264 - INFO - Added 213 profile records (total: 38273)
+2025-09-14 01:43:34,602 - INFO - Added 17161 measurement records (total: 5818632)
+2025-09-14 01:43:37,514 - INFO - Extracting Mozambique Channel data for 2012
+2025-09-14 01:43:37,522 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2012-01-01', '2012-12-31']
+2025-09-14 01:43:47,138 - INFO -   Found 35750 data points
+2025-09-14 01:43:47,139 - INFO - Processing point-based dataset: 35750 data points
+2025-09-14 01:43:50,850 - INFO - Processed: 20 floats, 205 profiles, 35750 measurements
+2025-09-14 01:43:54,289 - INFO - Added 20 float records (total: 619)
+2025-09-14 01:43:54,367 - INFO - Added 205 profile records (total: 38478)
+2025-09-14 01:44:16,666 - INFO - Added 35750 measurement records (total: 5854382)
+2025-09-14 01:44:19,491 - INFO - Extracting Mozambique Channel data for 2013
+2025-09-14 01:44:19,499 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2013-01-01', '2013-12-31']
+2025-09-14 01:44:30,386 - INFO -   Found 22621 data points
+2025-09-14 01:44:30,387 - INFO - Processing point-based dataset: 22621 data points
+2025-09-14 01:44:34,275 - INFO - Processed: 32 floats, 339 profiles, 22621 measurements
+2025-09-14 01:44:37,783 - INFO - Added 32 float records (total: 640)
+2025-09-14 01:44:37,992 - INFO - Added 339 profile records (total: 38817)
+2025-09-14 01:45:00,199 - INFO - Added 22621 measurement records (total: 5877003)
+2025-09-14 01:45:03,028 - INFO - Extracting Mozambique Channel data for 2014
+2025-09-14 01:45:03,036 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2014-01-01', '2014-12-31']
+2025-09-14 01:45:17,014 - INFO -   Found 82978 data points
+2025-09-14 01:45:17,014 - INFO - Processing point-based dataset: 82978 data points
+2025-09-14 01:45:24,783 - INFO - Processed: 29 floats, 292 profiles, 82978 measurements
+2025-09-14 01:45:28,296 - INFO - Added 29 float records (total: 656)
+2025-09-14 01:45:28,499 - INFO - Added 292 profile records (total: 39109)
+2025-09-14 01:45:53,731 - INFO - Added 82978 measurement records (total: 5959981)
+2025-09-14 01:45:56,944 - INFO - Extracting Mozambique Channel data for 2015
+2025-09-14 01:45:56,952 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2015-01-01', '2015-12-31']
+2025-09-14 01:46:08,724 - INFO -   Found 39015 data points
+2025-09-14 01:46:08,724 - INFO - Processing point-based dataset: 39015 data points
+2025-09-14 01:46:13,521 - INFO - Processed: 25 floats, 304 profiles, 39015 measurements
+2025-09-14 01:46:17,621 - INFO - Added 25 float records (total: 664)
+2025-09-14 01:46:17,808 - INFO - Added 304 profile records (total: 39413)
+2025-09-14 01:46:42,203 - INFO - Added 39015 measurement records (total: 5998996)
+2025-09-14 01:46:45,297 - INFO - Extracting Mozambique Channel data for 2016
+2025-09-14 01:46:45,303 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2016-01-01', '2016-12-31']
+2025-09-14 01:46:56,190 - INFO -   Found 31257 data points
+2025-09-14 01:46:56,190 - INFO - Processing point-based dataset: 31257 data points
+2025-09-14 01:47:00,092 - INFO - Processed: 24 floats, 272 profiles, 31257 measurements
+2025-09-14 01:47:03,825 - INFO - Added 24 float records (total: 675)
+2025-09-14 01:47:04,000 - INFO - Added 272 profile records (total: 39685)
+2025-09-14 01:47:28,326 - INFO - Added 31257 measurement records (total: 6030253)
+2025-09-14 01:47:31,370 - INFO - Progress: 70 extractions processed (70 successful)
+2025-09-14 01:47:31,372 - INFO - Extracting Mozambique Channel data for 2017
+2025-09-14 01:47:31,379 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2017-01-01', '2017-12-31']
+2025-09-14 01:47:42,518 - INFO -   Found 30225 data points
+2025-09-14 01:47:42,518 - INFO - Processing point-based dataset: 30225 data points
+2025-09-14 01:47:46,052 - INFO - Processed: 24 floats, 211 profiles, 30225 measurements
+2025-09-14 01:47:49,762 - INFO - Added 24 float records (total: 688)
+2025-09-14 01:47:49,947 - INFO - Added 211 profile records (total: 39896)
+2025-09-14 01:48:13,983 - INFO - Added 30225 measurement records (total: 6060478)
+2025-09-14 01:48:17,112 - INFO - Extracting Mozambique Channel data for 2018
+2025-09-14 01:48:17,120 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2018-01-01', '2018-12-31']
+2025-09-14 01:48:37,952 - INFO -   Found 115622 data points
+2025-09-14 01:48:37,952 - INFO - Processing point-based dataset: 115622 data points
+2025-09-14 01:48:48,976 - INFO - Processed: 30 floats, 391 profiles, 115622 measurements
+2025-09-14 01:48:53,601 - INFO - Added 30 float records (total: 701)
+2025-09-14 01:48:53,840 - INFO - Added 391 profile records (total: 40287)
+2025-09-14 01:49:19,351 - INFO - Added 115622 measurement records (total: 6176100)
+2025-09-14 01:49:22,521 - INFO - Extracting Mozambique Channel data for 2019
+2025-09-14 01:49:22,529 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2019-01-01', '2019-12-31']
+2025-09-14 01:49:48,915 - INFO -   Found 173092 data points
+2025-09-14 01:49:48,915 - INFO - Processing point-based dataset: 173092 data points
+2025-09-14 01:50:04,155 - INFO - Processed: 36 floats, 420 profiles, 173092 measurements
+2025-09-14 01:50:08,943 - INFO - Added 36 float records (total: 718)
+2025-09-14 01:50:09,414 - INFO - Added 420 profile records (total: 40707)
+2025-09-14 01:50:36,599 - INFO - Added 173092 measurement records (total: 6349192)
+2025-09-14 01:50:40,460 - INFO - Extracting Mozambique Channel data for 2020
+2025-09-14 01:50:40,468 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2020-01-01', '2020-12-31']
+2025-09-14 01:50:58,634 - INFO -   Found 121812 data points
+2025-09-14 01:50:58,634 - INFO - Processing point-based dataset: 121812 data points
+2025-09-14 01:51:09,125 - INFO - Processed: 29 floats, 251 profiles, 121812 measurements
+2025-09-14 01:51:14,941 - INFO - Added 29 float records (total: 727)
+2025-09-14 01:51:15,544 - INFO - Added 251 profile records (total: 40958)
+2025-09-14 01:51:45,489 - INFO - Added 121812 measurement records (total: 6471004)
+2025-09-14 01:51:48,735 - INFO - Extracting Mozambique Channel data for 2021
+2025-09-14 01:51:48,742 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2021-01-01', '2021-12-31']
+2025-09-14 01:52:04,421 - INFO -   Found 119029 data points
+2025-09-14 01:52:04,422 - INFO - Processing point-based dataset: 119029 data points
+2025-09-14 01:52:14,887 - INFO - Processed: 19 floats, 252 profiles, 119029 measurements
+2025-09-14 01:52:21,901 - INFO - Added 19 float records (total: 732)
+2025-09-14 01:52:22,208 - INFO - Added 252 profile records (total: 41210)
+2025-09-14 01:52:51,649 - INFO - Added 119029 measurement records (total: 6590033)
+2025-09-14 01:52:54,802 - INFO - Extracting Mozambique Channel data for 2022
+2025-09-14 01:52:54,810 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2022-01-01', '2022-12-31']
+2025-09-14 01:53:13,329 - INFO -   Found 171659 data points
+2025-09-14 01:53:13,329 - INFO - Processing point-based dataset: 171659 data points
+2025-09-14 01:53:27,536 - INFO - Processed: 22 floats, 266 profiles, 171659 measurements
+2025-09-14 01:53:35,278 - INFO - Added 22 float records (total: 745)
+2025-09-14 01:53:35,674 - INFO - Added 266 profile records (total: 41476)
+2025-09-14 01:54:07,078 - INFO - Added 171659 measurement records (total: 6761692)
+2025-09-14 01:54:10,889 - INFO - Extracting Mozambique Channel data for 2023
+2025-09-14 01:54:10,900 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2023-01-01', '2023-12-31']
+2025-09-14 01:54:29,389 - INFO -   Found 160271 data points
+2025-09-14 01:54:29,389 - INFO - Processing point-based dataset: 160271 data points
+2025-09-14 01:54:42,609 - INFO - Processed: 24 floats, 267 profiles, 160271 measurements
+2025-09-14 01:54:50,706 - INFO - Added 24 float records (total: 756)
+2025-09-14 01:54:51,105 - INFO - Added 267 profile records (total: 41743)
+2025-09-14 01:55:23,139 - INFO - Added 160271 measurement records (total: 6921963)
+2025-09-14 01:55:27,523 - INFO - Extracting Mozambique Channel data for 2024
+2025-09-14 01:55:27,531 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2024-01-01', '2024-12-31']
+2025-09-14 01:55:45,438 - INFO -   Found 168182 data points
+2025-09-14 01:55:45,438 - INFO - Processing point-based dataset: 168182 data points
+2025-09-14 01:55:58,946 - INFO - Processed: 23 floats, 269 profiles, 168182 measurements
+2025-09-14 01:56:06,439 - INFO - Added 23 float records (total: 767)
+2025-09-14 01:56:06,825 - INFO - Added 269 profile records (total: 42012)
+2025-09-14 01:56:40,818 - INFO - Added 168182 measurement records (total: 7090145)
+2025-09-14 01:56:45,628 - INFO - Extracting Mozambique Channel data for 2025
+2025-09-14 01:56:45,636 - INFO -   Region box: [40.0, 50.0, -27.0, -10.0, 0, 2000, '2025-01-01', '2025-03-18']
+2025-09-14 01:56:53,092 - INFO -   Found 28266 data points
+2025-09-14 01:56:53,092 - INFO - Processing point-based dataset: 28266 data points
+2025-09-14 01:56:55,145 - INFO - Processed: 9 floats, 44 profiles, 28266 measurements
+2025-09-14 01:57:02,650 - INFO - Added 9 float records (total: 767)
+2025-09-14 01:57:02,924 - INFO - Added 44 profile records (total: 42056)
+2025-09-14 01:57:34,912 - INFO - Added 28266 measurement records (total: 7118411)
+2025-09-14 01:57:39,316 - INFO - 
+=== EXTRACTION COMPLETE ===
+2025-09-14 01:57:39,317 - INFO - Successful: 79
+2025-09-14 01:57:39,317 - INFO - Failed: 0
+2025-09-14 01:57:46,320 - INFO - === FINAL DATABASE STATISTICS ===
+2025-09-14 01:57:46,330 - INFO - Floats: 767 records
+2025-09-14 01:57:46,330 - INFO - Profiles: 42,056 records
+2025-09-14 01:57:46,330 - INFO - Measurements: 7,118,411 records
+2025-09-14 01:57:46,369 - INFO - Date range: 2000-01-02T07:45:00 to 2025-03-17T23:23:14
+2025-09-14 01:57:46,376 - INFO - Geographic coverage: -40.0� to 29.7�N, 32.2� to 120.0�E
+2025-09-15 20:42:34,975 - INFO - Will extract data from 2000 to 2025
+2025-09-15 20:42:34,975 - INFO - Total time periods: 26
+2025-09-15 20:42:34,975 - INFO - Running in INCREMENTAL UPDATE mode
+2025-09-15 20:42:34,975 - INFO - Starting INCREMENTAL ARGO data update (last 1 months)
+2025-09-15 20:42:34,975 - INFO - ============================================================
+2025-09-15 20:42:34,975 - INFO - Setting up database structure...
+2025-09-15 20:42:35,009 - INFO - Initialized empty floats table
+2025-09-15 20:42:35,016 - INFO - Initialized empty profiles table
+2025-09-15 20:42:35,023 - INFO - Initialized empty measurements table
+2025-09-15 20:42:35,023 - INFO - Initialized extraction metadata tracking
+2025-09-15 20:42:35,023 - INFO - Database structure ready
+2025-09-15 20:42:35,023 - INFO - Will update data for 1 recent time periods
+2025-09-15 20:42:35,024 - INFO - 
+=== INCREMENTAL UPDATE: Indian Ocean ===
+2025-09-15 20:42:35,042 - WARNING - Quick check failed for Indian Ocean 2025: [20.0, 120.0, -50.0, 30.0, 0, 100, '2025-08-16', '2025-03-19']: datetim_max must come after datetim_min
+2025-09-15 20:42:35,042 - INFO - Extracting Indian Ocean data for 2025
+2025-09-15 20:42:35,043 - INFO -   Region box: [20.0, 120.0, -50.0, 30.0, 0, 2000, '2025-08-16', '2025-03-19']
+2025-09-15 20:42:35,044 - ERROR - Error extracting Indian Ocean data for 2025: [20.0, 120.0, -50.0, 30.0, 0, 2000, '2025-08-16', '2025-03-19']: datetim_max must come after datetim_min
+2025-09-15 20:42:35,045 - INFO - Marked Indian Ocean_2025 as failed
+2025-09-15 20:42:35,045 - INFO - 
+=== INCREMENTAL UPDATE COMPLETE ===
+2025-09-15 20:42:35,045 - INFO - Successful updates: 0
+2025-09-15 20:42:35,045 - INFO - Skipped (no new data): 1
+2025-09-15 20:42:35,045 - INFO - Failed updates: 0
+2025-09-15 20:42:35,466 - INFO - === FINAL DATABASE STATISTICS ===
+2025-09-15 20:42:35,466 - INFO - Floats: 0 records
+2025-09-15 20:42:35,466 - INFO - Profiles: 0 records
+2025-09-15 20:42:35,466 - INFO - Measurements: 0 records
+2025-09-15 20:42:35,473 - INFO - 
+=== EXTRACTION METADATA ====
+2025-09-15 20:42:35,473 - INFO - Successfully extracted combinations: 0
+2025-09-15 20:42:35,473 - INFO - Failed combinations: 1
+2025-09-15 20:42:35,473 - INFO - 
+Recent failures:
+2025-09-15 20:42:35,473 - INFO -   Indian Ocean 2025: [20.0, 120.0, -50.0, 30.0, 0, 2000, '2025-08-16', '2025-03-19']: datetim_max must come after datetim...
+2025-09-15 20:46:22,309 - INFO - Will extract data from 2000 to 2025
+2025-09-15 20:46:22,309 - INFO - Total time periods: 26
+2025-09-15 20:46:22,309 - INFO - Running in FULL EXTRACTION mode
+2025-09-15 20:46:22,309 - INFO - Starting ARGO data extraction using argopy (delayed-mode data)
+2025-09-15 20:46:22,309 - INFO - ============================================================
+2025-09-15 20:46:22,310 - INFO - Setting up database structure...
+2025-09-15 20:46:22,310 - INFO - Found existing extraction metadata
+2025-09-15 20:46:22,310 - INFO - Database structure ready
+2025-09-15 20:46:22,317 - ERROR - Extraction failed: 'date'
+2025-09-15 20:47:04,245 - INFO - Will extract data from 2000 to 2025
+2025-09-15 20:47:04,245 - INFO - Total time periods: 26
+2025-09-15 20:47:04,245 - INFO - Running in INCREMENTAL UPDATE mode
+2025-09-15 20:47:04,245 - INFO - Starting INCREMENTAL ARGO data update (last 3 months)
+2025-09-15 20:47:04,245 - INFO - ============================================================
+2025-09-15 20:47:04,245 - INFO - Setting up database structure...
+2025-09-15 20:47:04,246 - INFO - Found existing extraction metadata
+2025-09-15 20:47:04,246 - INFO - Database structure ready
+2025-09-15 20:47:04,246 - WARNING - Skipping 2025 - start date 2025-06-17 is after end date 2025-03-19
+2025-09-15 20:47:04,246 - INFO - Will update data for 0 recent time periods
+2025-09-15 20:47:04,246 - INFO - 
+=== INCREMENTAL UPDATE: Indian Ocean ===
+2025-09-15 20:47:04,246 - INFO - 
+=== INCREMENTAL UPDATE COMPLETE ===
+2025-09-15 20:47:04,246 - INFO - Successful updates: 0
+2025-09-15 20:47:04,246 - INFO - Skipped (no new data): 0
+2025-09-15 20:47:04,246 - INFO - Failed updates: 0
+2025-09-15 20:47:04,353 - INFO - === FINAL DATABASE STATISTICS ===
+2025-09-15 20:47:04,354 - INFO - Floats: 0 records
+2025-09-15 20:47:04,354 - INFO - Profiles: 0 records
+2025-09-15 20:47:04,354 - INFO - Measurements: 0 records
+2025-09-15 20:47:04,354 - INFO - 
+=== EXTRACTION METADATA ====
+2025-09-15 20:47:04,354 - INFO - Successfully extracted combinations: 0
+2025-09-15 20:47:04,354 - INFO - Failed combinations: 1
+2025-09-15 20:47:04,354 - INFO - 
+Recent failures:
+2025-09-15 20:47:04,354 - INFO -   Indian Ocean 2025: [20.0, 120.0, -50.0, 30.0, 0, 2000, '2025-08-16', '2025-03-19']: datetim_max must come after datetim...
+2025-09-15 20:47:32,092 - INFO - Will extract data from 2000 to 2025
+2025-09-15 20:47:32,092 - INFO - Total time periods: 26
+2025-09-15 20:47:32,093 - INFO - Running in INCREMENTAL UPDATE mode
+2025-09-15 20:47:32,093 - INFO - Starting INCREMENTAL ARGO data update (last 3 months)
+2025-09-15 20:47:32,093 - INFO - ============================================================
+2025-09-15 20:47:32,093 - INFO - Setting up database structure...
+2025-09-15 20:47:32,093 - INFO - Found existing extraction metadata
+2025-09-15 20:47:32,093 - INFO - Database structure ready
+2025-09-15 20:47:32,093 - INFO - Will check period: 2024-12-19 to 2024-12-31 (year 2024)
+2025-09-15 20:47:32,093 - INFO - Will check period: 2025-01-01 to 2025-03-19 (year 2025)
+2025-09-15 20:47:32,093 - INFO - Will update data for 2 recent time periods
+2025-09-15 20:47:32,093 - INFO - 
+=== INCREMENTAL UPDATE: Indian Ocean ===
+2025-09-15 20:48:32,156 - WARNING - Quick check failed for Indian Ocean 2024: 
+2025-09-15 20:48:32,157 - INFO - Extracting Indian Ocean data for 2024
+2025-09-15 20:48:32,157 - INFO -   Region box: [20.0, 120.0, -50.0, 30.0, 0, 2000, '2024-12-19', '2024-12-31']
