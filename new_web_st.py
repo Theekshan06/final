@@ -134,6 +134,115 @@ def get_float_trajectory(float_id):
     if not st.session_state.get('initialized', False) or not st.session_state.rag_system:
         return None
 
+def create_filters_controls():
+    """Render Filters & Controls on the right side; updates session state."""
+    if not st.session_state.get('initialized', False) or not st.session_state.rag_system:
+        st.error("RAG system not initialized")
+        return
+
+    # Initialize filter and trajectory states
+    if 'map_start_date' not in st.session_state:
+        st.session_state.map_start_date = None
+    if 'map_end_date' not in st.session_state:
+        st.session_state.map_end_date = None
+    if 'map_selected_region' not in st.session_state:
+        st.session_state.map_selected_region = 'All Oceans'
+    if 'show_trajectory' not in st.session_state:
+        st.session_state.show_trajectory = False
+    if 'trajectory_float_id' not in st.session_state:
+        st.session_state.trajectory_float_id = None
+
+    with st.container():
+        st.markdown("### Filters & Controls")
+
+        import datetime as _dt
+        today = _dt.date.today()
+        start_default = _dt.date(2000, 1, 1)
+
+        col_start, col_end = st.columns(2)
+        with col_start:
+            start_date = st.date_input(
+                "Start Date:",
+                value=st.session_state.map_start_date or start_default,
+                min_value=_dt.date(1990, 1, 1),
+                max_value=today,
+                key="start_date_filter"
+            )
+            st.session_state.map_start_date = start_date
+
+        with col_end:
+            end_date = st.date_input(
+                "End Date:",
+                value=st.session_state.map_end_date or today,
+                min_value=start_date,
+                max_value=today,
+                key="end_date_filter"
+            )
+            st.session_state.map_end_date = end_date
+
+        st.markdown("**Ocean Regions**")
+        ocean_regions = {
+            "All Oceans": None,
+            "Red Sea": {"lat_min": 12.0, "lat_max": 30.0, "lon_min": 32.0, "lon_max": 43.0},
+            "Persian Gulf": {"lat_min": 24.0, "lat_max": 31.0, "lon_min": 48.0, "lon_max": 57.0},
+            "Andaman Sea": {"lat_min": 5.0, "lat_max": 20.0, "lon_min": 92.0, "lon_max": 100.0},
+            "Western Australian Basin": {"lat_min": -40.0, "lat_max": -10.0, "lon_min": 90.0, "lon_max": 120.0},
+            "Mozambique Channel": {"lat_min": -27.0, "lat_max": -10.0, "lon_min": 40.0, "lon_max": 50.0},
+            "Northern Indian Ocean": {"lat_min": 0.0, "lat_max": 30.0, "lon_min": 40.0, "lon_max": 100.0},
+            "Southern Indian Ocean": {"lat_min": -50.0, "lat_max": 0.0, "lon_min": 40.0, "lon_max": 120.0},
+            "Bay Of Bengal": {"lat_min": 5.0, "lat_max": 25.0, "lon_min": 80.0, "lon_max": 100.0},
+            "Arabian Sea": {"lat_min": 8.0, "lat_max": 27.0, "lon_min": 50.0, "lon_max": 75.0},
+            "Atlantic Ocean": {"lat_min": -60.0, "lat_max": 70.0, "lon_min": -80.0, "lon_max": 20.0},
+            "Pacific Ocean": {"lat_min": -60.0, "lat_max": 70.0, "lon_min": 120.0, "lon_max": -70.0},
+            "Mediterranean Sea": {"lat_min": 30.0, "lat_max": 46.0, "lon_min": -6.0, "lon_max": 37.0}
+        }
+
+        selected_region = st.selectbox(
+            "Select ocean region:",
+            options=list(ocean_regions.keys()),
+            index=list(ocean_regions.keys()).index(st.session_state.map_selected_region),
+            key="region_filter_map"
+        )
+        st.session_state.map_selected_region = selected_region
+
+        col_apply, col_reset = st.columns(2)
+        with col_apply:
+            if st.button("Apply Filters", use_container_width=True, type="primary"):
+                st.session_state.map_filters_applied = True
+                st.rerun()
+        with col_reset:
+            if st.button("Reset Filters", use_container_width=True):
+                st.session_state.map_start_date = None
+                st.session_state.map_end_date = None
+                st.session_state.map_selected_region = 'All Oceans'
+                st.session_state.map_filters_applied = True
+                st.rerun()
+
+        st.markdown("---")
+        st.subheader("Float Trajectory")
+        float_id_input = st.text_input(
+            "Enter Float ID for trajectory:",
+            placeholder="e.g., 2902755",
+            help="Enter the ARGO float ID to visualize its trajectory path"
+        )
+        col_t1, col_t2 = st.columns(2)
+        with col_t1:
+            if st.button("Show Trajectory", use_container_width=True, type="secondary"):
+                if float_id_input.strip():
+                    st.session_state.show_trajectory = True
+                    st.session_state.trajectory_float_id = float_id_input.strip()
+                    st.rerun()
+                else:
+                    st.warning("Please enter a valid Float ID")
+        with col_t2:
+            if st.button("Clear Trajectory", use_container_width=True):
+                st.session_state.show_trajectory = False
+                st.session_state.trajectory_float_id = None
+                st.rerun()
+
+        if st.session_state.get('show_trajectory', False) and st.session_state.get('trajectory_float_id'):
+            st.info(f"Currently showing trajectory for Float: {st.session_state.trajectory_float_id}")
+
     try:
         rag_system = st.session_state.rag_system
         if not rag_system.db_connection:
@@ -200,7 +309,7 @@ def create_enhanced_float_map():
                     st.rerun()
 
             with col_title:
-                st.markdown("### 🌊 Filters & Controls")
+                st.markdown("### Filters & Controls")
 
             if not st.session_state.filters_minimized:
                 st.markdown("""
@@ -208,7 +317,7 @@ def create_enhanced_float_map():
                 """, unsafe_allow_html=True)
 
                 # Date Range Filter with Calendar
-                st.markdown("**📅 Time Range**")
+                st.markdown("**Time Range**")
 
                 import datetime
                 today = datetime.date.today()
@@ -396,17 +505,17 @@ def create_enhanced_float_map():
 
                         st.success(f"Found {len(latest_locations)} ARGO floats")
 
-                        # Display map info
-                        col1, col2, col3, col4 = st.columns(4)
-                        with col1:
+                        # Display map info horizontally just below the map title
+                        colm1, colm2, colm3, colm4 = st.columns(4)
+                        with colm1:
                             st.metric("Total Floats", len(latest_locations))
-                        with col2:
+                        with colm2:
                             total_measurements = latest_locations['measurement_count'].sum()
                             st.metric("Total Measurements", f"{total_measurements:,}")
-                        with col3:
+                        with colm3:
                             avg_measurements = latest_locations['measurement_count'].mean()
                             st.metric("Avg Measurements", f"{avg_measurements:.0f}")
-                        with col4:
+                        with colm4:
                             st.metric("Ocean Region", st.session_state.map_selected_region)
 
                         # Enhanced Interactive Map
@@ -421,7 +530,7 @@ def create_enhanced_float_map():
                             location=[center_lat, center_lon],
                             zoom_start=3,
                             width='100%',
-                            height=600,
+                            height=700,
                             tiles=None  # Start with no default tiles
                         )
 
@@ -568,8 +677,8 @@ def create_enhanced_float_map():
                         # Add layer control
                         folium.LayerControl().add_to(m)
 
-                        # Display the map
-                        map_data = st_folium(m, width=900, height=600, returned_objects=["last_clicked"])
+                        # Display the map full width
+                        map_data = st_folium(m, width=None, height=700, returned_objects=["last_clicked"])
 
                         # Handle map clicks
                         if map_data['last_clicked']:
@@ -841,33 +950,6 @@ def create_scientific_sidebar():
             st.error("System Offline")
             st.progress(0.0, text="Initializing...")
             st.write("**Status:** Waiting for initialization...")
-
-        st.markdown("---")
-
-        # Oceanographic Parameters
-        st.subheader("Analysis Parameters")
-
-        # Temperature range
-        temp_range = st.slider("Temperature Range (°C)", -2.0, 40.0, (-2.0, 40.0), 0.1)
-
-        # Pressure/Depth range
-        pressure_range = st.slider("Pressure Range (dbar)", 0, 6000, (0, 2000), 50)
-
-        # Geographic bounds
-        st.write("**Geographic Bounds**")
-        lat_range = st.slider("Latitude", -90.0, 90.0, (-90.0, 90.0), 1.0)
-        lon_range = st.slider("Longitude", -180.0, 180.0, (-180.0, 180.0), 1.0)
-
-        # Time period
-        st.write("**Temporal Scope**")
-        time_period = st.selectbox("Time Period",
-            ["Last 30 days", "Last 3 months", "Last 6 months", "Last year", "All time"]
-        )
-
-        # Data quality filters
-        st.write("**Data Quality**")
-        quality_filter = st.multiselect("QC Flags", ["1 - Good", "2 - Probably Good", "3 - Probably Bad"],
-                                       default=["1 - Good", "2 - Probably Good"])
 
         st.markdown("---")
 
@@ -1257,6 +1339,13 @@ def main():
             min-width: 120px !important;
         }
 
+        /* Button alignment improvements */
+        .stButton { width: 100% !important; }
+        .stButton > button { width: 100% !important; }
+        div[data-testid="column"] .stButton { width: 100% !important; }
+        div[data-testid="column"] .stButton > button { width: 100% !important; }
+        .stButton + .stButton { margin-left: 0.5rem !important; }
+
         /* Boat floating animation */
         .stButton button::before {
             content: '' !important;
@@ -1402,16 +1491,12 @@ def main():
                 backdrop-filter: blur(20px);
                 border: 1px solid rgba(255, 255, 255, 0.2);
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
-        <h1 style="color: white; margin: 0; font-size: 2.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
-            🌊 ARGO Scientific Oceanographic Dashboard
-        </h1>
+        <h1 style="color: white; margin: 0; font-size: 2.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">ARGO Scientific Oceanographic Dashboard</h1>
         <p style="color: #e0f7fa; margin: 0; font-size: 1.2rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
             Advanced RAG-powered analysis of global ocean observations
         </p>
-        <div style="margin-top: 1rem; opacity: 0.8;">
-            <span style="color: #b3e5fc; font-size: 0.9rem;">
-                Research-grade • AI-powered • Real-time analysis
-            </span>
+        <div style="margin-top: 1rem; opacity: 0.9; color: #b3e5fc; font-size: 0.95rem;">
+            • Research-grade&nbsp;&nbsp;&nbsp;• AI-powered&nbsp;&nbsp;&nbsp;• Real-time analysis
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1437,17 +1522,18 @@ def main():
 
     st.markdown("---")
 
-    # Main Layout: Map (left) + Query Interface (right)
-    main_col1, main_col2 = st.columns([3, 2])
+    # Main Layout: Map (left), Filters (right), then Query Interface below filters
+    map_col, filters_col = st.columns([3, 2])
 
-    with main_col1:
-        # Enhanced Interactive Map (Always Visible)
+    with map_col:
         st.markdown("### Global ARGO Float Distribution Map")
         create_enhanced_float_map()
 
-    with main_col2:
-        # Advanced Query Interface
-        st.markdown("### Scientific Query Interface")
+    with filters_col:
+        create_filters_controls()
+
+    st.markdown("---")
+    st.markdown("### Scientific Query Interface")
 
         # Check for preset query
         preset_query = st.session_state.get('preset_query', '')
